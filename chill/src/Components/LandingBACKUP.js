@@ -23,7 +23,6 @@ import theme__5 from "../images/theme__5.png";
 import theme__6 from "../images/theme__6.png";
 import car from "../images/car.png";
 import logo from "../images/ch.png";
-import dining from "../images/dining.png";
 import LandingHeader from "./LandingHeader";
 
 function Landing() {
@@ -38,18 +37,18 @@ function Landing() {
         id: "theme__1",
         // markers: true,
       },
-      x: -20,
+      x: -200,
       opacity: 0,
       duration: 3,
       ease: "back",
     });
-
     let t2 = gsap.timeline({
       scrollTrigger: {
         trigger: ".light__2__left",
         start: "-80px 20%",
+        // end: "top 80px",
         end: "+=80px",
-        scrub: 15,
+        scrub: 5,
         id: "theme__2",
         // markers: true,
       },
@@ -58,17 +57,16 @@ function Landing() {
       opacity: 1,
       duration: 5,
     }).to(".theme__2", {
-      x: 10,
-      y: 80,
+      x: 100,
       opacity: 0,
-      duration: 10,
+      duration: 6,
     });
     let t3 = gsap.timeline({
       scrollTrigger: {
         trigger: ".light__3__left",
-        start: "400px 60%",
-        end: "+=30px",
-        scrub: 15,
+        start: "10px 15%",
+        end: "+=80px",
+        scrub: 5,
         id: ".theme__2",
         // markers: true,
       },
@@ -77,17 +75,17 @@ function Landing() {
       opacity: 1,
       duration: 5,
     }).to(".theme__3", {
-      x: -20,
+      x: -200,
       opacity: 0,
       duration: 3,
     });
     let t4 = gsap.timeline({
       scrollTrigger: {
         trigger: ".light__4__left",
-        start: "300px 30%",
-        end: "+=30px",
-        scrub: 15,
-        id: "t4",
+        start: "130px 15%",
+        end: "+=80px",
+        scrub: 5,
+        id: "light__4__left",
         // markers: true,
       },
     });
@@ -95,16 +93,16 @@ function Landing() {
       opacity: 1,
       duration: 5,
     }).to(".theme__4", {
-      x: 20,
-      y: 15,
+      x: 200,
+      y: 150,
       opacity: 0,
       duration: 3,
     });
     let t5 = gsap.timeline({
       scrollTrigger: {
         trigger: ".light__5__right",
-        start: "400px 20%",
-        end: "+=30px",
+        start: "150px 20%",
+        end: "+=100px",
         scrub: 10,
         id: "light__5__right",
         // markers: true,
@@ -114,18 +112,18 @@ function Landing() {
       opacity: 1,
       duration: 5,
     }).to(".theme__5", {
-      x: -20,
-      y: -15,
+      x: -200,
+      y: -150,
       opacity: 0,
       duration: 3,
     });
     let t6 = gsap.timeline({
       scrollTrigger: {
-        trigger: ".theme__6",
-        start: "450px 10%",
+        trigger: ".middle__6",
+        start: "250px 10%",
         end: "+=30px",
-        scrub: 25,
-        id: ".theme__6",
+        scrub: 10,
+        id: ".middle__666",
         // markers: true,
       },
     });
@@ -142,7 +140,7 @@ function Landing() {
     let t7 = gsap.timeline({
       scrollTrigger: {
         trigger: ".middle__6",
-        start: "550px 5%",
+        start: "250px 5%",
         end: "+=30px",
         scrub: 15,
         id: ".777",
@@ -158,6 +156,9 @@ function Landing() {
     gsap.registerPlugin(ScrollTrigger);
 
     gsap.to(".triangle", {
+      // y: -100,
+      // start: "top 50%",
+      // end: "+=300px",
       rotation: 360,
       duration: 2,
       ease: "back",
@@ -167,221 +168,221 @@ function Landing() {
     gsap.to(".light__1__left", {
       scrollTrigger: {
         trigger: ".light__1__left",
-        start: "250px 80%",
-        end: "+=50px",
+        start: "top 50%",
+        end: "+=300px",
         scrub: 10,
-        id: "l1",
+        id: "light-1",
         // markers: true,
       },
-      x: -60,
-      y: 100,
+      x: -300,
+      y: 500,
       opacity: 0,
       ease: "none",
     });
     gsap.to(".light__1__right", {
       scrollTrigger: {
         trigger: ".light__1__left",
-        start: "250px 80%",
-        end: "+=50px",
+        start: "top 50%",
+        end: "+=180px",
         scrub: 10,
-        id: "r1",
+        id: "light-1",
         // markers: true,
       },
-      x: 60,
-      y: 100,
+      x: 300,
+      y: 500,
       opacity: 0,
       ease: "none",
     });
     gsap.to(".light__2__left", {
       scrollTrigger: {
-        trigger: ".light__2__right",
-        start: "400px 78%",
-        end: "+=30px",
+        trigger: ".light__1__left",
+        start: "80px 30%",
+        end: "+=50px",
         scrub: 5,
-        id: "l2",
-        // markers: true,
+        id: "light-2",
+        markers: true,
       },
+      // x: -300,
+      // y: 500,
       opacity: 1,
-      duration: 2,
+      duration: 1,
+      // duration: 25,
+      ease: "none",
     });
     gsap.to(".light__2__left", {
       scrollTrigger: {
         trigger: ".light__2__left",
-        start: "400px 70%",
-        end: "+=50px",
-        scrub: 25,
-        id: "l2-2",
-        // markers: true,
-      },
-      x: -270,
-      y: 450,
-      duration: 25,
-    });
-    gsap.to(".light__2__right", {
-      scrollTrigger: {
-        trigger: ".light__2__right",
-        start: "400px 78%",
-        end: "+=40px",
+        start: "100px 20%",
+        end: "+=60px",
         scrub: 5,
-        id: "r2",
+        id: "light-22",
+        markers: true,
+      },
+      x: -300,
+      y: 500,
+
+      duration: 1,
+      // duration: 25,
+      ease: "none",
+    });
+    // let l2 = gsap.timeline({
+    //   scrollTrigger: {
+    //     trigger: ".light__2__left",
+    //     start: "-80px 20%",
+    //     end: "+=60px",
+    //     scrub: 25,
+    //     id: "light-2",
+    //     // markers: true,
+    //   },
+    // });
+    // l2.to(".light__2__left", {
+    //   opacity: 1,
+    //   duration: 7,
+    // }).to(".light__2__left", {
+    //   x: -300,
+    //   y: 500,
+    //   duration: 25,
+    // });
+
+    // let l2 = gsap.timeline({
+    //   scrollTrigger: {
+    //     trigger: ".light__2__left",
+    //     start: "-80px 20%",
+    //     end: "+=60px",
+    //     scrub: 25,
+    //     id: "light-2",
+    //     // markers: true,
+    //   },
+    // });
+    // l2.to(".light__2__left", {
+    //   opacity: 1,
+    //   duration: 7,
+    // }).to(".light__2__left", {
+    //   x: -300,
+    //   y: 500,
+    //   duration: 25,
+    // });
+    let r2 = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".light__2__left",
+        start: "-80px 20%",
+        end: "top 150px",
+        scrub: 20,
+        id: "light-2",
         // markers: true,
       },
+    });
+    r2.to(".light__2__right", {
       opacity: 1,
       duration: 6,
-    });
-    gsap.to(".light__2__right", {
-      scrollTrigger: {
-        trigger: ".light__2__right",
-        start: "400px 70%",
-        end: "+=50px",
-        scrub: 25,
-        id: "r2-2",
-        // markers: true,
-      },
-      x: 270, //300
-      y: 450, //500
+    }).to(".light__2__right", {
+      x: 300,
+      y: 500,
       duration: 25,
     });
-
-    gsap.to(".light__3__left", {
+    let l3 = gsap.timeline({
       scrollTrigger: {
         trigger: ".light__3__left",
-        start: "400px 60%",
-        end: "+=30px",
-        scrub: 5,
-        id: "l3",
+        start: "10px 15%",
+        end: "+=80px",
+        scrub: 40,
+        id: "light__3__left",
         // markers: true,
       },
+    });
+    l3.to(".light__3__left", {
+      opacity: 1,
+      duration: 10,
+    }).to(".light__3__left", {
+      x: -250,
+      y: 500,
+      duration: 25,
+    });
+    let r3 = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".light__3__left",
+        start: "600px 70%",
+        end: "+=60px",
+        scrub: 20,
+        id: "light__3__right",
+        // markers: true,
+      },
+    });
+    r3.to(".light__3__right", {
       opacity: 1,
       duration: 6,
-    });
-    gsap.to(".light__3__left", {
-      scrollTrigger: {
-        trigger: ".light__3__left",
-        start: "400px 55%",
-        end: "+=60px",
-        scrub: 25,
-        id: "l3-2",
-        // markers: true,
-      },
-      x: -270,
-      y: 450,
+    }).to(".light__3__right", {
+      x: 300,
+      y: 500,
       duration: 25,
     });
-    gsap.to(".light__3__right", {
-      scrollTrigger: {
-        trigger: ".light__3__right",
-        start: "400px 60%",
-        end: "+=30px",
-        scrub: 5,
-        id: "l3",
-        // markers: true,
-      },
-      opacity: 1,
-      duration: 2,
-    });
-    gsap.to(".light__3__right", {
-      scrollTrigger: {
-        trigger: ".light__3__right",
-        start: "400px 55%",
-        end: "+=60px",
-        scrub: 25,
-        id: "l3-2",
-        // markers: true,
-      },
-      x: 270,
-      y: 450,
-      duration: 25,
-    });
-
-    gsap.to(".light__4__left", {
+    let l4 = gsap.timeline({
       scrollTrigger: {
         trigger: ".light__4__left",
-        start: "400px 50%",
-        end: "+=30px",
-        scrub: 5,
-        id: "l4",
+        start: "130px 15%",
+        end: "+=80px",
+        scrub: 30,
+        id: "light__4__left",
         // markers: true,
       },
-      opacity: 1,
-      duration: 2,
     });
-    gsap.to(".light__4__left", {
+    l4.to(".light__4__left", {
+      opacity: 1,
+      duration: 6,
+    }).to(".light__4__left", {
+      x: -300,
+      y: 500,
+      duration: 25,
+    });
+    let r4 = gsap.timeline({
       scrollTrigger: {
         trigger: ".light__4__left",
-        start: "400px 40%",
-        end: "+=60px",
-        scrub: 25,
-        id: "l4-2",
+        start: "150px 10%",
+        end: "+=50px",
+        scrub: 30,
+        id: "light__4__right",
         // markers: true,
       },
-      x: -270,
-      y: 450,
-      duration: 25,
     });
-
-    gsap.to(".light__4__right", {
-      scrollTrigger: {
-        trigger: ".light__4__right",
-        start: "400px 50%",
-        end: "+=30px",
-        scrub: 5,
-        id: "l4",
-        // markers: true,
-      },
+    r4.to(".light__4__right", {
       opacity: 1,
-      duration: 2,
-    });
-    gsap.to(".light__4__right", {
-      scrollTrigger: {
-        trigger: ".light__4__right",
-        start: "400px 40%",
-        end: "+=60px",
-        scrub: 25,
-        id: "l4-2",
-        // markers: true,
-      },
-      x: 270,
-      y: 450,
+      duration: 8,
+    }).to(".light__4__right", {
+      x: 300,
+      y: 500,
       duration: 25,
     });
-    gsap.to(".light__5__right", {
+    let r5 = gsap.timeline({
       scrollTrigger: {
         trigger: ".light__5__right",
-        start: "400px 40%",
-        end: "+=30px",
-        scrub: 5,
-        id: "l5",
+        start: "150px 20%",
+        end: "+=100px",
+        scrub: 20,
+        id: "light__5__right",
         // markers: true,
       },
-      opacity: 1,
-      duration: 2,
     });
-    gsap.to(".light__5__right", {
-      scrollTrigger: {
-        trigger: ".light__5__right",
-        start: "400px 30%",
-        end: "+=60px",
-        scrub: 25,
-        id: "l5-2",
-        // markers: true,
-      },
-      x: 270,
-      y: 450,
+    r5.to(".light__5__right", {
+      opacity: 1,
+      duration: 6,
+    }).to(".light__5__right", {
+      x: 200,
+      y: 500,
       duration: 25,
     });
-
-    gsap.to(".middle__6", {
+    let m6 = gsap.timeline({
       scrollTrigger: {
         trigger: ".middle__6",
-        start: "400px 20%",
-        end: "+=30px",
-        scrub: 25,
-        id: "l5",
+        start: "150px 20%",
+        end: "+=100px",
+        scrub: 20,
+        id: ".middle__6",
         // markers: true,
       },
+    });
+    m6.to(".middle__6", {
       opacity: 1,
-      duration: 4,
+      duration: 6,
     });
   });
 
@@ -409,7 +410,6 @@ function Landing() {
       <div className="light__2__right">
         <img className="light" src={lightPng} alt="" />
         <img className="big" src={hospitalPng} alt="" />
-        <div className="box__C"></div>
       </div>
       <div className="light__3__left">
         <img className="light" src={lightPng} alt="" />

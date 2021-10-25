@@ -22,7 +22,6 @@ const BookIcon = styled(RiBook3Fill)`
   height: 100%;
 `;
 const HeaderNav = styled.div`
-  width: 100%;
   z-index: 2;
   position: fixed;
   background-color: #2c213b;
@@ -32,32 +31,51 @@ const HeaderNav = styled.div`
 const NavLink = styled(Link)`
   font-style: italic;
   font-weight: 600;
-  /* color: #ff8400; */
   padding: 1rem;
-  font-size: 20px;
+  font-size: 18px;
   text-decoration: none;
-  text-shadow: 0 0 5px #ffa500, 0 0 5px #ffa500, 0 0 10px #ffa500,
+  /* text-shadow: 0 0 5px #ffa500, 0 0 5px #ffa500, 0 0 10px #ffa500,
     0 0 20px #ffa500;
-  color: #fff6a9;
+  color: #fff6a9; */
+`;
+const Btn = styled.div`
+  display: flex;
+  align-items: center;
+  position: relative;
+  text-decoration: none;
+  border-radius: 50rem;
+  padding: 0.3rem 0.6rem;
+  color: #2c213b;
+  background-color: #f93c10;
+  box-shadow: 0px 3px 0 #1abea7;
+  transition: all 0.1s ease-in-out;
+  &:hover {
+    bottom: -7px;
+    box-shadow: 0px 0px 0 #000;
+  }
 `;
 
 const LandingHeader = () => {
   return (
     <HeaderNav>
-      <NavLink to="/">
-        <HomeIcon />
+      <NavLink to="/news">
+        <Btn>
+          <FindIcon />
+          累積去憂#345
+        </Btn>
       </NavLink>
       <NavLink to="/themes">
-        <ThemeIcon />
-        去憂主題
+        <Btn>
+          <ThemeIcon />
+          去憂主題
+        </Btn>
       </NavLink>
-      <NavLink to="/news">
-        <FindIcon />
-        累積去憂#345
-      </NavLink>
+
       <NavLink to="/mybooks">
-        <BookIcon />
-        我的書櫃
+        <Btn>
+          <BookIcon />
+          我的書櫃
+        </Btn>
       </NavLink>
     </HeaderNav>
   );
