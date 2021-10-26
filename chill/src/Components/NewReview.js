@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { useState } from "react";
 import "firebase/firestore";
+import firebase from "../utils/firebase";
 
 const CloseIcon = styled(AiOutlineCloseCircle)`
   color: #1abea7;
@@ -123,6 +124,21 @@ function NewReview(props) {
   const [hashtag1, setHashtag1] = useState("");
   const [hashtag2, setHashtag2] = useState("");
   const [hashtag3, setHashtag3] = useState("");
+
+  function onSubmit() {
+    let db = firebase.firestore();
+    let ref = db.collection("users").doc("apple");
+
+    ref
+      .set({
+        total: 500,
+        good: 480,
+        sale: 330,
+      })
+      .then(() => {
+        console.log("set data successful");
+      });
+  }
   return props.trigger ? (
     <Mask>
       <PopupInner>
@@ -160,6 +176,7 @@ function NewReview(props) {
             onChange={(e) => setHashtag3(e.target.value)}
           />
         </Question>
+        <Btn onClick={onSubmit}>送出</Btn>
       </PopupInner>
     </Mask>
   ) : (

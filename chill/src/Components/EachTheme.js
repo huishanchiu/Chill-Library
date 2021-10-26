@@ -11,7 +11,7 @@ import theme__5 from "../images/theme__5.png";
 import theme__6 from "../images/theme__6.png";
 import c__3 from "../images/c3.png";
 
-import { useRouteMatch } from "react-router";
+import { useRouteMatch } from "react-router-dom";
 
 const Div = styled.div`
   display: flex;

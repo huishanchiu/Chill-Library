@@ -10,6 +10,7 @@ import { MdMood } from "react-icons/md";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import SignIn from "./SignIn";
 import { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import firebase from "../utils/firebase";
 
 const Avatar = styled(MdMood)`
@@ -93,6 +94,7 @@ const Btn = styled.div`
 `;
 
 const SideMenu = () => {
+  const history = useHistory();
   const [user, setUser] = useState(null);
   const [buttonPopup, setButtonPopup] = useState(false);
   useEffect(() => {
@@ -126,7 +128,17 @@ const SideMenu = () => {
             </Btn>
           </NavLink>
           <NavLink>
-            <Btn onClick={() => firebase.auth().signOut()}>
+            <Btn
+              onClick={() =>
+                firebase
+                  .auth()
+                  .signOut()
+                  .then(() => {
+                    // history.push("/mybooks");
+                    window.location.href = "/";
+                  })
+              }
+            >
               <LogOutIcon />
               登出
             </Btn>
