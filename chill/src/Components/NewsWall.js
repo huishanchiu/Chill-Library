@@ -1,10 +1,8 @@
-import { React, useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
-import { IoMdBeer } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import firebase from "../utils/firebase";
-import { useHistory, useParams } from "react-router-dom";
-import like from "../images/tag_pink.png";
+import { Link } from "react-router-dom";
 import toastGrey from "../images/toast_grey.png";
 import toastYellow from "../images/toast_gold.png";
 
@@ -18,8 +16,10 @@ const Star = ({ starId, marked }) => {
 const Div = styled.div`
   display: flex;
   flex-direction: column;
+  flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
+  width: 750px;
 `;
 const ReviewTag = styled.div`
   margin-top: 20px;
@@ -102,35 +102,38 @@ const Quote = styled.h3`
 const LikeDiv = styled.div`
   display: flex;
 `;
-function EachReview() {
-  const [reviews, setReviews] = useState([]);
-  const bookid = useParams();
 
+const NewsWall = () => {
+  const [news, setNews] = useState([]);
+  const options = {
+    day: "numeric", //(e.g., 1)
+    month: "short", //(e.g., Oct)
+    year: "numeric", //(e.g., 2019)
+    hour: "2-digit", //(e.g., 02)
+    minute: "2-digit", //(e.g., 02)
+    hour12: true, // 24 小時制
+    timeZone: "Asia/Taipei", // 美國/紐約
+  };
   useEffect(() => {
-    const db = firebase.firestore();
-    const reviewRef = db
+    firebase
+      .firestore()
       .collection("reviews")
-      .where("bookName", "==", bookid.id)
       .onSnapshot((collectionSnapshot) => {
         const data = collectionSnapshot.docs.map((docSnapshot) => {
           const id = docSnapshot.id;
           return { ...docSnapshot.data(), id };
         });
-        setReviews(data);
+        setNews(data);
       });
   }, []);
-  console.log(reviews);
-
   const toggleLiked = (e, isLiked) => {
     const uid = firebase.auth().currentUser.uid;
-    console.log(e.target);
+    console.log(isLiked);
     console.log(e.target.dataset.id);
-
     if (isLiked) {
       firebase
         .firestore()
         .collection("reviews")
-
         .doc(e.target.dataset.id)
         .update({
           likedBy: firebase.firestore.FieldValue.arrayRemove(uid),
@@ -145,10 +148,10 @@ function EachReview() {
         });
     }
   };
-
+  console.log(news);
   return (
     <Div>
-      {reviews.map((review) => {
+      {news.map((review) => {
         const isLiked = review.likedBy?.includes(
           firebase.auth().currentUser.uid
         );
@@ -198,11 +201,15 @@ function EachReview() {
               </Beer>
               <BeerText>覺得很讚，賞作者一杯啤酒!</BeerText>
             </LikeDiv>
+            {new Date(review.createdAt.seconds * 1000).toLocaleString(
+              "en-US",
+              options
+            )}
           </ReviewTag>
         );
       })}
     </Div>
   );
-}
+};
 
-export default EachReview;
+export default NewsWall;

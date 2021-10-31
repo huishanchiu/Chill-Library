@@ -153,7 +153,7 @@ function Landing() {
       opacity: 1,
       duration: 4,
     });
-  });
+  }, []);
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
@@ -383,7 +383,7 @@ function Landing() {
       opacity: 1,
       duration: 4,
     });
-  });
+  }, []);
 
   return (
     <div className="background">
