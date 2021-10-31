@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { BsBookmarkFill, BsBookmark } from "react-icons/bs";
+import firebase from "../../utils/firebase";
+import { Link } from "react-router-dom";
 
 const BookCollection = styled(BsBookmarkFill)`
   width: 10px;
@@ -12,45 +14,70 @@ const BookUnCollection = styled(BsBookmark)`
   height: 100%;
   color: tomato;
 `;
-const Shelf = styled.div`
+
+const AllBook = styled.div``;
+const BookTag = styled(Link)`
+  padding: 20px;
+  text-decoration: none;
+  display: grid;
+  grid-template-columns: 25% 75%;
+  grid-template-rows: 100% 100%;
+  background-color: #fbe192;
+  margin-top: 20px;
+  height: 200px;
+`;
+const BookContent = styled.div`
   display: flex;
-  background-color: #e5e5e3;
+  flex-direction: column;
 `;
-const BookTag = styled.div`
-  margin: 10px;
-  padding: 10px;
-  background-color: #eeeda7;
+const BookImg = styled.img`
+  outline: grey solid 1px;
+  height: 150px;
+  width: 100px;
 `;
-const BookInfo = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+const BookName = styled.div`
+  font-size: 24px;
+  font-weight: 500;
+  color: grey;
 `;
-const BookTitle = styled.h4`
-  margin: 5px 5px;
-  color: #414141;
+const BookSummary = styled.div`
+  color: grey;
 `;
-const BookImage = styled.img``;
 
 function Collection() {
-  const [bookTitle, setbookTitle] = useState("怎麼吃");
-  const [bookImage, setBookImage] = useState(
-    "http://books.google.com/books/content?id=hHfHCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
-  );
-  const [like, setLike] = useState(false);
-  //   function toggleLiked() {
-
-  //   }
+  const [bookList, setBookList] = useState([]);
+  const db = firebase.firestore();
+  console.log(firebase.auth().currentUser.uid);
+  useEffect(() => {
+    db.collection("books")
+      .where("collectedBy", "array-contains", firebase.auth().currentUser.uid)
+      .get()
+      .then((collectionSnapshot) => {
+        const data = collectionSnapshot.docs.map((docSnapshot) => {
+          const id = docSnapshot.id;
+          return { ...docSnapshot.data(), id };
+        });
+        setBookList(data);
+      });
+  }, []);
+  console.log(bookList);
   return (
-    <Shelf>
-      <BookTag>
-        <BookImage src={bookImage} alt="" />
-        <BookInfo>
-          <BookTitle>{bookTitle}</BookTitle>
-          {/* <BookUnCollection onClick={()=>{toggleLiked}} /> */}
-        </BookInfo>
-      </BookTag>
-    </Shelf>
+    <AllBook>
+      {bookList.map((item) => {
+        let des = item.description.slice(0, 200);
+        item.description = des + "......";
+
+        return (
+          <BookTag key={item.title} to={`/book/${item.title}`}>
+            <BookImg src={item.image} alt="" />
+            <BookContent>
+              <BookName>{item.title}</BookName>
+              <BookSummary>{item.description}</BookSummary>
+            </BookContent>
+          </BookTag>
+        );
+      })}
+    </AllBook>
   );
 }
 

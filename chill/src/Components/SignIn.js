@@ -60,10 +60,11 @@ const Btn = styled.div`
   cursor: pointer;
 `;
 const Tab = styled.div`
-  color: #3f403f;
+  color: #b3b3b3;
   font-size: 20px;
   font-weight: 500;
   cursor: pointer;
+  padding: 8px 20px;
 `;
 const Input = styled.input`
   margin: auto;
@@ -78,7 +79,6 @@ const Input = styled.input`
   height: 20px;
   padding: 8px;
   border-radius: 10px;
-  /* box-shadow: 0px 3px 0 #1abea7; */
 `;
 const Div = styled.div`
   display: flex;
@@ -109,11 +109,7 @@ const SignUpDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 20px;
-  padding: 15px 50px;
-  border-radius: 10px;
-  height: 20px;
-  background-color: white;
+  padding: 15px 70px;
   color: #868686;
 `;
 const Message = styled.div`
@@ -132,10 +128,36 @@ function SignIn(props) {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const active = {
+    background: "#F1FAF7",
+    color: "#0D6663",
+    borderRadius: "20px",
+    cursor: "pointer",
+  };
+
   const handleOnClick = async (provider) => {
     const res = await socialMediaAuth(provider);
+    console.log(res);
+    ThirdAddToFirebase(res);
     history.push("/");
   };
+  function ThirdAddToFirebase(data) {
+    firebase.firestore().collection("users").doc(data.uid).set({
+      URL: data.photoURL,
+      email: data.email,
+      uid: data.uid,
+      userName: data.displayName,
+    });
+  }
+  function AddToFirebase(data) {
+    firebase.firestore().collection("users").doc(data.user.uid).set({
+      URL: data.user.photoURL,
+      email: data.user.email,
+      uid: data.user.uid,
+      userName: data.user.displayName,
+    });
+  }
+
   function onSubmit() {
     setIsLoading(true);
     if (activeItem === "signin") {
@@ -168,11 +190,13 @@ function SignIn(props) {
         .then((res) => {
           history.push("/");
           setIsLoading(false);
+          AddToFirebase(res);
           return res.user.updateProfile({
             displayName: displayName,
             photoURL: "https://cdn-icons-png.flaticon.com/512/5914/5914031.png",
           });
         })
+
         .catch((error) => {
           switch (error.code) {
             case "auth/email-already-in-use":
@@ -203,6 +227,7 @@ function SignIn(props) {
               setErrorMessage("");
               setActiveItem("signin");
             }}
+            style={activeItem === "signin" ? active : []}
           >
             登入
           </Tab>
@@ -213,6 +238,7 @@ function SignIn(props) {
               setErrorMessage("");
               setActiveItem("signup");
             }}
+            style={activeItem === "signup" ? active : []}
           >
             註冊
           </Tab>

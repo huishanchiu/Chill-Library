@@ -4,7 +4,19 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import { useState } from "react";
 import "firebase/firestore";
 import firebase from "../utils/firebase";
+import { useHistory, useParams } from "react-router-dom";
 
+const Star = ({ starId, marked }) => {
+  return (
+    <span
+      star-id={starId}
+      role="button"
+      style={{ color: "#ff9933", cursor: "pointer" }}
+    >
+      {marked ? "\u2605" : "\u2606"}
+    </span>
+  );
+};
 const CloseIcon = styled(AiOutlineCloseCircle)`
   color: #1abea7;
   width: 30px;
@@ -96,7 +108,7 @@ const ReviewContent = styled.textarea`
   outline: none;
   border: none;
   width: 350px;
-  /* height: 20px; */
+  height: 200px;
   padding: 8px;
   border-radius: 10px;
 `;
@@ -115,10 +127,11 @@ const HashtagInput = styled.input`
   border-radius: 10px;
 `;
 
-function NewReview(props) {
-  const [reviewAuthor, setReviewAuthor] = useState(
-    "https://miro.medium.com/max/1400/1*XGw9zUEZGYPNmeKGmyeX1g.jpeg"
-  );
+function NewReview({ close }) {
+  const [selection, setSelection] = useState(0);
+  const [rating, setRating] = useState(0);
+  let bookid = useParams();
+
   const [quote, setQuote] = useState("");
   const [content, setContent] = useState("");
   const [hashtag1, setHashtag1] = useState("");
@@ -126,33 +139,53 @@ function NewReview(props) {
   const [hashtag3, setHashtag3] = useState("");
 
   function onSubmit() {
-    let db = firebase.firestore();
-    let ref = db.collection("users").doc("apple");
-
-    ref
+    const documentRef = firebase.firestore().collection("reviews").doc();
+    documentRef
       .set({
-        total: 500,
-        good: 480,
-        sale: 330,
+        bookName: bookid.id,
+        content,
+        quote,
+        hashtag1,
+        hashtag2,
+        hashtag3,
+        rating,
+        createdAt: firebase.firestore.Timestamp.now(),
+        author: {
+          displayName: firebase.auth().currentUser.displayName || "",
+          photoURL: firebase.auth().currentUser.photoURL || "",
+          uid: firebase.auth().currentUser.uid,
+          email: firebase.auth().currentUser.email,
+        },
       })
       .then(() => {
-        console.log("set data successful");
+        // history.push(`/book/${bookid.id}`);
       });
+    close(false);
   }
-  return props.trigger ? (
+  return (
     <Mask>
       <PopupInner>
-        <Close onClick={() => props.setTrigger(false)}>
+        <Close onClick={() => close(false)}>
           <CloseIcon />
         </Close>
         <ReviewAuthor>
-          <ReviewAuthorImg src={reviewAuthor} alt="" />
+          <ReviewAuthorImg src={firebase.auth().currentUser.photoURL} alt="" />
         </ReviewAuthor>
         <QuoteInput
           placeholder="寫下本書你最喜歡的一句Quote吧！"
           value={quote}
           onChange={(e) => setQuote(e.target.value)}
         />
+        <div
+          onClick={(event) => setRating(event.target.getAttribute("star-id"))}
+        >
+          {Array.from({ length: 5 }, (v, i) => (
+            <Star
+              starId={i + 1}
+              marked={selection ? selection > i : rating > i}
+            />
+          ))}
+        </div>
         <ReviewContent
           placeholder="寫下去憂內容"
           value={content}
@@ -179,8 +212,6 @@ function NewReview(props) {
         <Btn onClick={onSubmit}>送出</Btn>
       </PopupInner>
     </Mask>
-  ) : (
-    ""
   );
 }
 

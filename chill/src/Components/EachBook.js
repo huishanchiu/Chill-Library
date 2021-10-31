@@ -6,12 +6,26 @@ import EachReview from "./EachReview";
 import { useState, useEffect } from "react";
 import NewReview from "./NewReview";
 import firebase from "../utils/firebase";
+import { useParams } from "react-router-dom";
+import { BsBookmarkFill, BsBookmark } from "react-icons/bs";
 
+const BookCollection = styled(BsBookmarkFill)`
+  cursor: pointer;
+  width: 20px;
+  height: 100%;
+  color: tomato;
+`;
+const BookUnCollection = styled(BsBookmark)`
+  cursor: pointer;
+  width: 20px;
+  height: 100%;
+  color: tomato;
+`;
 const Div = styled.div`
   display: flex;
   justify-content: space-between;
   color: white;
-  background-color: #2c213b;
+  background-image: linear-gradient(to right, #2c213b, #4f3a6c);
 `;
 const Content = styled.div`
   display: flex;
@@ -29,6 +43,8 @@ const BookTag = styled.div`
   text-decoration: none;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   background-color: #fbe192;
   margin-top: 20px;
 `;
@@ -40,7 +56,6 @@ const BookContent = styled.div`
 `;
 const BookImg = styled.img`
   height: 250px;
-  width: 150px;
   box-shadow: 3px 3px 6px grey;
 `;
 const BookTitle = styled.div`
@@ -72,39 +87,74 @@ const Btn = styled.div`
   }
   cursor: pointer;
 `;
+const ReviewTag = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 function Book() {
-  const [buttonPopup, setButtonPopup] = useState(false);
+  const [open, setOpen] = useState(false);
   const [bookInfo, setBookInfo] = useState({});
+  const [book, setBook] = useState({});
   const db = firebase.firestore();
-
+  let bookid = useParams();
+  function linkToBorrow() {
+    window.open(
+      `https://webpac.tphcc.gov.tw/webpac/search.cfm?m=ss&k0=${bookInfo.ISBN}&t0=k&c0=and`,
+      "新北市立圖書館"
+    );
+  }
   useEffect(() => {
-    const bookRef = db.collection("books").doc("怎麼走");
+    const bookRef = db.collection("books").doc(bookid.id);
+    console.log(bookid);
     bookRef.get().then((doc) => {
       setBookInfo({
         title: doc.data().title,
-        authors: doc.data().author,
+        authors: doc.data().authors,
         publisher: doc.data().publisher,
         publishedDate: doc.data().publishedDate,
         categories: doc.data().categories,
         image: doc.data().image,
         description: doc.data().description,
+        ISBN: doc.data().ISBN,
       });
     });
   }, []);
 
-  db.collection("books")
-    .where("categories", "array-contains", "宅在家好發慌？")
-    .get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("books")
+      .doc(bookid.id)
+      .onSnapshot((docSnapshot) => {
+        setBook(docSnapshot.data());
       });
-    })
-    .catch((error) => {
-      console.log("Error getting documents: ", error);
-    });
+    // .get()
+    // .then((docSnapshot) => {
+    //   setBook(docSnapshot.data());
+    // });
+  }, []);
+  function toggleCollected() {
+    const uid = firebase.auth().currentUser.uid;
+    if (isCollect) {
+      firebase
+        .firestore()
+        .collection("books")
+        .doc(bookid.id)
+        .update({
+          collectedBy: firebase.firestore.FieldValue.arrayRemove(uid),
+        });
+    } else {
+      firebase
+        .firestore()
+        .collection("books")
+        .doc(bookid.id)
+        .update({
+          collectedBy: firebase.firestore.FieldValue.arrayUnion(uid),
+        });
+    }
+  }
+  const isCollect = book.collectedBy?.includes(firebase.auth().currentUser.uid);
 
   return (
     <Div>
@@ -115,20 +165,23 @@ function Book() {
           <BookContent>
             <BookTitle>{bookInfo.title}</BookTitle>
             <BookDetail>
-              <BookInfo>作者：{bookInfo.author}</BookInfo>
+              <BookInfo>作者：{bookInfo.authors}</BookInfo>
               <BookInfo>出版社：{bookInfo.publisher}</BookInfo>
               <BookInfo>出版日期：{bookInfo.publishedDate}</BookInfo>
               <BookInfo>去憂分類：{bookInfo.categories}</BookInfo>
+              <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
             </BookDetail>
+            <div onClick={toggleCollected}>
+              {isCollect ? <BookCollection /> : <BookUnCollection />}
+            </div>
           </BookContent>
           <BookSummary>{bookInfo.description}</BookSummary>
-          <EachReview />
-          <Btn onClick={() => setButtonPopup(true)}>發表一篇去憂</Btn>
+          <ReviewTag>
+            <EachReview />
+            <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
+          </ReviewTag>
         </BookTag>
-        <NewReview
-          trigger={buttonPopup}
-          setTrigger={setButtonPopup}
-        ></NewReview>
+        {open && <NewReview close={setOpen} />}
       </Content>
       <Header />
     </Div>

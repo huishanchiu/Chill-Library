@@ -1,45 +1,91 @@
 import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
+import firebase from "../../utils/firebase";
+import { Link } from "react-router-dom";
 
-const Div = styled.div`
-  display: flex;
-  background-color: #e5e5e3;
+const AllBook = styled.div`
+  /* outline: red solid; */
 `;
-const BookTag = styled.div`
+
+const ReviewTag = styled.div`
+  border-radius: 10px 20px;
   display: flex;
-  margin: 10px;
+  flex-direction: column;
   padding: 10px;
-  background-color: #eeeda7;
+  text-decoration: none;
+  color: grey;
+  background-color: #fbe192;
+  margin: 20px 0;
 `;
-const BookImage = styled.img``;
-const BookInfo = styled.div`
-  margin-left: 20px;
+
+const Quote = styled.h3`
+  color: tomato;
+  margin-bottom: 5px;
 `;
-const BookTitle = styled.h4`
-  margin: 5px 5px;
-  color: #414141;
+const BookName = styled.p`
+  font-size: 14px;
+  font-weight: 900;
+  margin-top: 0;
+`;
+const Hashtag = styled.div`
+  /* background-color: #1abea7;
+  color:; */
+  margin-left: 10px;
+  padding: 0.6%;
+  background: #f7e8dc center/contain no-repeat;
+  border-radius: 5px;
+  box-shadow: 0.2em 0.2em #222126;
+  -webkit-animation: animate-face 0.5s steps(2, end) infinite;
+  animation: animate-face 0.5s steps(2, end) infinite;
+`;
+const ReviewTime = styled.h4`
+  color: gray;
+`;
+const HashtagContainer = styled.div`
+  margin: 10px;
+  display: flex;
 `;
 
 function Review() {
-  const [bookTitle, setbookTitle] = useState("怎麼吃");
-  const [bookImage, setBookImage] = useState(
-    "http://books.google.com/books/content?id=hHfHCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
-  );
+  const [reviews, setReviews] = useState([]);
+  const db = firebase.firestore();
 
+  useEffect(() => {
+    db.collection("reviews")
+      .where("author.uid", "==", firebase.auth().currentUser.uid)
+      .get()
+      .then((collectionSnapshot) => {
+        const data = collectionSnapshot.docs.map((docSnapshot) => {
+          const id = docSnapshot.id;
+          return { ...docSnapshot.data(), id };
+        });
+        setReviews(data);
+      });
+  }, []);
+
+  console.log(reviews);
   return (
-    <Div>
-      <BookTag>
-        <BookImage src={bookImage} alt="" />
-        <BookInfo>
-          <BookTitle>{bookTitle}</BookTitle>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odit, illum
-          atque? Blanditiis officiis eos nulla aliquid vero tempora adipisci,
-          sint corrupti maxime itaque laborum voluptates corporis possimus
-          dolores molestiae eveniet.
-        </BookInfo>
-      </BookTag>
-    </Div>
+    <AllBook>
+      {reviews.map((review) => {
+        return (
+          <ReviewTag key={review.id}>
+            <Quote>{review.quote}</Quote>
+            <BookName>-{review.bookName}</BookName>
+            {review.content}
+
+            <HashtagContainer>
+              {review.hashtag1 ? <Hashtag>#{review.hashtag1}</Hashtag> : ""}
+              {review.hashtag2 ? <Hashtag>#{review.hashtag2}</Hashtag> : ""}
+              {review.hashtag3 ? <Hashtag>#{review.hashtag3}</Hashtag> : ""}
+            </HashtagContainer>
+            <ReviewTime>
+              {new Date(review.createdAt.seconds * 1000).toLocaleString()}
+            </ReviewTime>
+          </ReviewTag>
+        );
+      })}
+    </AllBook>
   );
 }
 

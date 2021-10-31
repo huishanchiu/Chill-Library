@@ -98,9 +98,15 @@ const SideMenu = () => {
   const [user, setUser] = useState(null);
   const [buttonPopup, setButtonPopup] = useState(false);
   useEffect(() => {
+    let isUnmount = false;
     firebase.auth().onAuthStateChanged((currentUser) => {
-      setUser(currentUser);
+      if (!isUnmount) {
+        setUser(currentUser);
+      }
     });
+    return () => {
+      isUnmount = true;
+    };
   }, []);
   return (
     <SideNav>

@@ -1,8 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import SideMenu from "./SideMenu";
-import Header from "./Header";
 import { useState, useEffect } from "react";
+// import firebase from "../utils/firebase";
 import firebase from "../utils/firebase";
 import { Link, useRouteMatch } from "react-router-dom";
 import { Route, BrowserRouter, Switch } from "react-router-dom";
@@ -11,12 +10,6 @@ import Review from "./Mybooks/Review";
 import Quote from "./Mybooks/Quote";
 import Follow from "./Mybooks/Follow";
 
-const Div = styled.div`
-  display: flex;
-  justify-content: space-between;
-  color: white;
-  background-color: #2c213b;
-`;
 const Content = styled.div`
   display: flex;
   flex-direction: column;
@@ -64,10 +57,9 @@ const TabTag = styled.div`
   display: flex;
 `;
 const Tab = styled(Link)`
-  background-color: #e1e1de;
   width: 70px;
   height: 40px;
-  border-radius: 5px;
+  border-radius: 5rem;
   text-align: center;
   line-height: 40px;
   font-size: 20px;
@@ -75,60 +67,133 @@ const Tab = styled(Link)`
   margin: 0 20px 20px 0;
   cursor: pointer;
   text-decoration: none;
+  &:hover {
+    background-color: #e1e1de;
+  }
 `;
 
 const Mybooks = () => {
+  const [activeItem, setActiveItem] = useState("collection");
+  const [quotes, setQuotes] = useState([]);
   const [user, setUser] = useState(null);
-
   const [quote, setQuote] = useState(
     "錢錢沒有變成你喜歡的樣子，是真的不見惹！"
   );
+  // function getRandom(x) {
+  //   return Math.floor(Math.random() * x);
+  // }
+  // getRandom(3); //會回傳0~2之間的隨機數字
+  // getRandom(5); //會回傳0~4之間的隨機數字
   const [quoteProvenance, setQuoteProvenance] = useState("每天來點負能量");
-
+  const active = {
+    background: "#F1FAF7",
+    color: "#0D6663",
+    borderRadius: "20px",
+    cursor: "pointer",
+  };
+  console.log(firebase.auth().currentUser);
   useEffect(() => {
+    let isUnmount = false;
     firebase.auth().onAuthStateChanged((currentUser) => {
-      setUser(currentUser);
+      if (!isUnmount) {
+        setUser(currentUser);
+      }
     });
+    return () => {
+      isUnmount = true;
+    };
   }, []);
-  console.log(user);
+  // useEffect(() => {
+  //   let isUnmount = false;
+  //   firebase
+  //     .firestore()
+  //     .collection("reviews")
+  //     .where("author.uid", "==", firebase.auth().currentUser.uid)
+  //     .get()
+  //     .then((collectionSnapshot) => {
+  //       if (!isUnmount) {
+  //         const list = [];
+  //         collectionSnapshot.forEach((doc) => {
+  //           list.push(doc.data());
+  //           setQuotes(list);
+  //         });
+  //       }
+
+  //       // setQuotes("");
+  //     });
+  //   return () => {
+  //     isUnmount = true;
+  //   };
+  // }, []);
+
+  console.log(quotes);
   let { path, url } = useRouteMatch();
 
   return (
     <BrowserRouter>
-      <Div>
-        <SideMenu />
-        {user ? (
-          <Content>
-            <QuoteTag>
-              <Quotes>"{quote}"</Quotes>
-              <QuoteProvenance>{quoteProvenance}</QuoteProvenance>
-            </QuoteTag>
-            <MyInfo>
-              <MyImage src={user.photoURL} alt="" />
-              <MyName>{user.displayName}</MyName>
-              的去憂書櫃
-            </MyInfo>
+      {user ? (
+        <Content>
+          <QuoteTag>
+            <Quotes>"{quote}"</Quotes>
+            {/* <QuoteProvenance>{bookName}</QuoteProvenance> */}
+          </QuoteTag>
 
-            <TabTag>
-              <Tab to={`${url}/collection`}>收藏</Tab>
-              <Tab to={`${url}/review`}>去憂</Tab>
-              <Tab to={`${url}/follow`}>追蹤</Tab>
-              <Tab to={`${url}/quote`}>Quote</Tab>
-            </TabTag>
-
-            <Switch>
-              <Route exact path={`${path}/collection`} component={Collection} />
-              <Route exact path={`${path}/review`} component={Review} />
-              <Route exact path={`${path}/follow`} component={Follow} />
-              <Route exact path={`${path}/quote`} component={Quote} />
-            </Switch>
-          </Content>
-        ) : (
-          <MyInfo>尚未登入喔！</MyInfo>
-        )}
-
-        <Header />
-      </Div>
+          <MyInfo>
+            <MyImage src={user.photoURL} alt="" />
+            <MyName>{user.displayName}</MyName>
+            的去憂書櫃
+          </MyInfo>
+          <TabTag>
+            <Tab
+              // active={activeItem === "collection"}
+              onClick={() => {
+                setActiveItem("collection");
+              }}
+              style={activeItem === "collection" ? active : []}
+              to={`${url}/collection`}
+            >
+              收藏
+            </Tab>
+            <Tab
+              // active={activeItem === "review"}
+              onClick={() => {
+                setActiveItem("review");
+              }}
+              style={activeItem === "review" ? active : []}
+              to={`${url}/review`}
+            >
+              去憂
+            </Tab>
+            <Tab
+              // active={activeItem === ""}
+              onClick={() => {
+                setActiveItem("follow");
+              }}
+              style={activeItem === "follow" ? active : []}
+              to={`${url}/follow`}
+            >
+              追蹤
+            </Tab>
+            <Tab
+              onClick={() => {
+                setActiveItem("quote");
+              }}
+              style={activeItem === "quote" ? active : []}
+              to={`${url}/quote`}
+            >
+              Quote
+            </Tab>
+          </TabTag>
+          <Switch>
+            <Route exact path={`${path}/collection`} component={Collection} />
+            <Route exact path={`${path}/review`} component={Review} />
+            <Route exact path={`${path}/follow`} component={Follow} />
+            <Route exact path={`${path}/quote`} component={Quote} />
+          </Switch>
+        </Content>
+      ) : (
+        <MyInfo>尚未登入喔！</MyInfo>
+      )}
     </BrowserRouter>
   );
 };

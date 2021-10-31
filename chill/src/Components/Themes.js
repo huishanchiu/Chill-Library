@@ -145,9 +145,6 @@ const Logo = styled.div`
   height: 100px;
   width: 300px;
   background-image: url(${logo});
-  /* background-size: 350px; */
-  /* display: block; */
-  /* margin: 0; */
 `;
 const LogoOrange = styled.div`
   @font-face {
@@ -173,15 +170,14 @@ const Themes = () => {
       <Header />
 
       <ThemesContainer>
-        <Theme1 to={`${url}/theme1`} />
-        <Theme2 to={`${url}/theme2`} />
-        <Theme3 to={`${url}/theme3`} />
-        <Theme4 to={`${url}/theme4`} />
-        <Theme5 to={`${url}/theme5`} />
-        <Theme6 to={`${url}/theme6`} />
+        <Theme1 to="/宅在家好發慌？" />
+        <Theme2 to="/錢錢去哪了？" />
+        <Theme3 to="/一個人好孤單？" />
+        <Theme4 to="/想不出好點子？" />
+        <Theme5 to="/如何上火箭？" />
+        <Theme6 to="/心裡總是卡卡的？" />
       </ThemesContainer>
       <LogoContainer>
-        {/* <Logo /> */}
         <LogoOrange>Chill Library</LogoOrange>
         <LinkTag>
           <NavLink to="/">
