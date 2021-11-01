@@ -202,8 +202,6 @@ function EachSearchBook() {
                   onClick={() => {
                     addToFirebase(bookInfo);
                   }}
-                  // color={isCollect ? "red" : "grey"}
-                  // onClick={toggleCollected}
                 />
               </BookContent>
               <BookSummary>{bookInfo.volumeInfo.description}</BookSummary>

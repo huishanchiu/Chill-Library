@@ -91,7 +91,7 @@ const Mybooks = () => {
     borderRadius: "20px",
     cursor: "pointer",
   };
-  console.log(firebase.auth().currentUser);
+  console.log(firebase.auth().currentUser.displayName);
   useEffect(() => {
     let isUnmount = false;
     firebase.auth().onAuthStateChanged((currentUser) => {

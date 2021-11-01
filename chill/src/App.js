@@ -19,6 +19,9 @@ import Collection from "./Components/Mybooks/Collection";
 import Searching from "./Components/Searching";
 import EachSearchBook from "./Components/EachSearchBook";
 
+const Div = styled.div`
+  display: flex;
+`;
 const Main = styled.div`
   display: flex;
   justify-content: space-between;
@@ -40,7 +43,10 @@ function App() {
           <Main>
             <SideMenu />
             <NewsWall />
-            <Header />
+            <SideRight>
+              <Header />
+              <SideBooks />
+            </SideRight>
           </Main>
         </Route>
 

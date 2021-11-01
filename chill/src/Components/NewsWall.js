@@ -19,7 +19,7 @@ const Div = styled.div`
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  width: 750px;
+  width: 700px;
 `;
 const ReviewTag = styled.div`
   margin-top: 20px;
