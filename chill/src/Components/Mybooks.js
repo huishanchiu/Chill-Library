@@ -1,13 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-// import firebase from "../utils/firebase";
+import { useParams } from "react-router-dom";
 import firebase from "../utils/firebase";
 import { Link, useRouteMatch } from "react-router-dom";
 import { Route, BrowserRouter, Switch } from "react-router-dom";
 import Collection from "./Mybooks/Collection";
 import Review from "./Mybooks/Review";
-import Quote from "./Mybooks/Quote";
 import Follow from "./Mybooks/Follow";
 
 const Content = styled.div`
@@ -22,24 +21,21 @@ const Content = styled.div`
   }
 `;
 const QuoteTag = styled.div`
-  /* position: relative; */
-  /* display: flex; */
-`;
-const Quotes = styled.div`
+  color: #1abea7;
   font-size: 44px;
   font-weight: 900;
 `;
-const QuoteProvenance = styled.p`
-  font-size: 20px;
-  margin: auto;
-  /* position: absolute;
-  right: 0; */
-`;
+
 const MyInfo = styled.div`
   display: flex;
-  margin: 100px 0 50px 0;
+  margin-top: 60px;
   font-size: 30px;
   align-items: center;
+`;
+const MyInfoDiv = styled.div`
+  display: flex;
+  align-items: center;
+  line-height: 20px;
 `;
 const MyName = styled.div`
   font-size: 30px;
@@ -52,6 +48,13 @@ const MyImage = styled.img`
   background-color: white;
   border-radius: 50px;
   margin-right: 10px;
+`;
+const MyEmail = styled.div`
+  color: #f1faf7;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-size: 18px;
 `;
 const TabTag = styled.div`
   display: flex;
@@ -71,27 +74,113 @@ const Tab = styled(Link)`
     background-color: #e1e1de;
   }
 `;
+const FollowBtn = styled.div`
+  background-color: #0d6663;
+  margin: 20px;
+  width: 60px;
+  padding: 10px;
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer;
+`;
+
+function getRandom(x) {
+  return Math.floor(Math.random() * x);
+}
 
 const Mybooks = () => {
+  const [uid, setUid] = useState("");
+  const [follows, setFollows] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [userInfo, setUserInfo] = useState({});
   const [activeItem, setActiveItem] = useState("collection");
   const [quotes, setQuotes] = useState([]);
   const [user, setUser] = useState(null);
-  const [quote, setQuote] = useState(
-    "錢錢沒有變成你喜歡的樣子，是真的不見惹！"
+  let userId = useParams();
+  const db = firebase.firestore();
+  const userRef = db.collection("users").doc(userId.userid);
+  // console.log(userRef);
+  // console.log(firebase.auth().currentUser.uid);
+
+  useEffect(() => {
+    setUid(firebase.auth().currentUser?.uid);
+  }, []);
+  const quoteIndex = getRandom(reviews.length);
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(userId.userid)
+      .onSnapshot((docSnapshot) => {
+        setFollows(docSnapshot.data());
+      });
+  }, []);
+
+  useEffect(() => {
+    if (user !== "") {
+      db.collection("reviews")
+        .where("author.uid", "==", userId.userid)
+        .get()
+        .then((collectionSnapshot) => {
+          const data = collectionSnapshot.docs.map((docSnapshot) => {
+            const id = docSnapshot.id;
+            return { ...docSnapshot.data(), id };
+          });
+          setReviews(data);
+        });
+    }
+  }, []);
+  console.log(reviews);
+  function toggleFollowed() {
+    if (userId.userid !== uid) {
+      if (isFollowed) {
+        firebase
+          .firestore()
+          .collection("users")
+          .doc(userId.userid)
+          .update({
+            followBy: firebase.firestore.FieldValue.arrayRemove(uid),
+          });
+      } else {
+        firebase
+          .firestore()
+          .collection("users")
+          .doc(userId.userid)
+          .update({
+            followBy: firebase.firestore.FieldValue.arrayUnion(uid),
+          });
+      }
+    }
+  }
+
+  const isFollowed = follows.followBy?.includes(
+    firebase.auth().currentUser.uid
   );
-  // function getRandom(x) {
-  //   return Math.floor(Math.random() * x);
-  // }
-  // getRandom(3); //會回傳0~2之間的隨機數字
-  // getRandom(5); //會回傳0~4之間的隨機數字
-  const [quoteProvenance, setQuoteProvenance] = useState("每天來點負能量");
+  console.log(isFollowed);
+
+  console.log(userId.userid);
+  useEffect(() => {
+    if (userId.userid) {
+      console.log(typeof userId.userid);
+      userRef.get().then((doc) => {
+        console.log(doc.data());
+        setUserInfo({
+          displayName: doc.data().userName,
+          email: doc.data().email,
+          photoURL: doc.data().URL,
+          uid: doc.data().uid,
+        });
+      });
+    }
+  }, []);
+
   const active = {
     background: "#F1FAF7",
     color: "#0D6663",
     borderRadius: "20px",
     cursor: "pointer",
   };
-  console.log(firebase.auth().currentUser);
+
   useEffect(() => {
     let isUnmount = false;
     firebase.auth().onAuthStateChanged((currentUser) => {
@@ -103,49 +192,35 @@ const Mybooks = () => {
       isUnmount = true;
     };
   }, []);
-  // useEffect(() => {
-  //   let isUnmount = false;
-  //   firebase
-  //     .firestore()
-  //     .collection("reviews")
-  //     .where("author.uid", "==", firebase.auth().currentUser.uid)
-  //     .get()
-  //     .then((collectionSnapshot) => {
-  //       if (!isUnmount) {
-  //         const list = [];
-  //         collectionSnapshot.forEach((doc) => {
-  //           list.push(doc.data());
-  //           setQuotes(list);
-  //         });
-  //       }
 
-  //       // setQuotes("");
-  //     });
-  //   return () => {
-  //     isUnmount = true;
-  //   };
-  // }, []);
-
-  console.log(quotes);
   let { path, url } = useRouteMatch();
 
   return (
     <BrowserRouter>
-      {user ? (
+      {Object.keys(userInfo) ? (
         <Content>
           <QuoteTag>
-            <Quotes>"{quote}"</Quotes>
-            {/* <QuoteProvenance>{bookName}</QuoteProvenance> */}
+            {reviews.length > 0 ? reviews[quoteIndex].quote : ""}
           </QuoteTag>
 
           <MyInfo>
-            <MyImage src={user.photoURL} alt="" />
-            <MyName>{user.displayName}</MyName>
+            <MyImage src={userInfo.photoURL} alt="" />
+            <MyName>{userInfo.displayName}</MyName>
             的去憂書櫃
           </MyInfo>
+          <MyInfoDiv>
+            <MyEmail>{userInfo.email}</MyEmail>
+            {uid
+              ? userId.userid !== uid && (
+                  <FollowBtn onClick={toggleFollowed}>
+                    {isFollowed ? "Unfollow" : "Follow"}
+                  </FollowBtn>
+                )
+              : ""}
+          </MyInfoDiv>
+
           <TabTag>
             <Tab
-              // active={activeItem === "collection"}
               onClick={() => {
                 setActiveItem("collection");
               }}
@@ -155,7 +230,6 @@ const Mybooks = () => {
               收藏
             </Tab>
             <Tab
-              // active={activeItem === "review"}
               onClick={() => {
                 setActiveItem("review");
               }}
@@ -165,7 +239,6 @@ const Mybooks = () => {
               去憂
             </Tab>
             <Tab
-              // active={activeItem === ""}
               onClick={() => {
                 setActiveItem("follow");
               }}
@@ -174,7 +247,7 @@ const Mybooks = () => {
             >
               追蹤
             </Tab>
-            <Tab
+            {/* <Tab
               onClick={() => {
                 setActiveItem("quote");
               }}
@@ -182,13 +255,13 @@ const Mybooks = () => {
               to={`${url}/quote`}
             >
               Quote
-            </Tab>
+            </Tab> */}
           </TabTag>
           <Switch>
             <Route exact path={`${path}/collection`} component={Collection} />
             <Route exact path={`${path}/review`} component={Review} />
             <Route exact path={`${path}/follow`} component={Follow} />
-            <Route exact path={`${path}/quote`} component={Quote} />
+            {/* <Route exact path={`${path}/quote`} component={Quote} /> */}
           </Switch>
         </Content>
       ) : (

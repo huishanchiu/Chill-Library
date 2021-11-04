@@ -3,7 +3,20 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { BsBookmarkFill, BsBookmark } from "react-icons/bs";
 import firebase from "../../utils/firebase";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { AiOutlineCloseCircle } from "react-icons/ai";
+const CloseIcon = styled(AiOutlineCloseCircle)`
+  color: #1abea7;
+  width: 30px;
+  height: 100%;
+  cursor: pointer;
+`;
+const Close = styled.div`
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+`;
 
 const BookCollection = styled(BsBookmarkFill)`
   width: 10px;
@@ -16,7 +29,8 @@ const BookUnCollection = styled(BsBookmark)`
 `;
 
 const AllBook = styled.div``;
-const BookTag = styled(Link)`
+const BookTag = styled.div`
+  position: relative;
   padding: 20px;
   text-decoration: none;
   display: grid;
@@ -25,6 +39,9 @@ const BookTag = styled(Link)`
   background-color: #fbe192;
   margin-top: 20px;
   height: 200px;
+  &:hover :first-child {
+    display: block;
+  }
 `;
 const BookContent = styled.div`
   display: flex;
@@ -45,14 +62,17 @@ const BookSummary = styled.div`
 `;
 
 function Collection() {
+  const [uid, setUid] = useState("");
+  let userId = useParams();
   const [bookList, setBookList] = useState([]);
   const db = firebase.firestore();
-  console.log(firebase.auth().currentUser.uid);
+  useEffect(() => {
+    setUid(firebase.auth().currentUser?.uid);
+  }, []);
   useEffect(() => {
     db.collection("books")
-      .where("collectedBy", "array-contains", firebase.auth().currentUser.uid)
-      .get()
-      .then((collectionSnapshot) => {
+      .where("collectedBy", "array-contains", userId.userid)
+      .onSnapshot((collectionSnapshot) => {
         const data = collectionSnapshot.docs.map((docSnapshot) => {
           const id = docSnapshot.id;
           return { ...docSnapshot.data(), id };
@@ -60,7 +80,17 @@ function Collection() {
         setBookList(data);
       });
   }, []);
-  console.log(bookList);
+  console.log(userId.userid);
+  function toggleUncellect(title) {
+    firebase
+      .firestore()
+      .collection("books")
+      .doc(title)
+      .update({
+        collectedBy: firebase.firestore.FieldValue.arrayRemove(userId.userid),
+      });
+  }
+
   return (
     <AllBook>
       {bookList.map((item) => {
@@ -68,8 +98,14 @@ function Collection() {
         item.description = des + "......";
 
         return (
-          <BookTag key={item.title} to={`/book/${item.title}`}>
-            <BookImg src={item.image} alt="" />
+          <BookTag key={item.title}>
+            <Close>
+              <CloseIcon onClick={(e) => toggleUncellect(item.title)} />
+            </Close>
+            <Link to={`/book/${item.title}`}>
+              <BookImg src={item.image} alt="" />
+            </Link>
+
             <BookContent>
               <BookName>{item.title}</BookName>
               <BookSummary>{item.description}</BookSummary>

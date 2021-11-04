@@ -129,10 +129,6 @@ function Book() {
       .onSnapshot((docSnapshot) => {
         setBook(docSnapshot.data());
       });
-    // .get()
-    // .then((docSnapshot) => {
-    //   setBook(docSnapshot.data());
-    // });
   }, []);
   function toggleCollected() {
     const uid = firebase.auth().currentUser.uid;
@@ -154,6 +150,7 @@ function Book() {
         });
     }
   }
+
   const isCollect = book.collectedBy?.includes(firebase.auth().currentUser.uid);
 
   return (

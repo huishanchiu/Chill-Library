@@ -19,7 +19,7 @@ const Div = styled.div`
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  width: 750px;
+  width: 700px;
 `;
 const ReviewTag = styled.div`
   margin-top: 20px;
@@ -106,13 +106,13 @@ const LikeDiv = styled.div`
 const NewsWall = () => {
   const [news, setNews] = useState([]);
   const options = {
-    day: "numeric", //(e.g., 1)
-    month: "short", //(e.g., Oct)
-    year: "numeric", //(e.g., 2019)
-    hour: "2-digit", //(e.g., 02)
-    minute: "2-digit", //(e.g., 02)
-    hour12: true, // 24 小時制
-    timeZone: "Asia/Taipei", // 美國/紐約
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Taipei",
   };
   useEffect(() => {
     firebase
@@ -159,7 +159,7 @@ const NewsWall = () => {
         return (
           <ReviewTag>
             <ReviewAuthor>
-              <ReviewAuthorLink>
+              <ReviewAuthorLink to={`/mybooks/${review.author.uid}/collection`}>
                 <ReviewAuthorImg src={review.author.photoURL} alt="" />
               </ReviewAuthorLink>
               {review.author.displayName}

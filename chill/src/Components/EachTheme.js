@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import c__3 from "../images/c3.png";
 import AllBooks from "./AllBooks";
 import { useRouteMatch, useParams } from "react-router-dom";
 import AllThemes from "./AllThemes";
+import Banner from "./Banner";
 
 const Div = styled.div`
   display: flex;
@@ -41,8 +41,8 @@ const EachTheme = () => {
   return (
     <Div>
       <Content>
-        <Themes path={`${url}`}>
-          <Img src={c__3} alt="" />
+        <Themes>
+          <Banner />
         </Themes>
         <AllThemes theme={theme} />
         <AllBooks theme={theme} />

@@ -1,6 +1,5 @@
 import React from "react";
-import SideMenu from "./SideMenu";
-import Header from "./Header";
+
 import styled from "styled-components";
 import EachReview from "./EachReview";
 import { useState, useEffect } from "react";
@@ -10,7 +9,9 @@ import { useParams } from "react-router-dom";
 import { BsBookmarkFill, BsBookmark } from "react-icons/bs";
 
 const BookCollection = styled(BsBookmarkFill)`
-  width: 10px;
+  cursor: pointer;
+  width: 20px;
+  height: 100%;
   color: tomato;
 `;
 const BookUnCollection = styled(BsBookmark)`
@@ -23,7 +24,7 @@ const Div = styled.div`
   display: flex;
   justify-content: space-between;
   color: white;
-  background-image: linear-gradient(to right, #2c213b, #4f3a6c);
+  background-image: #2c213b;
 `;
 const Content = styled.div`
   display: flex;
@@ -93,6 +94,8 @@ const ReviewTag = styled.div`
 function EachSearchBook() {
   const [open, setOpen] = useState(false);
   const [bookInfo, setBookInfo] = useState([]);
+  const [book, setBook] = useState([]);
+  const [bookTitle, setBookTitle] = useState("");
   const search = useParams();
   function linkToBorrow() {
     window.open(
@@ -106,14 +109,19 @@ function EachSearchBook() {
     })
       .then((res) => res.json())
       .then((datas) => {
-        console.log(datas.items);
-        setBookInfo(datas.items);
+        const data = datas.items.map((item) => {
+          console.log(item.volumeInfo.title);
+          setBookInfo(item);
+          setBookTitle(item.volumeInfo.title);
+        });
+        console.log(bookInfo);
       })
       .catch((error) => {
         console.log(error);
       });
   }, [search.id]);
   console.log(bookInfo);
+  console.log(bookTitle);
 
   function addToFirebase(bookInfo) {
     const documentRef = firebase
@@ -121,103 +129,96 @@ function EachSearchBook() {
       .collection("books")
       .doc(bookInfo.volumeInfo.title);
     documentRef.set({
-      title: bookInfo.volumeInfo.title,
-      subtitle: bookInfo.volumeInfo.subtitle,
-      authors: bookInfo.volumeInfo.authors,
-      publisher: bookInfo.volumeInfo.publisher,
-      publishedDate: bookInfo.volumeInfo.publishedDate,
-      ISBN: bookInfo.volumeInfo.industryIdentifiers[0].identifier,
-      description: bookInfo.volumeInfo.description,
-      image: bookInfo.volumeInfo.imageLinks.smallThumbnail,
+      title: bookInfo.volumeInfo.title || "",
+      subtitle: bookInfo.volumeInfo.subtitle || "",
+      authors: bookInfo.volumeInfo.authors || "",
+      publisher: bookInfo.volumeInfo.publisher || "",
+      publishedDate: bookInfo.volumeInfo.publishedDate || "",
+      ISBN: bookInfo.volumeInfo.industryIdentifiers[0].identifier || "",
+      description: bookInfo.volumeInfo.description || "",
+      image: bookInfo.volumeInfo.imageLinks.smallThumbnail || "",
     });
+    if (
+      firebase.firestore().collection("books").doc(bookInfo.volumeInfo.title)
+    ) {
+      toggleCollected(bookInfo.volumeInfo.title);
+    }
   }
+  console.log(bookInfo);
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("books")
+      .doc(bookTitle)
+      ?.onSnapshot((docSnapshot) => {
+        setBook(docSnapshot.data());
+      });
+  }, [bookTitle]);
+  console.log(book);
 
-  // function onSubmit(bookInfo) {
-  //   const documentRef = firebase.firestore().collection("reviews").doc();
-  //   documentRef
-  //     .set({
-  //       title: bookInfo.volumeInfo.title,
-  //     })
-  //     .then(() => {
-  //       // history.push(`/book/${bookid.id}`);
-  //     });
-
-  // }
-
-  // function toggleCollected() {
-  //   const uid = firebase.auth().currentUser.uid;
-  //   if (isCollect) {
-  //     firebase
-  //       .firestore()
-  //       .collection("books")
-  //       .doc(bookid.id)
-  //       .update({
-  //         collectedBy: firebase.firestore.FieldValue.arrayRemove(uid),
-  //       });
-  //   } else {
-  //     firebase
-  //       .firestore()
-  //       .collection("books")
-  //       .doc(bookid.id)
-  //       .update({
-  //         collectedBy: firebase.firestore.FieldValue.arrayUnion(uid),
-  //       });
-  //   }
-  // }
-  // const isCollect = books.collectedBy?.includes(
-  //   firebase.auth().currentUser.uid
-  // );
+  function toggleCollected(bookInfo) {
+    const uid = firebase.auth().currentUser.uid;
+    if (isCollect) {
+      firebase
+        .firestore()
+        .collection("books")
+        .doc(bookInfo)
+        .update({
+          collectedBy: firebase.firestore.FieldValue.arrayRemove(uid),
+        });
+    } else {
+      firebase
+        .firestore()
+        .collection("books")
+        .doc(bookInfo)
+        .update({
+          collectedBy: firebase.firestore.FieldValue.arrayUnion(uid),
+        });
+    }
+  }
+  const isCollect = book.collectedBy?.includes(firebase.auth().currentUser.uid);
+  console.log(isCollect);
 
   return (
-    // <div>12</div>
-
     <Div>
-      <SideMenu />
-      {bookInfo.map((bookInfo) => {
-        return (
-          <Content>
-            <BookTag>
-              <BookImg
-                src={
-                  bookInfo.volumeInfo.imageLinks
-                    ? bookInfo.volumeInfo.imageLinks.smallThumbnail
-                    : "https://i.pinimg.com/564x/8d/98/54/8d9854ecfd84f4daa1561c7b62c6387f.jpg"
-                }
-                alt=""
-              />
-              <BookContent>
-                <BookTitle>{bookInfo.volumeInfo.title}</BookTitle>
-                <BookDetail>
-                  <BookInfo>作者：{bookInfo.volumeInfo.authors}</BookInfo>
-                  <BookInfo>出版社：{bookInfo.volumeInfo.publisher}</BookInfo>
-                  <BookInfo>
-                    出版日期：{bookInfo.volumeInfo.publishedDate}
-                  </BookInfo>
-                  <BookInfo>
-                    去憂分類：{bookInfo.volumeInfo.categories}
-                  </BookInfo>
-                </BookDetail>
-                <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
-                <BookUnCollection
-                  onClick={() => {
-                    addToFirebase(bookInfo);
-                  }}
-                  // color={isCollect ? "red" : "grey"}
-                  // onClick={toggleCollected}
-                />
-              </BookContent>
-              <BookSummary>{bookInfo.volumeInfo.description}</BookSummary>
-              <ReviewTag>
-                <EachReview />
-                <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
-              </ReviewTag>
-            </BookTag>
-            {open && <NewReview close={setOpen} />}
-          </Content>
-        );
-      })}
-      );
-      <Header />
+      {bookInfo && (
+        <Content>
+          <BookTag>
+            <BookImg
+              src={
+                bookInfo.volumeInfo.imageLinks.smallThumbnail ||
+                "https://i.pinimg.com/564x/8d/98/54/8d9854ecfd84f4daa1561c7b62c6387f.jpg"
+              }
+              alt=""
+            />
+            <BookContent>
+              <BookTitle>{bookInfo.volumeInfo.title}</BookTitle>
+              <BookDetail>
+                <BookInfo>作者：{bookInfo.volumeInfo.authors}</BookInfo>
+                <BookInfo>出版社：{bookInfo.volumeInfo.publisher}</BookInfo>
+                <BookInfo>
+                  出版日期：{bookInfo.volumeInfo.publishedDate}
+                </BookInfo>
+                <BookInfo>去憂分類：{bookInfo.volumeInfo.categories}</BookInfo>
+              </BookDetail>
+              <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
+              <div
+                onClick={() => {
+                  addToFirebase(bookInfo);
+                }}
+              >
+                {isCollect ? <BookCollection /> : <BookUnCollection />}
+              </div>
+            </BookContent>
+            <BookSummary>{bookInfo.volumeInfo.description}</BookSummary>
+            <ReviewTag>
+              <EachReview />
+              <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
+            </ReviewTag>
+          </BookTag>
+          {open && <NewReview close={setOpen} />}
+        </Content>
+      )}
     </Div>
   );
 }

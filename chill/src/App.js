@@ -1,10 +1,4 @@
-import {
-  Route,
-  BrowserRouter,
-  Switch,
-  useParams,
-  useRouteMatch,
-} from "react-router-dom";
+import { Route, BrowserRouter, Switch } from "react-router-dom";
 import styled from "styled-components";
 import Landing from "./Components/Landing";
 import EachTheme from "./Components/EachTheme";
@@ -15,7 +9,6 @@ import EachBook from "./Components/EachBook";
 import Header from "./Components/Header";
 import SideMenu from "./Components/SideMenu";
 import SideBooks from "./Components/SideBooks";
-import Collection from "./Components/Mybooks/Collection";
 import Searching from "./Components/Searching";
 import EachSearchBook from "./Components/EachSearchBook";
 
@@ -40,15 +33,21 @@ function App() {
           <Main>
             <SideMenu />
             <NewsWall />
-            <Header />
+            <SideRight>
+              <Header />
+              <SideBooks />
+            </SideRight>
           </Main>
         </Route>
 
-        <Route path="/mybooks">
+        <Route path="/mybooks/:userid">
           <Main>
             <SideMenu />
             <Mybooks />
-            <Header />
+            <SideRight>
+              <Header />
+              <SideBooks />
+            </SideRight>
           </Main>
         </Route>
         <Route exact path="/:theme">
@@ -73,7 +72,16 @@ function App() {
         </Route>
 
         <Route exact path="/book/:id" component={EachBook} />
-        <Route exact path="/book/searching/:id" component={EachSearchBook} />
+        <Route exact path="/book/searching/:id">
+          <Main>
+            <SideMenu />
+            <EachSearchBook />
+            <SideRight>
+              <Header />
+              <SideBooks />
+            </SideRight>
+          </Main>
+        </Route>
       </Switch>
     </BrowserRouter>
   );

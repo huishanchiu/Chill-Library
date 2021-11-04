@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import { BsPencilSquare } from "react-icons/bs";
 import { MdFileDownloadDone } from "react-icons/md";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-// import ReviewEdit from "./ReviewEdit";
 
 const CloseIcon = styled(AiOutlineCloseCircle)`
   color: #1abea7;
@@ -15,10 +14,7 @@ const CloseIcon = styled(AiOutlineCloseCircle)`
   cursor: pointer;
 `;
 const Close = styled.div`
-  width: 40px;
-  height: 40px;
-
-  /* display: none; */
+  display: none;
   position: absolute;
   top: 8px;
   right: 8px;
@@ -29,22 +25,13 @@ const AllBook = styled.div`
 `;
 const EditIcon = styled(BsPencilSquare)`
   cursor: pointer;
-  width: 20px;
-  height: 20px;
 `;
 const DoneIcon = styled(MdFileDownloadDone)`
   cursor: pointer;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 100%;
 `;
-const Edit = styled.div`
-  /* position: absolute;
-  top: 8px;
-  left: 8px; */
-
-  width: 50px;
-  height: 50px;
-`;
+const Edit = styled.div``;
 const ReviewTag = styled.div`
   position: relative;
   border-radius: 10px 20px;
@@ -55,20 +42,14 @@ const ReviewTag = styled.div`
   color: grey;
   background-color: #fbe192;
   margin: 20px 0;
-  /* &:hover :first-child {
+  &:hover :first-child {
     display: block;
-  } */
+  }
 `;
-const Quote = styled.div`
-  color: tomato;
-  height: 25px;
-  font-size: 20px;
-  font-weight: 500;
-  margin-bottom: 5px;
-`;
+
 const QuoteEdit = styled.input`
-  /* background: none;
-  border: none; */
+  background: none;
+  border: none;
   color: tomato;
   height: 25px;
   font-size: 20px;
@@ -77,10 +58,6 @@ const QuoteEdit = styled.input`
   ::placeholder {
     color: tomato;
   }
-`;
-const ContentEdit = styled.textarea`
-  height: 60px;
-  color: tomato;
 `;
 const BookName = styled.p`
   font-size: 14px;
@@ -106,14 +83,11 @@ const HashtagContainer = styled.div`
 
 function Review() {
   const [user, setUser] = useState(null);
-  const [editReview, setEditReview] = useState(undefined);
-  const [content, setContent] = useState([]);
-  const [hashtag1, steHashtag1] = useState("");
-  const [hashtag2, steHashtag2] = useState("");
-  const [hashtag3, steHashtag3] = useState("");
+  const [readOnly, setReadOnly] = useState(true);
+  const [activeItem, setActiveItem] = useState("");
   const [quote, setQuote] = useState("");
   let userId = useParams();
-  // console.log(userId);
+  console.log(userId);
   const [reviews, setReviews] = useState([]);
   const db = firebase.firestore();
   const active = {
@@ -131,30 +105,24 @@ function Review() {
         .doc(id)
         .update({
           quote: `${quote}`,
-          content: `${content}`,
-          hashtag1: `${hashtag1}`,
-          hashtag2: `${hashtag2}`,
-          hashtag3: `${hashtag3}`,
         });
   }
-
-  const toggleSave = (id) => {
-    setEditReview(false);
-    AddToFirebase(id);
+  const onSubmit = (e) => {
+    setReadOnly(false);
   };
-  function clickEdit(docId) {
-    if (editReview === false) {
-      setEditReview(docId);
-    } else if (editReview !== docId) {
-      setEditReview(docId);
-    } else if (editReview === docId) {
-      setEditReview(false);
+
+  const toggleSave = (e, id) => {
+    console.log(id);
+    if (!readOnly) {
+      setReadOnly(true);
+      AddToFirebase(id);
     }
-  }
+  };
   useEffect(() => {
     let isUnmount = false;
     firebase.auth().onAuthStateChanged((currentUser) => {
       if (!isUnmount) {
+        console.log(currentUser);
         setUser(currentUser);
       }
     });
@@ -162,7 +130,7 @@ function Review() {
       isUnmount = true;
     };
   }, []);
-
+  console.log(user);
   useEffect(() => {
     if (user !== "") {
       db.collection("reviews")
@@ -178,11 +146,10 @@ function Review() {
   }, []);
 
   function toggleRemove(reviewId) {
-    if (window.confirm("確定要刪除這篇去憂嗎？")) {
-      console.log(reviewId);
-      firebase.firestore().collection("reviews").doc(reviewId).delete();
-    }
+    console.log(reviewId);
+    firebase.firestore().collection("reviews").doc(reviewId).delete();
   }
+  console.log(reviews);
   return (
     <AllBook>
       {reviews &&
@@ -192,43 +159,37 @@ function Review() {
               <Close>
                 <CloseIcon onClick={(e) => toggleRemove(review.id)} />
               </Close>
-              <Edit>
-                <EditIcon
-                  onClick={() => {
-                    clickEdit(review.id);
-                  }}
-                />
 
-                {editReview === review.id ? (
+              <Edit>
+                {readOnly ? (
+                  <EditIcon onClick={onSubmit} />
+                ) : (
                   <DoneIcon
-                    onClick={() => {
-                      toggleSave(review.id);
+                    onClick={(e) => {
+                      toggleSave(e, review.id);
                     }}
                   />
-                ) : (
-                  ""
                 )}
               </Edit>
-
-              {editReview === review.id ? (
-                <>
-                  <QuoteEdit
-                    onChange={(e) => setQuote(e.target.value)}
-                    value={quote}
-                  />
-                  <ContentEdit
-                    onChange={(e) => setContent(e.target.value)}
-                    value={content}
-                  />
-                </>
+              <QuoteEdit
+                value={quote}
+                onChange={(e) => setQuote(e.target.value)}
+                readOnly={readOnly}
+                placeholder={review.quote}
+              />
+              {/* {readOnly ? (
+                <Quote readOnly={readOnly} defaultValue={review.quote} />
               ) : (
-                <>
-                  <Quote>{review.quote}</Quote>
-                  <div>{review.content}</div>
-                </>
-              )}
+                <QuoteEdit
+                  value={quote}
+                  onChange={(e) => setQuote(e.target.value)}
+                  readOnly={readOnly}
+                  defaultValue={review.quote}
+                />
+              )} */}
 
               <BookName>-{review.bookName}</BookName>
+              {review.content}
 
               <HashtagContainer>
                 {review.hashtag1 ? <Hashtag>#{review.hashtag1}</Hashtag> : ""}
