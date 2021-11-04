@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "firebase/firestore";
 import firebase from "../utils/firebase";
 import { useHistory, useParams } from "react-router-dom";
@@ -130,16 +130,38 @@ const HashtagInput = styled.input`
 function NewReview({ close }) {
   const [selection, setSelection] = useState(0);
   const [rating, setRating] = useState(0);
-  let bookid = useParams();
+  // const [userId, setUserId] = useState("");
 
+  const db = firebase.firestore();
+  let bookid = useParams();
+  const [authorName, setAuthorName] = useState("");
+  const [authorPhoto, setAuthorPhoto] = useState("");
+  const [authoremail, setAuthoremail] = useState("");
+  const [authorUid, setAuthorUid] = useState("");
   const [quote, setQuote] = useState("");
   const [content, setContent] = useState("");
   const [hashtag1, setHashtag1] = useState("");
   const [hashtag2, setHashtag2] = useState("");
   const [hashtag3, setHashtag3] = useState("");
 
+  const userId = firebase.auth().currentUser.uid;
+
+  useEffect(() => {
+    db.collection("users")
+      .doc(userId)
+      .get()
+      .then((docSnapshot) => {
+        console.log(docSnapshot.data());
+        setAuthorPhoto(docSnapshot.data().URL);
+        setAuthorName(docSnapshot.data().userName);
+        setAuthoremail(docSnapshot.data().email);
+        setAuthorUid(docSnapshot.data().uid);
+      });
+  }, []);
+
   function onSubmit() {
     const documentRef = firebase.firestore().collection("reviews").doc();
+    console.log(documentRef);
     documentRef
       .set({
         bookName: bookid.id,
@@ -151,10 +173,10 @@ function NewReview({ close }) {
         rating,
         createdAt: firebase.firestore.Timestamp.now(),
         author: {
-          displayName: firebase.auth().currentUser.displayName || "",
-          photoURL: firebase.auth().currentUser.photoURL || "",
-          uid: firebase.auth().currentUser.uid,
-          email: firebase.auth().currentUser.email,
+          displayName: authorName || "",
+          photoURL: authorPhoto || "",
+          uid: authorUid,
+          email: authoremail,
         },
       })
       .then(() => {
@@ -169,7 +191,7 @@ function NewReview({ close }) {
           <CloseIcon />
         </Close>
         <ReviewAuthor>
-          <ReviewAuthorImg src={firebase.auth().currentUser.photoURL} alt="" />
+          <ReviewAuthorImg src={authorPhoto} alt="" />
         </ReviewAuthor>
         <QuoteInput
           placeholder="寫下本書你最喜歡的一句Quote吧！"

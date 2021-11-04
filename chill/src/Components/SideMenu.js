@@ -13,6 +13,11 @@ import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import firebase from "../utils/firebase";
 
+const AvatarImg = styled.img`
+  width: 60px;
+  border-radius: 50px;
+`;
+
 const Avatar = styled(MdMood)`
   width: 30px;
   height: 100%;
@@ -94,20 +99,52 @@ const Btn = styled.div`
 `;
 
 const SideMenu = () => {
+  const [userId, setUserId] = useState("");
   const history = useHistory();
   const [user, setUser] = useState(null);
   const [buttonPopup, setButtonPopup] = useState(false);
+  const db = firebase.firestore();
+  const [authorName, setAuthorName] = useState("");
+  const [authorPhoto, setAuthorPhoto] = useState("");
+  const [authoremail, setAuthoremail] = useState("");
+  const [authorUid, setAuthorUid] = useState("");
+
+  // console.log(user.uid);
+  // useEffect(() => {
+  //   if (user) {
+  //     console.log(user.uid);
+  //     setUserId(user.uid);
+  //   }
+  // }, [user]);
   useEffect(() => {
     let isUnmount = false;
     firebase.auth().onAuthStateChanged((currentUser) => {
       if (!isUnmount) {
         setUser(currentUser);
+        setUserId(currentUser.uid);
       }
     });
     return () => {
       isUnmount = true;
     };
   }, []);
+
+  useEffect(() => {
+    userId &&
+      db
+        .collection("users")
+        .doc(userId)
+        .get()
+        .then((docSnapshot) => {
+          setAuthorPhoto(docSnapshot.data().URL);
+          setAuthorName(docSnapshot.data().userName);
+          setAuthoremail(docSnapshot.data().email);
+          setAuthorUid(docSnapshot.data().uid);
+        });
+  }, [userId]);
+
+  // const userId = user.uid;
+
   return (
     <SideNav>
       {user ? (
@@ -127,7 +164,7 @@ const SideMenu = () => {
               去憂主題
             </Btn>
           </NavLink>
-          <NavLink to="/mybooks">
+          <NavLink to={`/mybooks/${userId}/collection`}>
             <Btn>
               <BookIcon />
               我的書櫃
@@ -149,6 +186,10 @@ const SideMenu = () => {
               登出
             </Btn>
           </NavLink>
+          <Nav>
+            <AvatarImg src={authorPhoto} alt="" />
+          </Nav>
+          <Nav>{authorName}</Nav>
         </>
       ) : (
         <div>

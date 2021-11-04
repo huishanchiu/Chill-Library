@@ -151,10 +151,10 @@ function SignIn(props) {
   }
   function AddToFirebase(data) {
     firebase.firestore().collection("users").doc(data.user.uid).set({
-      URL: data.user.photoURL,
+      URL: "https://cdn-icons-png.flaticon.com/512/5914/5914031.png",
       email: data.user.email,
       uid: data.user.uid,
-      userName: data.user.displayName,
+      userName: displayName,
     });
   }
 
@@ -191,10 +191,11 @@ function SignIn(props) {
           history.push("/");
           setIsLoading(false);
           AddToFirebase(res);
-          return res.user.updateProfile({
-            displayName: displayName,
-            photoURL: "https://cdn-icons-png.flaticon.com/512/5914/5914031.png",
-          });
+          console.log(res);
+          // return res.user.updateProfile({
+          //   displayName: displayName,
+          //   photoURL: "https://cdn-icons-png.flaticon.com/512/5914/5914031.png",
+          // });
         })
 
         .catch((error) => {

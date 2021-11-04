@@ -4,7 +4,6 @@ import { IoMdBeer } from "react-icons/io";
 import { Link } from "react-router-dom";
 import firebase from "../utils/firebase";
 import { useHistory, useParams } from "react-router-dom";
-import like from "../images/tag_pink.png";
 import toastGrey from "../images/toast_grey.png";
 import toastYellow from "../images/toast_gold.png";
 
@@ -119,7 +118,6 @@ function EachReview() {
         setReviews(data);
       });
   }, []);
-  console.log(reviews);
 
   const toggleLiked = (e, isLiked) => {
     const uid = firebase.auth().currentUser.uid;
@@ -149,6 +147,9 @@ function EachReview() {
   return (
     <Div>
       {reviews.map((review) => {
+        {
+          /* console.log(review); */
+        }
         const isLiked = review.likedBy?.includes(
           firebase.auth().currentUser.uid
         );

@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import Header from "./Header";
-import SideMenu from "./SideMenu";
 import theme__1 from "../images/theme__1.png";
 import theme__2 from "../images/theme__2.png";
 import theme__3 from "../images/theme__3.png";

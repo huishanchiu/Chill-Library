@@ -1,9 +1,18 @@
-import React, { Component } from "react";
-import { useRouteMatch, useParams } from "react-router-dom";
+import React from "react";
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import EachSearchBook from "./EachSearchBook";
+import algolia from "../utils/algolia";
+import { IoMdBeer } from "react-icons/io";
+
+const BeerIcon = styled(IoMdBeer)`
+  color: #f7db15;
+  width: 25px;
+  height: 100%;
+  padding-left: 10px;
+  transform: rotate(-20deg);
+`;
 
 const AllBook = styled.div`
   width: 700px;
@@ -35,12 +44,77 @@ const BookName = styled.div`
 const BookSummary = styled.div`
   color: grey;
 `;
+const ReviewContainer = styled.div`
+  display: flex;
+`;
+const ReviewTag = styled.div`
+  padding: 10px;
+  margin: 20px 10px;
+  color: #0d6663;
+  background-color: #f1faf7;
+  border-radius: 20px;
+`;
+
+const ReviewBookName = styled(Link)`
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 20px;
+  display: flex;
+  margin-top: 10px;
+  padding: 5px;
+  color: #f1faf7;
+  background-color: #0d6663;
+  font-size: 16px;
+  font-weight: 500;
+`;
+const ReviewQuote = styled.div`
+  white-space: nowrap;
+  font-size: 16px;
+  line-height: 25px;
+  font-weight: 900;
+`;
+const Hashtag = styled(ReviewQuote)`
+  margin: 10px 10px 10px 0;
+  color: #f83b10;
+  margin-left: 10px;
+  padding: 0.6%;
+  background: #f7e8dc center/contain no-repeat;
+  border-radius: 5px;
+  box-shadow: 0.2em 0.2em #222126;
+`;
+
+const Div = styled.div`
+  margin-right: 30px;
+  display: flex;
+`;
+const HashtagContainer = styled.div`
+  display: flex;
+`;
+const ResultLength = styled.div`
+  margin: 20px;
+`;
+
 function Searching() {
   const [bookResult, setBookResult] = useState([]);
+  const [results, setResults] = useState([]);
   const search = useParams();
   console.log(search);
 
   useEffect(() => {
+    algolia.search(search.search).then((result) => {
+      console.log(result.hits);
+      const searschResults = result.hits.map((hit) => {
+        return {
+          bookName: hit.bookName,
+          quote: hit.quote,
+          hashtag1: hit.hashtag1,
+          hashtag2: hit.hashtag2,
+          hashtag3: hit.hashtag3,
+          id: hit.objectID,
+        };
+      });
+      setResults(searschResults);
+    });
     fetch(`https://www.googleapis.com/books/v1/volumes?q=${search.search}`, {
       method: "GET",
     })
@@ -51,12 +125,34 @@ function Searching() {
         setBookResult(data);
       });
   }, [search.search]);
-  console.log(bookResult);
+
+  // console.log(bookResult);
 
   return (
     <div>
       <AllBook>
-        搜尋結果共{bookResult.length}筆
+        <ResultLength>
+          搜尋結果共{bookResult.length + results.length}筆
+        </ResultLength>
+        <ReviewContainer>
+          {results.map((item) => {
+            return (
+              <Div>
+                <ReviewTag>
+                  <ReviewQuote>#{item.quote}</ReviewQuote>
+                  <HashtagContainer>
+                    <Hashtag>#{item.hashtag1}</Hashtag>
+                    <Hashtag>#{item.hashtag2}</Hashtag>
+                    <Hashtag>#{item.hashtag3}</Hashtag>
+                  </HashtagContainer>
+                  <ReviewBookName to={`/book/${item.bookName}`}>
+                    <BeerIcon />《{item.bookName}》點擊看看這本書！
+                  </ReviewBookName>
+                </ReviewTag>
+              </Div>
+            );
+          })}
+        </ReviewContainer>
         {bookResult.map((item) => {
           return (
             <BookTag
@@ -85,9 +181,7 @@ function Searching() {
             </BookTag>
           );
         })}
-        );
       </AllBook>
-      ;
     </div>
   );
 }
