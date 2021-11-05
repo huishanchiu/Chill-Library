@@ -128,7 +128,6 @@ function EachReview() {
       firebase
         .firestore()
         .collection("reviews")
-
         .doc(e.target.dataset.id)
         .update({
           likedBy: firebase.firestore.FieldValue.arrayRemove(uid),

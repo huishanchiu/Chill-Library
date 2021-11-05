@@ -48,6 +48,7 @@ function AllBooks({ theme }) {
         setBookList(list);
       });
   }, []);
+  console.log(bookList);
   return (
     <div>
       <AllBook>
@@ -57,7 +58,10 @@ function AllBooks({ theme }) {
 
           return (
             <BookTag key={item.title} to={`/book/${item.title}`}>
-              <BookImg src={item.image} alt="" />
+              <BookImg
+                src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
+                alt=""
+              />
               <BookContent>
                 <BookName>{item.title}</BookName>
                 <BookSummary>{item.description}</BookSummary>

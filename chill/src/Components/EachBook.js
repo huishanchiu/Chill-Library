@@ -117,6 +117,7 @@ function Book() {
         image: doc.data().image,
         description: doc.data().description,
         ISBN: doc.data().ISBN,
+        id: doc.data().id,
       });
     });
   }, []);
@@ -152,13 +153,16 @@ function Book() {
   }
 
   const isCollect = book.collectedBy?.includes(firebase.auth().currentUser.uid);
-
+  console.log(bookInfo);
   return (
     <Div>
       <SideMenu />
       <Content>
         <BookTag>
-          <BookImg src={bookInfo.image} alt="" />
+          <BookImg
+            src={`https://books.google.com/books/publisher/content/images/frontcover/${bookInfo.id}?fife=w400-h600`}
+            alt=""
+          />
           <BookContent>
             <BookTitle>{bookInfo.title}</BookTitle>
             <BookDetail>

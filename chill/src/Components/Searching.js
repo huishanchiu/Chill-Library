@@ -166,7 +166,7 @@ function Searching() {
               <BookImg
                 src={
                   item.volumeInfo.imageLinks
-                    ? item.volumeInfo.imageLinks.smallThumbnail
+                    ? `https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`
                     : "https://i.pinimg.com/564x/8d/98/54/8d9854ecfd84f4daa1561c7b62c6387f.jpg"
                 }
                 alt="book_image"

@@ -74,8 +74,7 @@ function Collection() {
       .where("collectedBy", "array-contains", userId.userid)
       .onSnapshot((collectionSnapshot) => {
         const data = collectionSnapshot.docs.map((docSnapshot) => {
-          const id = docSnapshot.id;
-          return { ...docSnapshot.data(), id };
+          return { ...docSnapshot.data() };
         });
         setBookList(data);
       });
@@ -90,7 +89,7 @@ function Collection() {
         collectedBy: firebase.firestore.FieldValue.arrayRemove(userId.userid),
       });
   }
-
+  console.log(bookList);
   return (
     <AllBook>
       {bookList.map((item) => {
@@ -103,7 +102,10 @@ function Collection() {
               <CloseIcon onClick={(e) => toggleUncellect(item.title)} />
             </Close>
             <Link to={`/book/${item.title}`}>
-              <BookImg src={item.image} alt="" />
+              <BookImg
+                src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
+                alt=""
+              />
             </Link>
 
             <BookContent>
