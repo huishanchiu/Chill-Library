@@ -31,7 +31,9 @@ const Mask = styled.div`
 `;
 
 const PopupInner = styled.div`
-  position: relative;
+  outline: red solid;
+  z-index: 3;
+  position: fixed;
   padding: 30px;
   width: 400px;
   background-color: #f6e7db;
@@ -142,20 +144,26 @@ function SignIn(props) {
     history.push("/");
   };
   function ThirdAddToFirebase(data) {
-    firebase.firestore().collection("users").doc(data.uid).set({
-      URL: data.photoURL,
-      email: data.email,
-      uid: data.uid,
-      userName: data.displayName,
-    });
+    firebase.firestore().collection("users").doc(data.uid).set(
+      {
+        URL: data.photoURL,
+        email: data.email,
+        uid: data.uid,
+        userName: data.displayName,
+      },
+      { merge: true }
+    );
   }
   function AddToFirebase(data) {
-    firebase.firestore().collection("users").doc(data.user.uid).set({
-      URL: "https://cdn-icons-png.flaticon.com/512/5914/5914031.png",
-      email: data.user.email,
-      uid: data.user.uid,
-      userName: displayName,
-    });
+    firebase.firestore().collection("users").doc(data.user.uid).set(
+      {
+        URL: "https://cdn-icons-png.flaticon.com/512/5914/5914031.png",
+        email: data.user.email,
+        uid: data.user.uid,
+        userName: displayName,
+      },
+      { merge: true }
+    );
   }
 
   function onSubmit() {

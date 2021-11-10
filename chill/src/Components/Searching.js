@@ -46,8 +46,10 @@ const BookSummary = styled.div`
 `;
 const ReviewContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
 `;
 const ReviewTag = styled.div`
+  width: 600px;
   padding: 10px;
   margin: 20px 10px;
   color: #0d6663;
@@ -125,9 +127,10 @@ function Searching() {
         setBookResult(data);
       });
   }, [search.search]);
-
-  // console.log(bookResult);
-
+  console.log(results);
+  console.log(bookResult);
+  // const All = [...results, ...bookResult];
+  // console
   return (
     <div>
       <AllBook>

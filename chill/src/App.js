@@ -11,6 +11,7 @@ import SideMenu from "./Components/SideMenu";
 import SideBooks from "./Components/SideBooks";
 import Searching from "./Components/Searching";
 import EachSearchBook from "./Components/EachSearchBook";
+import BookState from "./Components/Mybooks/BookState";
 
 const Main = styled.div`
   display: flex;
@@ -50,6 +51,7 @@ function App() {
             </SideRight>
           </Main>
         </Route>
+
         <Route exact path="/:theme">
           <Main>
             <SideMenu />
@@ -71,7 +73,16 @@ function App() {
           </Main>
         </Route>
 
-        <Route exact path="/book/:id" component={EachBook} />
+        <Route exact path="/book/:id">
+          <Main>
+            <SideMenu />
+            <EachBook />
+            <SideRight>
+              <Header />
+              <SideBooks />
+            </SideRight>
+          </Main>
+        </Route>
         <Route exact path="/book/searching/:id">
           <Main>
             <SideMenu />

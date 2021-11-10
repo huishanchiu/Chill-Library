@@ -15,6 +15,7 @@ import firebase from "../utils/firebase";
 
 const AvatarImg = styled.img`
   width: 60px;
+  height: 60px;
   border-radius: 50px;
 `;
 
@@ -82,6 +83,7 @@ const NavLink = styled(Link)`
   text-decoration: none;
 `;
 const Btn = styled.div`
+  width: 150px;
   display: flex;
   align-items: center;
   position: relative;
@@ -108,14 +110,22 @@ const SideMenu = () => {
   const [authorPhoto, setAuthorPhoto] = useState("");
   const [authoremail, setAuthoremail] = useState("");
   const [authorUid, setAuthorUid] = useState("");
+  const [news, setNews] = useState("");
 
-  // console.log(user.uid);
-  // useEffect(() => {
-  //   if (user) {
-  //     console.log(user.uid);
-  //     setUserId(user.uid);
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("reviews")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((collectionSnapshot) => {
+        const data = collectionSnapshot.docs.map((docSnapshot) => {
+          const id = docSnapshot.id;
+          return { ...docSnapshot.data(), id };
+        });
+        setNews(data);
+      });
+  }, []);
+
   useEffect(() => {
     let isUnmount = false;
     firebase.auth().onAuthStateChanged((currentUser) => {
@@ -136,6 +146,7 @@ const SideMenu = () => {
         .doc(userId)
         .get()
         .then((docSnapshot) => {
+          console.log(docSnapshot.data());
           setAuthorPhoto(docSnapshot.data().URL);
           setAuthorName(docSnapshot.data().userName);
           setAuthoremail(docSnapshot.data().email);
@@ -155,7 +166,7 @@ const SideMenu = () => {
           <NavLink to="/news">
             <Btn>
               <FindIcon />
-              累積去憂#345
+              累積去憂#{news.length}
             </Btn>
           </NavLink>
           <NavLink to="/themes">
@@ -199,7 +210,7 @@ const SideMenu = () => {
           <NavLink to="/news">
             <Btn>
               <FindIcon />
-              累積去憂#345
+              累積去憂#{news.length}
             </Btn>
           </NavLink>
           <NavLink to="/themes">

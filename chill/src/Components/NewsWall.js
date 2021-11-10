@@ -5,6 +5,7 @@ import firebase from "../utils/firebase";
 import { Link } from "react-router-dom";
 import toastGrey from "../images/toast_grey.png";
 import toastYellow from "../images/toast_gold.png";
+import Comment from "./Comment";
 
 const Star = ({ starId, marked }) => {
   return (
@@ -27,7 +28,7 @@ const ReviewTag = styled.div`
   background-color: #f1faf7;
   border-radius: 10px;
   color: grey;
-  /* width: 600px; */
+  width: 700px;
 `;
 const ReviewAuthorLink = styled(Link)``;
 const ReviewAuthor = styled.div`
@@ -118,6 +119,7 @@ const NewsWall = () => {
     firebase
       .firestore()
       .collection("reviews")
+      .orderBy("createdAt", "desc")
       .onSnapshot((collectionSnapshot) => {
         const data = collectionSnapshot.docs.map((docSnapshot) => {
           const id = docSnapshot.id;
@@ -126,88 +128,114 @@ const NewsWall = () => {
         setNews(data);
       });
   }, []);
+
+  // const toggleLiked = (e, isLiked) => {
+  //   const uid = firebase.auth().currentUser.uid;
+  //   console.log(isLiked);
+  //   console.log(e.target.dataset.id);
+  //   if (isLiked) {
+  //     firebase
+  //       .firestore()
+  //       .collection("reviews")
+  //       .doc(e.target.dataset.id)
+  //       .update({
+  //         likedBy: firebase.firestore.FieldValue.arrayRemove(uid),
+  //       });
+  //   } else {
+  //     firebase
+  //       .firestore()
+  //       .collection("reviews")
+  //       .doc(e.target.dataset.id)
+  //       .update({
+  //         likedBy: firebase.firestore.FieldValue.arrayUnion(uid),
+  //       });
+  //   }
+  // };
   const toggleLiked = (e, isLiked) => {
     const uid = firebase.auth().currentUser.uid;
-    console.log(isLiked);
-    console.log(e.target.dataset.id);
-    if (isLiked) {
-      firebase
-        .firestore()
-        .collection("reviews")
-        .doc(e.target.dataset.id)
-        .update({
-          likedBy: firebase.firestore.FieldValue.arrayRemove(uid),
-        });
-    } else {
-      firebase
-        .firestore()
-        .collection("reviews")
-        .doc(e.target.dataset.id)
-        .update({
-          likedBy: firebase.firestore.FieldValue.arrayUnion(uid),
-        });
-    }
+    firebase
+      .firestore()
+      .collection("reviews")
+      .doc(e.target.dataset.id)
+      .update({
+        likedCount: firebase.firestore.FieldValue.increment(1),
+        likedBy: firebase.firestore.FieldValue.arrayUnion(uid),
+      });
   };
-  console.log(news);
+
   return (
     <Div>
-      {news.map((review) => {
-        const isLiked = review.likedBy?.includes(
-          firebase.auth().currentUser.uid
-        );
+      {firebase.auth().currentUser ? (
+        news.map((review) => {
+          const isLiked = review.likedBy?.includes(
+            firebase.auth().currentUser.uid
+          );
 
-        return (
-          <ReviewTag>
-            <ReviewAuthor>
-              <ReviewAuthorLink to={`/mybooks/${review.author.uid}/collection`}>
-                <ReviewAuthorImg src={review.author.photoURL} alt="" />
-              </ReviewAuthorLink>
-              {review.author.displayName}
-
-              <Quote>{review.quote}</Quote>
-              <Rate>
-                去憂指數：
-                {Array.from({ length: 5 }, (v, i) => (
-                  <Star marked={review.rating > i} />
-                ))}
-              </Rate>
-            </ReviewAuthor>
-            <div>{review.content}</div>
-            <Question>
-              這本書幫我解決了
-              <HashtagContainer>
-                {review.hashtag1 ? <Hashtag>#{review.hashtag1}</Hashtag> : ""}
-                {review.hashtag2 ? <Hashtag>#{review.hashtag2}</Hashtag> : ""}
-                {review.hashtag3 ? <Hashtag>#{review.hashtag3}</Hashtag> : ""}
-              </HashtagContainer>
-              的問題!
-            </Question>
-            <LikeDiv>
-              <Beer>
-                {isLiked ? (
-                  <BeerYellow
-                    onClick={(e) => toggleLiked(e, isLiked)}
-                    data-id={review.id}
-                    src={toastYellow}
-                  />
-                ) : (
-                  <BeerIcon
-                    onClick={(e) => toggleLiked(e, isLiked)}
-                    data-id={review.id}
-                    src={toastGrey}
-                  />
-                )}
-                <LikeCount>{review.likedBy && review.likedBy.length}</LikeCount>
-              </Beer>
-              <BeerText>覺得很讚，賞作者一杯啤酒!</BeerText>
-            </LikeDiv>
-            {new Date(review.createdAt.seconds * 1000).toLocaleString(
-              "en-US",
-              options
-            )}
-          </ReviewTag>
-        );
-      })}
+          return (
+            <ReviewTag>
+              <ReviewAuthor>
+                <ReviewAuthorLink
+                  to={`/mybooks/${review.author.uid}/collection`}
+                >
+                  <ReviewAuthorImg src={review.author.photoURL} alt="" />
+                </ReviewAuthorLink>
+                {review.author.displayName}
+                <Quote>{review.quote}</Quote>
+                <Rate>
+                  去憂指數：
+                  {Array.from({ length: 5 }, (v, i) => (
+                    <Star marked={review.rating > i} />
+                  ))}
+                </Rate>
+              </ReviewAuthor>
+              <div>{review.content}</div>
+              <Question>
+                這本書幫我解決了
+                <HashtagContainer>
+                  {review.hashtag1 ? <Hashtag>#{review.hashtag1}</Hashtag> : ""}
+                  {review.hashtag2 ? <Hashtag>#{review.hashtag2}</Hashtag> : ""}
+                  {review.hashtag3 ? <Hashtag>#{review.hashtag3}</Hashtag> : ""}
+                </HashtagContainer>
+                的問題!
+              </Question>
+              <LikeDiv>
+                <Beer>
+                  {isLiked ? (
+                    <BeerYellow
+                      onClick={(e) => toggleLiked(e, isLiked)}
+                      data-id={review.id}
+                      src={toastYellow}
+                    />
+                  ) : (
+                    <BeerIcon
+                      onClick={(e) => toggleLiked(e, isLiked)}
+                      data-id={review.id}
+                      src={toastGrey}
+                    />
+                  )}
+                  {/* <LikeCount>{review.likedBy && review.likedBy.length}</LikeCount> */}
+                  {review.likedCount >= 1 ? (
+                    <LikeCount>
+                      {review.likedCount && review.likedCount}
+                    </LikeCount>
+                  ) : (
+                    ""
+                  )}
+                </Beer>
+                <BeerText>覺得很讚，賞作者一杯啤酒!</BeerText>
+              </LikeDiv>
+              {new Date(review.createdAt.seconds * 1000).toLocaleString(
+                "en-US",
+                options
+              )}
+              -{review.bookName}
+              <Comment review={review} />
+            </ReviewTag>
+          );
+        })
+      ) : (
+        <>123</>
+      )}
     </Div>
   );
 };

@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 import EachReview from "./EachReview";
 import { useState, useEffect } from "react";
-import NewReview from "./NewReview";
+import NewReviewOnSearch from "./NewReviewOnSearch";
 import firebase from "../utils/firebase";
 import { useParams } from "react-router-dom";
 import { BsBookmarkFill, BsBookmark } from "react-icons/bs";
@@ -103,6 +103,7 @@ function EachSearchBook() {
   const [bookInfo, setBookInfo] = useState({});
   const [book, setBook] = useState({});
   const [bookTitle, setBookTitle] = useState("");
+  const [categoriesExist, setCategoriesExist] = useState(false);
   // const [categories, setCategories] = useState([]);
   const search = useParams();
   function linkToRead() {
@@ -125,6 +126,7 @@ function EachSearchBook() {
       .then((datas) => {
         setBookInfo(datas.items[0]);
         setBookTitle(datas.items[0].volumeInfo.title);
+        setBook(datas.items[0]);
       })
       .then(() => {})
       .catch((error) => {
@@ -133,7 +135,7 @@ function EachSearchBook() {
   }, [bookTitle]);
 
   function addToFirebase(bookInfo) {
-    // alert("先幫這本書選個去憂分類吧！");
+    const uid = firebase.auth().currentUser.uid;
     const documentRef = firebase
       .firestore()
       .collection("books")
@@ -152,6 +154,28 @@ function EachSearchBook() {
       },
       { merge: true }
     );
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(uid)
+      .collection("collectedBooks")
+      .doc(bookInfo.volumeInfo.title)
+      .set(
+        {
+          title: bookInfo.volumeInfo.title || "",
+          authors: bookInfo.volumeInfo.authors || "",
+        },
+        { merge: true }
+      );
+
+    firebase
+      .firestore()
+      .collection("books")
+      .doc(bookTitle)
+      .onSnapshot((docSnapshot) => {
+        // console.log(docSnapshot.data());
+        setBook(docSnapshot.data());
+      });
 
     if (
       firebase.firestore().collection("books").doc(bookInfo.volumeInfo.title)
@@ -160,7 +184,6 @@ function EachSearchBook() {
     }
   }
 
-  console.log(bookTitle);
   useEffect(() => {
     bookTitle &&
       firebase
@@ -168,26 +191,41 @@ function EachSearchBook() {
         .collection("books")
         .doc(bookTitle)
         .onSnapshot((docSnapshot) => {
-          console.log(docSnapshot.data());
+          // console.log(docSnapshot.data());
           setBook(docSnapshot.data());
         });
   }, [bookTitle]);
-  console.log(bookTitle);
+  // console.log(bookTitle);
   useEffect(() => {
     firebase
       .firestore()
       .collection("books")
       .where("title", "==", bookTitle)
-      .onSnapshot((collectionSnapshot) => {
-        console.log(collectionSnapshot.docs);
-        // setBook(data);
-        setCheckBook(true);
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data());
+          setBook(doc.data());
+          if (Object.keys(doc.data()).length > 0) {
+            setCheckBook(true);
+          } else {
+            setCheckBook(false);
+          }
+        });
       });
+    // .onSnapshot((collectionSnapshot) => {
+    //   console.log(collectionSnapshot.docs);
+    //   if (collectionSnapshot.docs.length > 0) {
+    //     setCheckBook(true);
+    //   } else {
+    //     setCheckBook(false);
+    //   }
+    // });
   }, []);
 
   function toggleCollected(bookInfo) {
     const uid = firebase.auth().currentUser.uid;
-    if (isCollect) {
+    if (isCollect ? isCollect : "") {
       firebase
         .firestore()
         .collection("books")
@@ -205,23 +243,27 @@ function EachSearchBook() {
         });
     }
   }
-  console.log(Object.keys(book).length);
-  console.log(book);
+
+  // const isCollect =
+  //   checkBook || Object.keys(book).length > 0
+  //     ? book.collectedBy?.includes(firebase.auth().currentUser.uid)
+  //     : "";
+  // console.log(Object.keyxf
 
   const isCollect =
-    Object.keys(book).length > 0
-      ? book.collectedBy?.includes(firebase.auth().currentUser.uid)
-      : "";
-  console.log(isCollect);
+    book?.collectedBy?.includes(firebase.auth().currentUser.uid) || "";
 
   function toggleAddCategory(e) {
+    if (book.categories === undefined) {
+      alert("請先收藏本書喔！");
+    }
     const isCategory =
       Object.keys(book).length > 0
         ? book.categories?.includes(e.target.textContent)
         : "";
 
-    console.log(book.categories);
-    console.log(isCategory);
+    // console.log(book.categories);
+    // console.log(isCategory);
     if (isCategory) {
       firebase
         .firestore()
@@ -244,7 +286,8 @@ function EachSearchBook() {
         });
     }
   }
-  console.log(book);
+  // console.log(book);
+  // console.log(bookInfo);
   return (
     <Div>
       {Object.keys(bookInfo).length > 0 ? (
@@ -265,49 +308,46 @@ function EachSearchBook() {
                 <BookInfo>
                   出版日期：{bookInfo.volumeInfo.publishedDate}
                 </BookInfo>
-                <BookInfo>去憂分類：{book.categories}</BookInfo>
-                <Category
-                  onClick={(e) => {
-                    toggleAddCategory(e);
-                  }}
-                >
-                  宅在家好發慌？
-                </Category>
-                <Category
-                  onClick={(e) => {
-                    toggleAddCategory(e);
-                  }}
-                >
-                  錢錢去哪了？
-                </Category>
-                <Category
-                  onClick={(e) => {
-                    toggleAddCategory(e);
-                  }}
-                >
-                  一個人好孤單？
-                </Category>
-                <Category
-                  onClick={(e) => {
-                    toggleAddCategory(e);
-                  }}
-                >
-                  想不出好點子？
-                </Category>
-                <Category
-                  onClick={(e) => {
-                    toggleAddCategory(e);
-                  }}
-                >
-                  如何上火箭？
-                </Category>
-                <Category
-                  onClick={(e) => {
-                    toggleAddCategory(e);
-                  }}
-                >
-                  心裡總是卡卡的？
-                </Category>
+                <BookInfo>去憂分類：{book?.categories || ""}</BookInfo>
+                {/* {book?.categories === undefined && ( */}
+                <>
+                  <Category
+                    onClick={(e) => {
+                      toggleAddCategory(e);
+                    }}
+                  >
+                    宅在家好發慌？
+                  </Category>
+                  <Category
+                    onClick={(e) => {
+                      toggleAddCategory(e);
+                    }}
+                  >
+                    一個人好孤單？
+                  </Category>
+                  <Category
+                    onClick={(e) => {
+                      toggleAddCategory(e);
+                    }}
+                  >
+                    想不出好點子？
+                  </Category>
+                  <Category
+                    onClick={(e) => {
+                      toggleAddCategory(e);
+                    }}
+                  >
+                    如何上火箭？
+                  </Category>
+                  <Category
+                    onClick={(e) => {
+                      toggleAddCategory(e);
+                    }}
+                  >
+                    心裡總是卡卡的？
+                  </Category>
+                </>
+                {/* )} */}
               </BookDetail>
               <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
               <Btn onClick={linkToRead}>試閱</Btn>
@@ -326,7 +366,12 @@ function EachSearchBook() {
               <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
             </ReviewTag>
           </BookTag>
-          {open && <NewReview close={setOpen} />}
+          {open && (
+            <NewReviewOnSearch
+              bookTitle={bookInfo.volumeInfo.title}
+              close={setOpen}
+            />
+          )}
         </Content>
       ) : (
         ""

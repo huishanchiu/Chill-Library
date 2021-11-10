@@ -1,12 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import search from "../images/search.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import algolia from "../utils/algolia";
-import "../header.css";
-import Search from "search-react-input";
-import Searching from "../Components/Searching";
+import firebase from "../utils/firebase";
 
 const SearchBar = styled.div`
   background-color: #f7f7f7;
@@ -29,8 +26,6 @@ const Input = styled.input`
   padding: 8px;
   background-color: transparent;
   border-radius: 30px;
-  /* border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px; */
 `;
 
 const SearchBtn = styled(Link)`
@@ -47,96 +42,79 @@ const SearchBtn = styled(Link)`
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
 `;
-const ResultContainer = styled.div`
-  width: 200px;
-  margin: 10px;
-`;
-const Result = styled.div`
-  color: white;
-`;
+
 const Div = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
 `;
-const ResultDiv = styled.div`
-  color: white;
+const HashtagDiv = styled.div`
+  /* width: 100px; */
+
+  color: #0d6663;
+  display: flex;
+  flex-direction: row;
 `;
-
+const Hashtag = styled.div`
+  border-radius: 5px;
+  padding: 3px;
+  font-size: 15px;
+  background-color: #0d6663;
+  color: #f7f7f7;
+  margin: 0 5px;
+  cursor: pointer;
+`;
 const Header = () => {
-  const [open, setOpen] = useState(false);
-  const [book, setBook] = useState("");
   const [search, setSearch] = useState("");
-  const [input, setInput] = useState("");
-
-  const [results, setResults] = useState([]);
-  // function onSearchChange(e, input) {
-  //   console.log(e.target.value);
-  //   setInput(e.target.value);
-  //   algolia.search(e.target.value).then((result) => {
-  //     console.log(result.hits);
-  //     const searschResults = result.hits.map((hit) => {
-  //       return {
-  //         bookName: hit.bookName,
-  //         quote: hit.quote,
-  //         hashtag1: hit.hashtag1,
-  //         hashtag2: hit.hashtag2,
-  //         hashtag3: hit.hashtag3,
-  //         id: hit.objectID,
-  //       };
-  //     });
-
-  //     setResults(searschResults);
-  //   });
-  //   console.log(results);
-  // }
+  const [reviews, setReviews] = useState([]);
+  function onsubmit(e) {
+    setSearch(e.target.textContent);
+  }
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("reviews")
+      .where("hashtag1", "!=", "")
+      .limit(5)
+      .onSnapshot((collectionSnapshot) => {
+        const data = collectionSnapshot.docs.map((docSnapshot) => {
+          const id = docSnapshot.id;
+          return { ...docSnapshot.data(), id };
+        });
+        setReviews(data);
+      });
+  }, []);
+  console.log(reviews);
+  function onSubmit() {
+    if (search.length <= 0) {
+      alert("搜尋不到唷");
+    }
+  }
 
   return (
     <Div>
       <SearchBar>
-        {/* firebase///////////////////////////////////////// */}
-        {/* <Input
-          onFocus={() => setOpen(true)}
-          type="text"
-          // onChange={(e) => onSearchChange(e.target.value)}
-          onChange={(e) => {
-            onSearchChange(e, results);
-          }}
-          onSearchChange={onSearchChange}
-          value={input}
-          placeholder="你在煩惱什麼？"
-        ></Input> */}
-        {/* 第三方api///////////////////////////////////////// */}
         <Input
           onChange={(e) => setSearch(e.target.value)}
           value={search}
           placeholder="你在煩惱什麼？"
         ></Input>
-        <SearchBtn to={`/book/search/${search}`} />
+        <SearchBtn onClick={onSubmit} to={`/book/search/${search}`} />
       </SearchBar>
-
-      {open ? (
-        <ResultDiv>
-          {results.length > 0 ? (
-            <ResultContainer>
-              {results.map((result) => {
-                return (
-                  <Link to={`book/${result.bookName}`}>
-                    <Result>{result.quote}</Result>
-                    {/* <Result>{result.bookName}</Result>
-                    <Result>{result.hashtag1}</Result> */}
-                  </Link>
-                );
-              })}
-            </ResultContainer>
-          ) : (
-            "搜尋不到喔"
-          )}
-        </ResultDiv>
-      ) : (
-        ""
-      )}
+      <HashtagDiv>
+        {reviews.map((review) => {
+          return (
+            <Hashtag
+              onClick={(e) => {
+                onsubmit(e);
+              }}
+            >
+              {review.hashtag1}
+            </Hashtag>
+          );
+        })}
+      </HashtagDiv>
     </Div>
   );
 };

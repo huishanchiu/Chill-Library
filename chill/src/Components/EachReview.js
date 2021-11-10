@@ -6,6 +6,8 @@ import firebase from "../utils/firebase";
 import { useHistory, useParams } from "react-router-dom";
 import toastGrey from "../images/toast_grey.png";
 import toastYellow from "../images/toast_gold.png";
+import Loading from "./Loading";
+import Comment from "./Comment";
 
 const Star = ({ starId, marked }) => {
   return (
@@ -26,7 +28,7 @@ const ReviewTag = styled.div`
   background-color: #f1faf7;
   border-radius: 10px;
   color: grey;
-  /* width: 600px; */
+  width: 600px;
 `;
 const ReviewAuthorLink = styled(Link)``;
 const ReviewAuthor = styled.div`
@@ -101,9 +103,22 @@ const Quote = styled.h3`
 const LikeDiv = styled.div`
   display: flex;
 `;
+
 function EachReview() {
+  const options = {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Taipei",
+  };
   const [reviews, setReviews] = useState([]);
   const bookid = useParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [reviewid, setReviewid] = useState([]);
 
   useEffect(() => {
     const db = firebase.firestore();
@@ -115,6 +130,7 @@ function EachReview() {
           const id = docSnapshot.id;
           return { ...docSnapshot.data(), id };
         });
+        console.log(data);
         setReviews(data);
       });
   }, []);
@@ -123,7 +139,6 @@ function EachReview() {
     const uid = firebase.auth().currentUser.uid;
     console.log(e.target);
     console.log(e.target.dataset.id);
-
     if (isLiked) {
       firebase
         .firestore()
@@ -143,20 +158,19 @@ function EachReview() {
     }
   };
 
+  console.log(reviewid);
+
+  console.log(comments);
   return (
     <Div>
       {reviews.map((review) => {
-        {
-          /* console.log(review); */
-        }
         const isLiked = review.likedBy?.includes(
           firebase.auth().currentUser.uid
         );
-
         return (
           <ReviewTag>
             <ReviewAuthor>
-              <ReviewAuthorLink>
+              <ReviewAuthorLink to={`/mybooks/${review.author.uid}/collection`}>
                 <ReviewAuthorImg src={review.author.photoURL} alt="" />
               </ReviewAuthorLink>
               {review.author.displayName}
@@ -198,6 +212,11 @@ function EachReview() {
               </Beer>
               <BeerText>覺得很讚，賞作者一杯啤酒!</BeerText>
             </LikeDiv>
+            {new Date(review.createdAt.seconds * 1000).toLocaleString(
+              "en-US",
+              options
+            )}
+            <Comment review={review} />
           </ReviewTag>
         );
       })}

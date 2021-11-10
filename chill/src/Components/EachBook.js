@@ -25,7 +25,6 @@ const Div = styled.div`
   display: flex;
   justify-content: space-between;
   color: white;
-  background-image: linear-gradient(to right, #2c213b, #4f3a6c);
 `;
 const Content = styled.div`
   display: flex;
@@ -98,6 +97,13 @@ function Book() {
   const [book, setBook] = useState({});
   const db = firebase.firestore();
   let bookid = useParams();
+
+  function linkToRead() {
+    window.open(
+      `https://play.google.com/books/reader?id=${bookInfo.id}&pg=GBS.PP1&hl=zh_TW`,
+      "試閱"
+    );
+  }
   function linkToBorrow() {
     window.open(
       `https://webpac.tphcc.gov.tw/webpac/search.cfm?m=ss&k0=${bookInfo.ISBN}&t0=k&c0=and`,
@@ -133,6 +139,20 @@ function Book() {
   }, []);
   function toggleCollected() {
     const uid = firebase.auth().currentUser.uid;
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(uid)
+      .collection("collectedBooks")
+      .doc(bookInfo.title)
+      .set(
+        {
+          title: bookInfo.title || "",
+          authors: bookInfo.authors || "",
+        },
+        { merge: true }
+      );
+
     if (isCollect) {
       firebase
         .firestore()
@@ -156,7 +176,6 @@ function Book() {
   console.log(bookInfo);
   return (
     <Div>
-      <SideMenu />
       <Content>
         <BookTag>
           <BookImg
@@ -171,6 +190,7 @@ function Book() {
               <BookInfo>出版日期：{bookInfo.publishedDate}</BookInfo>
               <BookInfo>去憂分類：{bookInfo.categories}</BookInfo>
               <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
+              <Btn onClick={linkToRead}>試閱</Btn>
             </BookDetail>
             <div onClick={toggleCollected}>
               {isCollect ? <BookCollection /> : <BookUnCollection />}
@@ -184,7 +204,6 @@ function Book() {
         </BookTag>
         {open && <NewReview close={setOpen} />}
       </Content>
-      <Header />
     </Div>
   );
 }

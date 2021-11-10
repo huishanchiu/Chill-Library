@@ -28,10 +28,11 @@ const Mask = styled.div`
   position: fixed;
   top: 0;
   bottom: 0;
-  width: 100p;
+  width: 100%;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.2);
   display: flex;
+  /* justify-content: center; */
   align-items: center;
 `;
 
@@ -126,14 +127,16 @@ const HashtagInput = styled.input`
   border-radius: 10px;
 `;
 
-function NewReview({ close }) {
+function NewReviewOnSearch({ close }) {
   const [selection, setSelection] = useState(0);
   const [rating, setRating] = useState(0);
   // const [userId, setUserId] = useState("");
 
   const db = firebase.firestore();
   let bookid = useParams();
-  const [book, setBook] = useState({});
+  const [bookName, setBookName] = useState("");
+  const [bookId, setBookId] = useState("");
+
   const [authorName, setAuthorName] = useState("");
   const [authorPhoto, setAuthorPhoto] = useState("");
   const [authoremail, setAuthoremail] = useState("");
@@ -145,6 +148,23 @@ function NewReview({ close }) {
   const [hashtag3, setHashtag3] = useState("");
 
   const userId = firebase.auth().currentUser.uid;
+  useEffect(() => {
+    fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${bookid.id}`, {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((datas) => {
+        console.log(datas.items[0].id);
+        setBookId(datas.items[0].id);
+        setBookName(datas.items[0].volumeInfo.title);
+        //   setBookTitle(datas.items[0].volumeInfo.title);
+        //   setBook(datas.items[0]);
+      })
+      .then(() => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   useEffect(() => {
     db.collection("users")
@@ -158,23 +178,14 @@ function NewReview({ close }) {
         setAuthorUid(docSnapshot.data().uid);
       });
   }, []);
-  useEffect(() => {
-    db.collection("books")
-      .doc(bookid.id)
-      .get()
-      .then((docSnapshot) => {
-        setBook(docSnapshot.data());
-      });
-  }, []);
-  console.log(book.id);
 
   function onSubmit() {
     const documentRef = firebase.firestore().collection("reviews").doc();
     console.log(documentRef);
     documentRef
       .set({
-        bookName: bookid.id,
-        id: book.id,
+        bookName: bookName,
+        id: bookId,
         content,
         quote,
         hashtag1,
@@ -247,4 +258,4 @@ function NewReview({ close }) {
   );
 }
 
-export default NewReview;
+export default NewReviewOnSearch;

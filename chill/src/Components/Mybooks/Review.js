@@ -17,8 +17,6 @@ const CloseIcon = styled(AiOutlineCloseCircle)`
 const Close = styled.div`
   width: 40px;
   height: 40px;
-
-  /* display: none; */
   position: absolute;
   top: 8px;
   right: 8px;
@@ -38,10 +36,6 @@ const DoneIcon = styled(MdFileDownloadDone)`
   height: 30px;
 `;
 const Edit = styled.div`
-  /* position: absolute;
-  top: 8px;
-  left: 8px; */
-
   width: 50px;
   height: 50px;
 `;
@@ -108,12 +102,9 @@ function Review() {
   const [user, setUser] = useState(null);
   const [editReview, setEditReview] = useState(undefined);
   const [content, setContent] = useState([]);
-  const [hashtag1, steHashtag1] = useState("");
-  const [hashtag2, steHashtag2] = useState("");
-  const [hashtag3, steHashtag3] = useState("");
   const [quote, setQuote] = useState("");
   let userId = useParams();
-  // console.log(userId);
+
   const [reviews, setReviews] = useState([]);
   const db = firebase.firestore();
   const active = {
@@ -132,9 +123,6 @@ function Review() {
         .update({
           quote: `${quote}`,
           content: `${content}`,
-          hashtag1: `${hashtag1}`,
-          hashtag2: `${hashtag2}`,
-          hashtag3: `${hashtag3}`,
         });
   }
 
@@ -183,6 +171,7 @@ function Review() {
       firebase.firestore().collection("reviews").doc(reviewId).delete();
     }
   }
+
   return (
     <AllBook>
       {reviews &&
@@ -192,33 +181,39 @@ function Review() {
               <Close>
                 <CloseIcon onClick={(e) => toggleRemove(review.id)} />
               </Close>
-              <Edit>
-                <EditIcon
-                  onClick={() => {
-                    clickEdit(review.id);
-                  }}
-                />
-
-                {editReview === review.id ? (
-                  <DoneIcon
+              {userId.userid === firebase.auth().currentUser.uid ? (
+                <Edit>
+                  <EditIcon
                     onClick={() => {
-                      toggleSave(review.id);
+                      clickEdit(review.id);
                     }}
                   />
-                ) : (
-                  ""
-                )}
-              </Edit>
+
+                  {editReview === review.id ? (
+                    <DoneIcon
+                      onClick={() => {
+                        toggleSave(review.id);
+                      }}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </Edit>
+              ) : (
+                ""
+              )}
 
               {editReview === review.id ? (
                 <>
                   <QuoteEdit
                     onChange={(e) => setQuote(e.target.value)}
-                    value={quote}
+                    // value={quote}
+                    defaultValue={review.quote}
                   />
+                  {quote}
                   <ContentEdit
                     onChange={(e) => setContent(e.target.value)}
-                    value={content}
+                    defaultValue={review.content}
                   />
                 </>
               ) : (
