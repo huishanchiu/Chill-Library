@@ -173,22 +173,22 @@
 }
 /* ///////////basic///////////// */
 .background {
-  overflow: hidden;
   z-index: 1;
   position: relative;
   width: 100%;
   background-color: #2c213b;
   /* min-height: 8000px; */
   height: 2000vmin;
-
   margin: auto;
 }
 
 .road {
+  z-index: 2;
   /* height: 350px; */
   height: 50vmin;
   position: fixed;
-  bottom: 0;
+  /* bottom: 0; */
+  top: 50vmin;
   left: 0;
   right: 0;
   margin: auto;
@@ -242,13 +242,19 @@
   width: 25px;
   opacity: 0;
 }
+.theme__1__content {
+  width: 300px;
+}
 .theme {
-  position: fixed;
-  transform: translateX(-40%);
-  bottom: 400px;
-  left: 50%;
+  /* outline: red solid; */
+  /* position: fixed; */
+  transform: translateY(-25%);
+  /* bottom: 150px; */
+
+  left: 40%;
   margin: auto;
-  width: 400px;
+  height: 300px;
+  width: 300px;
   color: white;
 }
 .theme__1__img,
@@ -257,10 +263,9 @@
 .theme__4__img,
 .theme__5__img,
 .theme__6__img {
-  /* outline: blue solid; */
   width: 300px;
-  /* position: relative;
-  top: 30px; */
+  position: relative;
+  top: 30px;
 }
 .theme__2,
 .theme__3,

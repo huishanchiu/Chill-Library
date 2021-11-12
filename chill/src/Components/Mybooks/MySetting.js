@@ -130,8 +130,8 @@ const IconDiv = styled.div`
 `;
 
 function MySetting({ close, userInfo }) {
-  const [displayName, setDisplayName] = useState("");
-  const [selfInfo, setSelfInfo] = useState("");
+  const [displayName, setDisplayName] = useState(userInfo.userName);
+  const [selfInfo, setSelfInfo] = useState(userInfo.selfInfo);
   const [file, setFile] = useState(null);
   const [userImg, setUserImg] = useState(null);
   const previewUrl = file ? URL.createObjectURL(file) : userInfo.imageUrl;
@@ -143,30 +143,40 @@ function MySetting({ close, userInfo }) {
       .firestore()
       .collection("users")
       .doc(userInfo.uid);
-    const fileRef = firebase.storage().ref("bookshelf-image/" + userInfo.uid);
-    const metadata = {
-      contentType: file.type,
-    };
-    fileRef.put(file, metadata).then(() => {
-      fileRef.getDownloadURL().then((imageUrl) => {
-        documentRef.update({
-          userName: displayName,
-          selfInfo: selfInfo,
-          imageUrl,
-        });
-      });
-    });
-    const doctRef = firebase.firestore().collection("users").doc(userInfo.uid);
-    const userImgRef = firebase.storage().ref("user-photo/" + userInfo.uid);
+    if (file || displayName || selfInfo) {
+      const fileRef = firebase.storage().ref("bookshelf-image/" + userInfo.uid);
+      const metadata = {
+        contentType: file.type,
+      };
 
-    userImgRef.put(userImg, metadata).then(() => {
-      userImgRef.getDownloadURL().then((userImageUrl) => {
-        doctRef.update({
-          URL: userImageUrl,
+      fileRef.put(file, metadata).then(() => {
+        fileRef.getDownloadURL().then((imageUrl) => {
+          documentRef.update({
+            userName: displayName || "",
+            selfInfo: selfInfo || "",
+            imageUrl: imageUrl || "",
+          });
         });
       });
-    });
+    } else if (userImg) {
+      const doctRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(userInfo.uid);
+      const userImgRef = firebase.storage().ref("user-photo/" + userInfo.uid);
+      const metadata2 = {
+        contentType: userImg.type,
+      };
+      userImgRef.put(userImg, metadata2).then(() => {
+        userImgRef.getDownloadURL().then((userImageUrl) => {
+          doctRef.update({
+            URL: userImageUrl,
+          });
+        });
+      });
+    }
   }
+  console.log(userInfo);
   return (
     <Mask>
       <PopupInner>
@@ -209,6 +219,8 @@ function MySetting({ close, userInfo }) {
               setDisplayName(e.target.value);
             }}
             defaultValue={userInfo.userName}
+
+            // placeholder={userInfo.userName}
           />
           <Div>個人簡介</Div>
           <Self

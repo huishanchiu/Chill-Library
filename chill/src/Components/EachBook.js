@@ -172,39 +172,73 @@ function Book() {
     }
   }
 
-  const isCollect = book.collectedBy?.includes(firebase.auth().currentUser.uid);
+  const isCollect = firebase.auth().currentUser
+    ? book.collectedBy?.includes(firebase.auth().currentUser.uid)
+    : "";
   console.log(bookInfo);
   return (
-    <Div>
-      <Content>
-        <BookTag>
-          <BookImg
-            src={`https://books.google.com/books/publisher/content/images/frontcover/${bookInfo.id}?fife=w400-h600`}
-            alt=""
-          />
-          <BookContent>
-            <BookTitle>{bookInfo.title}</BookTitle>
-            <BookDetail>
-              <BookInfo>作者：{bookInfo.authors}</BookInfo>
-              <BookInfo>出版社：{bookInfo.publisher}</BookInfo>
-              <BookInfo>出版日期：{bookInfo.publishedDate}</BookInfo>
-              <BookInfo>去憂分類：{bookInfo.categories}</BookInfo>
-              <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
-              <Btn onClick={linkToRead}>試閱</Btn>
-            </BookDetail>
-            <div onClick={toggleCollected}>
-              {isCollect ? <BookCollection /> : <BookUnCollection />}
-            </div>
-          </BookContent>
-          <BookSummary>{bookInfo.description}</BookSummary>
-          <ReviewTag>
-            <EachReview />
-            <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
-          </ReviewTag>
-        </BookTag>
-        {open && <NewReview close={setOpen} />}
-      </Content>
-    </Div>
+    <>
+      {firebase.auth().currentUser ? (
+        <Div>
+          <Content>
+            <BookTag>
+              <BookImg
+                src={`https://books.google.com/books/publisher/content/images/frontcover/${bookInfo.id}?fife=w400-h600`}
+                alt=""
+              />
+              <BookContent>
+                <BookTitle>{bookInfo.title}</BookTitle>
+                <BookDetail>
+                  <BookInfo>作者：{bookInfo.authors}</BookInfo>
+                  <BookInfo>出版社：{bookInfo.publisher}</BookInfo>
+                  <BookInfo>出版日期：{bookInfo.publishedDate}</BookInfo>
+                  <BookInfo>去憂分類：{bookInfo.categories}</BookInfo>
+                  <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
+                  <Btn onClick={linkToRead}>試閱</Btn>
+                </BookDetail>
+                <div onClick={toggleCollected}>
+                  {isCollect ? <BookCollection /> : <BookUnCollection />}
+                </div>
+              </BookContent>
+              <BookSummary>{bookInfo.description}</BookSummary>
+              <ReviewTag>
+                <EachReview />
+                <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
+              </ReviewTag>
+            </BookTag>
+            {open && <NewReview close={setOpen} />}
+          </Content>
+        </Div>
+      ) : (
+        <>
+          <Div>
+            <Content>
+              <BookTag>
+                <BookImg
+                  src={`https://books.google.com/books/publisher/content/images/frontcover/${bookInfo.id}?fife=w400-h600`}
+                  alt=""
+                />
+                <BookContent>
+                  <BookTitle>{bookInfo.title}</BookTitle>
+                  <BookDetail>
+                    <BookInfo>作者：{bookInfo.authors}</BookInfo>
+                    <BookInfo>出版社：{bookInfo.publisher}</BookInfo>
+                    <BookInfo>出版日期：{bookInfo.publishedDate}</BookInfo>
+                    <BookInfo>去憂分類：{bookInfo.categories}</BookInfo>
+                    <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
+                    <Btn onClick={linkToRead}>試閱</Btn>
+                  </BookDetail>
+                </BookContent>
+                <BookSummary>{bookInfo.description}</BookSummary>
+                <ReviewTag>
+                  <EachReview />
+                </ReviewTag>
+              </BookTag>
+            </Content>
+          </Div>
+        </>
+      )}
+    </>
   );
 }
 

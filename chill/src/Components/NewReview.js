@@ -149,8 +149,7 @@ function NewReview({ close }) {
   useEffect(() => {
     db.collection("users")
       .doc(userId)
-      .get()
-      .then((docSnapshot) => {
+      .onSnapshot((docSnapshot) => {
         console.log(docSnapshot.data());
         setAuthorPhoto(docSnapshot.data().URL);
         setAuthorName(docSnapshot.data().userName);

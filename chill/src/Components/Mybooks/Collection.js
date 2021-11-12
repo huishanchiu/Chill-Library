@@ -3,23 +3,7 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import firebase from "../../utils/firebase";
 import { Link, useParams } from "react-router-dom";
-import { AiOutlineCloseCircle } from "react-icons/ai";
 import bookShelf from "../../images/bookShelf.jpeg";
-import book from "../../images/library.png";
-import BookState from "./BookState";
-
-const CloseIcon = styled(AiOutlineCloseCircle)`
-  color: #1abea7;
-  width: 20px;
-  height: 100%;
-  cursor: pointer;
-`;
-const Close = styled.div`
-  display: none;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-`;
 
 const AllBook = styled.div`
   color: #0b4d4a;
@@ -72,16 +56,6 @@ const BookName = styled.div`
   font-weight: 900;
   color: #2c213b;
 `;
-const BookSummary = styled.div`
-  color: grey;
-`;
-
-const Img = styled.img`
-  width: 700px;
-  position: absolute;
-  opacity: 0.6;
-  margin-bottom: 10px;
-`;
 
 function Collection() {
   const [uid, setUid] = useState("");
@@ -115,7 +89,7 @@ function Collection() {
             return (
               <BookTag
                 to={`/mybooks/${userId.userid}/collection/${item.title}`}
-                key={item.title}
+                key={item.id}
               >
                 <BookContent>
                   <ImgTag>

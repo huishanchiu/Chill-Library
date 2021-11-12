@@ -126,32 +126,44 @@ const SideMenu = () => {
       });
   }, []);
 
+  // useEffect(() => {
+  //   let isUnmount = false;
+  //   firebase.auth().onAuthStateChanged((currentUser) => {
+  //     if (!isUnmount) {
+  //       setUser(currentUser);
+  //       setUserId(currentUser.uid);
+  //     }
+  //   });
+  //   return () => {
+  //     isUnmount = true;
+  //   };
+  // }, []);
   useEffect(() => {
-    let isUnmount = false;
-    firebase.auth().onAuthStateChanged((currentUser) => {
-      if (!isUnmount) {
+    firebase.auth().currentUser ? (
+      firebase.auth().onAuthStateChanged((currentUser) => {
         setUser(currentUser);
         setUserId(currentUser.uid);
-      }
-    });
-    return () => {
-      isUnmount = true;
-    };
+      })
+    ) : (
+      <></>
+    );
   }, []);
 
   useEffect(() => {
-    userId &&
+    user ? (
       db
         .collection("users")
         .doc(userId)
-        .get()
-        .then((docSnapshot) => {
+        .onSnapshot((docSnapshot) => {
           console.log(docSnapshot.data());
           setAuthorPhoto(docSnapshot.data().URL);
           setAuthorName(docSnapshot.data().userName);
           setAuthoremail(docSnapshot.data().email);
           setAuthorUid(docSnapshot.data().uid);
-        });
+        })
+    ) : (
+      <></>
+    );
   }, [userId]);
 
   // const userId = user.uid;

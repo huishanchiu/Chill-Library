@@ -72,7 +72,7 @@ const Div = styled.div`
   /* width: 100%;
   height: 100%; */
   background-color: #2c213b;
-  max-width: 1440px;
+  max-width: 1920px;
 `;
 
 const ThemesContainer = styled.div`

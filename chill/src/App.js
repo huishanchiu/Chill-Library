@@ -1,6 +1,6 @@
 import { Route, BrowserRouter, Switch } from "react-router-dom";
 import styled from "styled-components";
-import Landing from "./Components/Landing";
+import Landing from "./Components/Landing3";
 import EachTheme from "./Components/EachTheme";
 import Mybooks from "./Components/Mybooks";
 import NewsWall from "./Components/NewsWall";

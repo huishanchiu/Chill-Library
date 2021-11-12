@@ -144,9 +144,9 @@ function Searching() {
                 <ReviewTag>
                   <ReviewQuote>#{item.quote}</ReviewQuote>
                   <HashtagContainer>
-                    <Hashtag>#{item.hashtag1}</Hashtag>
-                    <Hashtag>#{item.hashtag2}</Hashtag>
-                    <Hashtag>#{item.hashtag3}</Hashtag>
+                    {item.hashtag1 ? <Hashtag>#{item.hashtag1}</Hashtag> : ""}
+                    {item.hashtag2 ? <Hashtag>#{item.hashtag2}</Hashtag> : ""}
+                    {item.hashtag3 ? <Hashtag>#{item.hashtag3}</Hashtag> : ""}
                   </HashtagContainer>
                   <ReviewBookName to={`/book/${item.bookName}`}>
                     <BeerIcon />《{item.bookName}》點擊看看這本書！

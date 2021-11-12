@@ -242,32 +242,52 @@
   width: 25px;
   opacity: 0;
 }
+
 .theme {
-  position: fixed;
-  transform: translateX(-40%);
-  bottom: 400px;
-  left: 50%;
-  margin: auto;
-  width: 400px;
+  /* outline: red solid; */
+  /* position: fixed; */
+  /* transform: translateX(-40%); */
+  /* bottom: 400px;
+  left: 50%; */
+
+  margin: 250px auto;
+  width: 50vmin;
   color: white;
 }
+
 .theme__1__img,
 .theme__2__img,
 .theme__3__img,
 .theme__4__img,
 .theme__5__img,
 .theme__6__img {
-  /* outline: blue solid; */
-  width: 300px;
+  width: 50vmin;
   /* position: relative;
   top: 30px; */
 }
+.theme__1,
 .theme__2,
 .theme__3,
 .theme__4,
 .theme__5,
 .theme__6 {
   opacity: 0;
+}
+.theme__0 {
+  /* outline: red solid; */
+  height: 100px;
+}
+.scroll {
+  position: fixed;
+  /* bottom: 0; */
+  bottom: 200px;
+  left: 0;
+  right: 0;
+
+  /* left: 0;
+  right: 0; */
+  margin: auto;
+  width: 250px;
 }
 
 @font-face {

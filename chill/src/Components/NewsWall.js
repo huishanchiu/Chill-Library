@@ -31,6 +31,7 @@ const ReviewTag = styled.div`
   width: 700px;
 `;
 const ReviewAuthorLink = styled(Link)``;
+const ReviewAuthorDiv = styled.div``;
 const ReviewAuthor = styled.div`
   align-items: center;
   color: #2c213b;
@@ -38,6 +39,7 @@ const ReviewAuthor = styled.div`
   display: flex;
   margin: 20px;
 `;
+
 const ReviewAuthorImg = styled.img`
   margin-right: 10px;
   width: 30px;
@@ -86,6 +88,7 @@ const BeerYellow = styled.img`
   width: 35px;
   padding: 5px;
 `;
+
 const BeerText = styled.p``;
 const LikeCount = styled.div`
   font-size: 12px;
@@ -170,9 +173,9 @@ const NewsWall = () => {
           const isLiked = review.likedBy?.includes(
             firebase.auth().currentUser.uid
           );
-
+          console.log(review);
           return (
-            <ReviewTag>
+            <ReviewTag key={review.id}>
               <ReviewAuthor>
                 <ReviewAuthorLink
                   to={`/mybooks/${review.author.uid}/collection`}
@@ -234,7 +237,70 @@ const NewsWall = () => {
           );
         })
       ) : (
-        <>123</>
+        <>
+          {news.map((review) => {
+            return (
+              <ReviewTag>
+                <ReviewAuthor>
+                  <ReviewAuthorDiv>
+                    <ReviewAuthorImg src={review.author.photoURL} alt="" />
+                  </ReviewAuthorDiv>
+                  {review.author.displayName}
+                  <Quote>{review.quote}</Quote>
+                  <Rate>
+                    去憂指數：
+                    {Array.from({ length: 5 }, (v, i) => (
+                      <Star marked={review.rating > i} />
+                    ))}
+                  </Rate>
+                </ReviewAuthor>
+                <div>{review.content}</div>
+                <Question>
+                  這本書幫我解決了
+                  <HashtagContainer>
+                    {review.hashtag1 ? (
+                      <Hashtag>#{review.hashtag1}</Hashtag>
+                    ) : (
+                      ""
+                    )}
+                    {review.hashtag2 ? (
+                      <Hashtag>#{review.hashtag2}</Hashtag>
+                    ) : (
+                      ""
+                    )}
+                    {review.hashtag3 ? (
+                      <Hashtag>#{review.hashtag3}</Hashtag>
+                    ) : (
+                      ""
+                    )}
+                  </HashtagContainer>
+                  的問題!
+                </Question>
+                <LikeDiv>
+                  <Beer>
+                    {review.likedCount >= 1 ? (
+                      <>
+                        <BeerYellow src={toastYellow} />
+                        <LikeCount>
+                          {review.likedCount && review.likedCount}
+                        </LikeCount>
+                      </>
+                    ) : (
+                      <>
+                        <BeerIcon src={toastGrey} />
+                      </>
+                    )}
+                  </Beer>
+                </LikeDiv>
+                {new Date(review.createdAt.seconds * 1000).toLocaleString(
+                  "en-US",
+                  options
+                )}
+                -《{review.bookName}》{/* <Comment review={review} /> */}
+              </ReviewTag>
+            );
+          })}
+        </>
       )}
     </Div>
   );

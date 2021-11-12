@@ -31,6 +31,7 @@ const ReviewTag = styled.div`
   width: 600px;
 `;
 const ReviewAuthorLink = styled(Link)``;
+const ReviewAuthorDiv = styled.div``;
 const ReviewAuthor = styled.div`
   align-items: center;
   color: #2c213b;
@@ -134,7 +135,17 @@ function EachReview() {
         setReviews(data);
       });
   }, []);
-
+  console.log(reviews);
+  // useEffect(() => {
+  //   const db = firebase.firestore();
+  //   reviews.author &&
+  //     db
+  //       .collection("users")
+  //       .where("uid", "==", reviews.author.uid)
+  //       .onSnapshot((doc) => {
+  //         console.log(doc.data());
+  //       });
+  // }, [reviews.author]);
   const toggleLiked = (e, isLiked) => {
     const uid = firebase.auth().currentUser.uid;
     console.log(e.target);
@@ -162,65 +173,152 @@ function EachReview() {
 
   console.log(comments);
   return (
-    <Div>
-      {reviews.map((review) => {
-        const isLiked = review.likedBy?.includes(
-          firebase.auth().currentUser.uid
-        );
-        return (
-          <ReviewTag>
-            <ReviewAuthor>
-              <ReviewAuthorLink to={`/mybooks/${review.author.uid}/collection`}>
-                <ReviewAuthorImg src={review.author.photoURL} alt="" />
-              </ReviewAuthorLink>
-              {review.author.displayName}
+    <>
+      {firebase.auth().currentUser ? (
+        <Div>
+          {reviews.map((review) => {
+            const isLiked = review.likedBy?.includes(
+              firebase.auth().currentUser.uid
+            );
+            return (
+              <ReviewTag>
+                <ReviewAuthor>
+                  <ReviewAuthorLink
+                    to={`/mybooks/${review.author.uid}/collection`}
+                  >
+                    <ReviewAuthorImg src={review.author.photoURL} alt="" />
+                  </ReviewAuthorLink>
+                  {review.author.displayName}
 
-              <Quote>{review.quote}</Quote>
-              <Rate>
-                去憂指數：
-                {Array.from({ length: 5 }, (v, i) => (
-                  <Star marked={review.rating > i} />
-                ))}
-              </Rate>
-            </ReviewAuthor>
-            <div>{review.content}</div>
-            <Question>
-              這本書幫我解決了
-              <HashtagContainer>
-                {review.hashtag1 ? <Hashtag>#{review.hashtag1}</Hashtag> : ""}
-                {review.hashtag2 ? <Hashtag>#{review.hashtag2}</Hashtag> : ""}
-                {review.hashtag3 ? <Hashtag>#{review.hashtag3}</Hashtag> : ""}
-              </HashtagContainer>
-              的問題!
-            </Question>
-            <LikeDiv>
-              <Beer>
-                {isLiked ? (
-                  <BeerYellow
-                    onClick={(e) => toggleLiked(e, isLiked)}
-                    data-id={review.id}
-                    src={toastYellow}
-                  />
-                ) : (
-                  <BeerIcon
-                    onClick={(e) => toggleLiked(e, isLiked)}
-                    data-id={review.id}
-                    src={toastGrey}
-                  />
+                  <Quote>{review.quote}</Quote>
+                  <Rate>
+                    去憂指數：
+                    {Array.from({ length: 5 }, (v, i) => (
+                      <Star marked={review.rating > i} />
+                    ))}
+                  </Rate>
+                </ReviewAuthor>
+                <div>{review.content}</div>
+                <Question>
+                  這本書幫我解決了
+                  <HashtagContainer>
+                    {review.hashtag1 ? (
+                      <Hashtag>#{review.hashtag1}</Hashtag>
+                    ) : (
+                      ""
+                    )}
+                    {review.hashtag2 ? (
+                      <Hashtag>#{review.hashtag2}</Hashtag>
+                    ) : (
+                      ""
+                    )}
+                    {review.hashtag3 ? (
+                      <Hashtag>#{review.hashtag3}</Hashtag>
+                    ) : (
+                      ""
+                    )}
+                  </HashtagContainer>
+                  的問題!
+                </Question>
+                <LikeDiv>
+                  <Beer>
+                    {isLiked ? (
+                      <BeerYellow
+                        onClick={(e) => toggleLiked(e, isLiked)}
+                        data-id={review.id}
+                        src={toastYellow}
+                      />
+                    ) : (
+                      <BeerIcon
+                        onClick={(e) => toggleLiked(e, isLiked)}
+                        data-id={review.id}
+                        src={toastGrey}
+                      />
+                    )}
+                    <LikeCount>
+                      {review.likedBy && review.likedBy.length}
+                    </LikeCount>
+                  </Beer>
+                  <BeerText>覺得很讚，賞作者一杯啤酒!</BeerText>
+                </LikeDiv>
+                {new Date(review.createdAt.seconds * 1000).toLocaleString(
+                  "en-US",
+                  options
                 )}
-                <LikeCount>{review.likedBy && review.likedBy.length}</LikeCount>
-              </Beer>
-              <BeerText>覺得很讚，賞作者一杯啤酒!</BeerText>
-            </LikeDiv>
-            {new Date(review.createdAt.seconds * 1000).toLocaleString(
-              "en-US",
-              options
-            )}
-            <Comment review={review} />
-          </ReviewTag>
-        );
-      })}
-    </Div>
+                <Comment review={review} />
+              </ReviewTag>
+            );
+          })}
+        </Div>
+      ) : (
+        <>
+          <Div>
+            {reviews.map((review) => {
+              return (
+                <ReviewTag>
+                  <ReviewAuthor>
+                    <ReviewAuthorDiv>
+                      <ReviewAuthorImg src={review.author.photoURL} alt="" />
+                    </ReviewAuthorDiv>
+                    {review.author.displayName}
+
+                    <Quote>{review.quote}</Quote>
+                    <Rate>
+                      去憂指數：
+                      {Array.from({ length: 5 }, (v, i) => (
+                        <Star marked={review.rating > i} />
+                      ))}
+                    </Rate>
+                  </ReviewAuthor>
+                  <div>{review.content}</div>
+                  <Question>
+                    這本書幫我解決了
+                    <HashtagContainer>
+                      {review.hashtag1 ? (
+                        <Hashtag>#{review.hashtag1}</Hashtag>
+                      ) : (
+                        ""
+                      )}
+                      {review.hashtag2 ? (
+                        <Hashtag>#{review.hashtag2}</Hashtag>
+                      ) : (
+                        ""
+                      )}
+                      {review.hashtag3 ? (
+                        <Hashtag>#{review.hashtag3}</Hashtag>
+                      ) : (
+                        ""
+                      )}
+                    </HashtagContainer>
+                    的問題!
+                  </Question>
+                  <LikeDiv>
+                    <Beer>
+                      {review.likedCount >= 1 ? (
+                        <>
+                          <BeerYellow src={toastYellow} />
+                          <LikeCount>
+                            {review.likedCount && review.likedCount}
+                          </LikeCount>
+                        </>
+                      ) : (
+                        <>
+                          <BeerIcon src={toastGrey} />
+                        </>
+                      )}
+                    </Beer>
+                  </LikeDiv>
+                  {new Date(review.createdAt.seconds * 1000).toLocaleString(
+                    "en-US",
+                    options
+                  )}
+                </ReviewTag>
+              );
+            })}
+          </Div>
+        </>
+      )}
+    </>
   );
 }
 

@@ -126,7 +126,7 @@ function EachSearchBook() {
       .then((datas) => {
         setBookInfo(datas.items[0]);
         setBookTitle(datas.items[0].volumeInfo.title);
-        setBook(datas.items[0]);
+        // setBook(datas.items[0]);
       })
       .then(() => {})
       .catch((error) => {
@@ -195,7 +195,7 @@ function EachSearchBook() {
           setBook(docSnapshot.data());
         });
   }, [bookTitle]);
-  // console.log(bookTitle);
+  console.log(bookTitle);
   useEffect(() => {
     firebase
       .firestore()
@@ -204,7 +204,7 @@ function EachSearchBook() {
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          console.log(doc.data());
+          // console.log(doc.data());
           setBook(doc.data());
           if (Object.keys(doc.data()).length > 0) {
             setCheckBook(true);
@@ -244,19 +244,14 @@ function EachSearchBook() {
     }
   }
 
-  // const isCollect =
-  //   checkBook || Object.keys(book).length > 0
-  //     ? book.collectedBy?.includes(firebase.auth().currentUser.uid)
-  //     : "";
-  // console.log(Object.keyxf
-
-  const isCollect =
-    book?.collectedBy?.includes(firebase.auth().currentUser.uid) || "";
+  const isCollect = firebase.auth().currentUser
+    ? book?.collectedBy?.includes(firebase.auth().currentUser.uid) || ""
+    : "";
 
   function toggleAddCategory(e) {
-    if (book.categories === undefined) {
-      alert("請先收藏本書喔！");
-    }
+    // if (book.categories === undefined) {
+    //   alert("請先收藏本書喔！");
+    // }
     const isCategory =
       Object.keys(book).length > 0
         ? book.categories?.includes(e.target.textContent)
@@ -286,97 +281,165 @@ function EachSearchBook() {
         });
     }
   }
-  // console.log(book);
+  console.log(book);
   // console.log(bookInfo);
   return (
-    <Div>
-      {Object.keys(bookInfo).length > 0 ? (
-        <Content>
-          <BookTag>
-            <BookImg
-              src={
-                `https://books.google.com/books/publisher/content/images/frontcover/${bookInfo.id}?fife=w400-h600` ||
-                "https://i.pinimg.com/564x/8d/98/54/8d9854ecfd84f4daa1561c7b62c6387f.jpg"
-              }
-              alt=""
-            />
-            <BookContent>
-              <BookTitle>{bookInfo.volumeInfo.title}</BookTitle>
-              <BookDetail>
-                <BookInfo>作者：{bookInfo.volumeInfo.authors}</BookInfo>
-                <BookInfo>出版社：{bookInfo.volumeInfo.publisher}</BookInfo>
-                <BookInfo>
-                  出版日期：{bookInfo.volumeInfo.publishedDate}
-                </BookInfo>
-                <BookInfo>去憂分類：{book?.categories || ""}</BookInfo>
-                {/* {book?.categories === undefined && ( */}
-                <>
-                  <Category
-                    onClick={(e) => {
-                      toggleAddCategory(e);
-                    }}
-                  >
-                    宅在家好發慌？
-                  </Category>
-                  <Category
-                    onClick={(e) => {
-                      toggleAddCategory(e);
-                    }}
-                  >
-                    一個人好孤單？
-                  </Category>
-                  <Category
-                    onClick={(e) => {
-                      toggleAddCategory(e);
-                    }}
-                  >
-                    想不出好點子？
-                  </Category>
-                  <Category
-                    onClick={(e) => {
-                      toggleAddCategory(e);
-                    }}
-                  >
-                    如何上火箭？
-                  </Category>
-                  <Category
-                    onClick={(e) => {
-                      toggleAddCategory(e);
-                    }}
-                  >
-                    心裡總是卡卡的？
-                  </Category>
-                </>
-                {/* )} */}
-              </BookDetail>
-              <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
-              <Btn onClick={linkToRead}>試閱</Btn>
+    <>
+      {firebase.auth().currentUser ? (
+        <Div>
+          {Object.keys(bookInfo).length > 0 ? (
+            <Content>
+              <BookTag>
+                <BookImg
+                  src={
+                    `https://books.google.com/books/publisher/content/images/frontcover/${bookInfo.id}?fife=w400-h600` ||
+                    "https://i.pinimg.com/564x/8d/98/54/8d9854ecfd84f4daa1561c7b62c6387f.jpg"
+                  }
+                  alt=""
+                />
+                <BookContent>
+                  <BookTitle>{bookInfo.volumeInfo.title}</BookTitle>
+                  <BookDetail>
+                    <BookInfo>作者：{bookInfo.volumeInfo.authors}</BookInfo>
+                    <BookInfo>出版社：{bookInfo.volumeInfo.publisher}</BookInfo>
+                    <BookInfo>
+                      出版日期：{bookInfo.volumeInfo.publishedDate}
+                    </BookInfo>
+                    <BookInfo>去憂分類：{book?.categories || ""}</BookInfo>
 
-              <div
-                onClick={() => {
-                  addToFirebase(bookInfo);
-                }}
-              >
-                {isCollect ? <BookCollection /> : <BookUnCollection />}
-              </div>
-            </BookContent>
-            <BookSummary>{bookInfo.volumeInfo.description}</BookSummary>
-            <ReviewTag>
-              <EachReview />
-              <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
-            </ReviewTag>
-          </BookTag>
-          {open && (
-            <NewReviewOnSearch
-              bookTitle={bookInfo.volumeInfo.title}
-              close={setOpen}
-            />
+                    {/* {(book === {} && book.categories?.length < 2) ||
+                    book.categories === undefined ? ( */}
+
+                    {book.categories === undefined ||
+                    book.categories?.length < 1 ? (
+                      <>
+                        <Category
+                          onClick={(e) => {
+                            toggleAddCategory(e);
+                          }}
+                        >
+                          宅在家好發慌？
+                        </Category>
+                        <Category
+                          onClick={(e) => {
+                            toggleAddCategory(e);
+                          }}
+                        >
+                          一個人好孤單？
+                        </Category>
+                        <Category
+                          onClick={(e) => {
+                            toggleAddCategory(e);
+                          }}
+                        >
+                          想不出好點子？
+                        </Category>
+                        <Category
+                          onClick={(e) => {
+                            toggleAddCategory(e);
+                          }}
+                        >
+                          如何上火箭？
+                        </Category>
+                        <Category
+                          onClick={(e) => {
+                            toggleAddCategory(e);
+                          }}
+                        >
+                          心裡總是卡卡的？
+                        </Category>
+                      </>
+                    ) : (
+                      <>收藏後可以為書新增分類唷(最多可新增三個分類)</>
+                    )}
+                  </BookDetail>
+                  <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
+                  <Btn onClick={linkToRead}>試閱</Btn>
+
+                  {book.categories === undefined ? (
+                    <>收藏後可以為書新增分類唷(最多可新增三個分類)</>
+                  ) : (
+                    ""
+                  )}
+                  <div
+                    onClick={() => {
+                      addToFirebase(bookInfo);
+                    }}
+                  >
+                    {isCollect ? <BookCollection /> : <BookUnCollection />}
+                  </div>
+                </BookContent>
+                <BookSummary>{bookInfo.volumeInfo.description}</BookSummary>
+                <ReviewTag>
+                  <EachReview />
+                  <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
+                </ReviewTag>
+              </BookTag>
+              {open && (
+                <NewReviewOnSearch
+                  bookTitle={bookInfo.volumeInfo.title}
+                  close={setOpen}
+                />
+              )}
+            </Content>
+          ) : (
+            ""
           )}
-        </Content>
+        </Div>
       ) : (
-        ""
+        <>
+          <Div>
+            {Object.keys(bookInfo).length > 0 ? (
+              <Content>
+                <BookTag>
+                  <BookImg
+                    src={
+                      `https://books.google.com/books/publisher/content/images/frontcover/${bookInfo.id}?fife=w400-h600` ||
+                      "https://i.pinimg.com/564x/8d/98/54/8d9854ecfd84f4daa1561c7b62c6387f.jpg"
+                    }
+                    alt=""
+                  />
+                  <BookContent>
+                    <BookTitle>{bookInfo.volumeInfo.title}</BookTitle>
+                    <BookDetail>
+                      <BookInfo>作者：{bookInfo.volumeInfo.authors}</BookInfo>
+                      <BookInfo>
+                        出版社：{bookInfo.volumeInfo.publisher}
+                      </BookInfo>
+                      <BookInfo>
+                        出版日期：{bookInfo.volumeInfo.publishedDate}
+                      </BookInfo>
+                      <BookInfo>去憂分類：{book?.categories || ""}</BookInfo>
+                    </BookDetail>
+                    <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
+                    <Btn onClick={linkToRead}>試閱</Btn>
+
+                    <div
+                      onClick={() => {
+                        addToFirebase(bookInfo);
+                      }}
+                    ></div>
+                  </BookContent>
+                  <BookSummary>{bookInfo.volumeInfo.description}</BookSummary>
+                  <ReviewTag>
+                    <EachReview />
+                    <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
+                  </ReviewTag>
+                </BookTag>
+                {open && (
+                  <NewReviewOnSearch
+                    bookTitle={bookInfo.volumeInfo.title}
+                    close={setOpen}
+                  />
+                )}
+              </Content>
+            ) : (
+              ""
+            )}
+          </Div>
+        </>
       )}
-    </Div>
+    </>
   );
 }
 
