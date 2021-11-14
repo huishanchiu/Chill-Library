@@ -178,6 +178,7 @@
   position: relative;
   width: 100%;
   background-color: #2c213b;
+  /* background-color: #343434; */
   /* min-height: 8000px; */
   height: 2000vmin;
 
@@ -362,4 +363,23 @@
   .light__4__left .light {
     transform: translateX(230%);
   }
+}
+
+.btn {
+  margin-top: 50px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  text-decoration: none;
+  border-radius: 50rem;
+  padding: 0.3rem 0.6rem;
+  color: #feae29;
+  border: rgb(254, 239, 222) 1px solid;
+  /* background-color: #f93c10; */
+  box-shadow: 0px 3px 0 rgb(254, 239, 222, 0.7);
+  transition: all 0.1s ease-in-out;
+}
+.btn:hover {
+  bottom: -7px;
+  box-shadow: 0px 0px 0 #000;
 }

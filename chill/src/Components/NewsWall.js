@@ -5,7 +5,7 @@ import firebase from "../utils/firebase";
 import { Link } from "react-router-dom";
 import toastGrey from "../images/toast_grey.png";
 import toastYellow from "../images/toast_gold.png";
-import Comment from "./Comment";
+import Comments from "./Comments";
 
 const Star = ({ starId, marked }) => {
   return (
@@ -25,10 +25,10 @@ const Div = styled.div`
 const ReviewTag = styled.div`
   margin-top: 20px;
   padding: 15px;
-  background-color: #f1faf7;
+  /* background-color: rgba(36, 37, 38, 0.4); */
   border-radius: 10px;
-  color: grey;
-  width: 700px;
+  color: rgba(254, 239, 222, 0.8);
+  width: 600px;
 `;
 const ReviewAuthorLink = styled(Link)``;
 const ReviewAuthorDiv = styled.div``;
@@ -42,8 +42,8 @@ const ReviewAuthor = styled.div`
 
 const ReviewAuthorImg = styled.img`
   margin-right: 10px;
-  width: 30px;
-  height: 30px;
+  width: 50px;
+  height: 50px;
   border-radius: 20px;
 `;
 const Rate = styled.div`
@@ -100,11 +100,27 @@ const LikeCount = styled.div`
   text-align: center;
 `;
 const Quote = styled.h3`
-  margin-left: 10px;
+  margin-right: 20px;
   color: tomato;
 `;
 const LikeDiv = styled.div`
   display: flex;
+`;
+const ReviewAuthorName = styled.h4`
+  margin-bottom: 0;
+  color: rgb(254, 239, 222);
+`;
+const BookName = styled.div`
+  color: rgba(254, 239, 222, 0.6);
+  display: flex;
+  align-items: center;
+`;
+const Time = styled.div`
+  color: rgba(254, 239, 222, 0.4);
+`;
+const ReviewAuthorInfo = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const NewsWall = () => {
@@ -182,8 +198,18 @@ const NewsWall = () => {
                 >
                   <ReviewAuthorImg src={review.author.photoURL} alt="" />
                 </ReviewAuthorLink>
-                {review.author.displayName}
-                <Quote>{review.quote}</Quote>
+                <ReviewAuthorInfo>
+                  <ReviewAuthorName>
+                    {review.author.displayName}
+                  </ReviewAuthorName>
+                  <Time>
+                    {new Date(review.createdAt.seconds * 1000).toLocaleString(
+                      "en-US",
+                      options
+                    )}
+                  </Time>
+                </ReviewAuthorInfo>
+
                 <Rate>
                   去憂指數：
                   {Array.from({ length: 5 }, (v, i) => (
@@ -191,6 +217,10 @@ const NewsWall = () => {
                   ))}
                 </Rate>
               </ReviewAuthor>
+              <BookName>
+                <Quote>{review.quote}</Quote>【 {review.bookName}】
+              </BookName>
+
               <div>{review.content}</div>
               <Question>
                 這本書幫我解決了
@@ -227,12 +257,8 @@ const NewsWall = () => {
                 </Beer>
                 <BeerText>覺得很讚，賞作者一杯啤酒!</BeerText>
               </LikeDiv>
-              {new Date(review.createdAt.seconds * 1000).toLocaleString(
-                "en-US",
-                options
-              )}
-              -{review.bookName}
-              <Comment review={review} />
+
+              {/* <Comments review={review} /> */}
             </ReviewTag>
           );
         })

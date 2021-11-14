@@ -282,7 +282,7 @@ function EachSearchBook() {
     }
   }
   console.log(book);
-  // console.log(bookInfo);
+  console.log(bookInfo);
   return (
     <>
       {firebase.auth().currentUser ? (
@@ -310,8 +310,8 @@ function EachSearchBook() {
                     {/* {(book === {} && book.categories?.length < 2) ||
                     book.categories === undefined ? ( */}
 
-                    {book.categories === undefined ||
-                    book.categories?.length < 1 ? (
+                    {book?.categories === undefined ||
+                    book?.categories?.length < 1 ? (
                       <>
                         <Category
                           onClick={(e) => {
@@ -356,11 +356,11 @@ function EachSearchBook() {
                   <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
                   <Btn onClick={linkToRead}>試閱</Btn>
 
-                  {book.categories === undefined ? (
+                  {/* {book.categories === undefined ? (
                     <>收藏後可以為書新增分類唷(最多可新增三個分類)</>
                   ) : (
                     ""
-                  )}
+                  )} */}
                   <div
                     onClick={() => {
                       addToFirebase(bookInfo);

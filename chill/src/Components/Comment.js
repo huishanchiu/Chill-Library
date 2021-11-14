@@ -10,23 +10,61 @@ import Loading from "./Loading";
 import { BsPencilSquare } from "react-icons/bs";
 import { MdFileDownloadDone } from "react-icons/md";
 import { AiOutlineCloseCircle } from "react-icons/ai";
+const Icon = styled.div`
+  border-bottom: hsla(0, 0%, 0%, 0.2) 1px solid;
+  width: 680px;
+  padding: 0 10px;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+`;
+const Btn = styled.div`
+  cursor: pointer;
+  padding: 5px 15px;
+  border-radius: 15px;
+  background-color: #0d6662;
+  color: #f1faf7;
+  font-size: 16px;
+  font-weight: 500;
+`;
 
+const Mask = styled.div`
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  background-color: rgba(211, 211, 211, 0.5);
+  display: flex;
+  align-items: center;
+`;
+
+const PopupInner = styled.div`
+  height: 300px;
+  z-index: 3;
+  position: relative;
+  padding: 15px 0;
+  width: 70vmin;
+  background-color: #f1faf7;
+  border-radius: 1rem;
+`;
 const CloseIcon = styled(AiOutlineCloseCircle)`
-  display: none;
   color: #1abea7;
   width: 30px;
-  height: 100%;
+  height: 30px;
   cursor: pointer;
-  /* &:hover {
-    display: block;
-  } */
-`;
-const Close = styled.div`
-  width: 40px;
-  height: 40px;
   position: absolute;
   top: 8px;
   right: 8px;
+`;
+const Close = styled.div`
+  outline: red solid;
+  width: 40px;
+  height: 40px;
 `;
 const EditIcon = styled(BsPencilSquare)`
   cursor: pointer;
@@ -48,8 +86,20 @@ const CommentTag = styled.div`
 `;
 
 const CommentDiv = styled.textarea`
-  width: 90%;
-  height: 100px;
+  font-size: 18px;
+  ::placeholder {
+    color: rgba(211, 211, 211, 0.8);
+  }
+  border: none;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none;
+  width: 99%;
+  height: 300px;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
 `;
 const CommentBtn = styled.div`
   cursor: pointer;
@@ -73,7 +123,7 @@ const CommentContent = styled.div`
 `;
 const ContentEdit = styled.textarea``;
 
-function Comment({ review }) {
+function Comment({ review, close }) {
   const [commentContent, setCommentContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [comments, setComments] = useState([]);
@@ -164,80 +214,83 @@ function Comment({ review }) {
   };
 
   return (
-    <div>
-      <CommentTag>
-        <CommentDiv
-          value={commentContent}
-          onChange={(e) => {
-            setCommentContent(e.target.value);
-          }}
-        />
-        <CommentBtn
-          onClick={(e) => {
-            onSubmit();
-          }}
-        >
-          回應
-        </CommentBtn>
+    <Mask>
+      <PopupInner>
+        <Icon>
+          <Btn onClick={onSubmit}>送出</Btn>
+          <CloseIcon onClick={() => close(false)} />
+        </Icon>
 
-        <CommentCount>共{review.commentCount || 0}則留言</CommentCount>
-        {comments.map((comment) => {
-          return (
-            <>
-              <CommentContent>
-                {comment.author.uid === firebase.auth().currentUser.uid ? (
-                  <>
-                    <Close>
-                      <CloseIcon onClick={(e) => toggleRemove(comment.id)} />
-                    </Close>
+        <CommentTag>
+          <CommentDiv
+            placeholder="想說什麼呢？"
+            value={commentContent}
+            onChange={(e) => {
+              setCommentContent(e.target.value);
+            }}
+          />
+        </CommentTag>
+      </PopupInner>
 
-                    <Edit>
-                      <EditIcon
-                        onClick={() => {
-                          clickEdit(comment.id);
-                        }}
-                      />
+      {/* <CommentCount>共{review.commentCount || 0}則留言</CommentCount>
+          {comments.map((comment) => {
+            return (
+              <>
+                <CommentContent>
+                  {comment.author.uid === firebase.auth().currentUser.uid ? (
+                    <>
+                      <Close>
+                        <CloseIcon onClick={(e) => toggleRemove(comment.id)} />
+                      </Close>
 
-                      {editReview === comment.id ? (
-                        <DoneIcon
+                      <Edit>
+                        <EditIcon
                           onClick={() => {
-                            toggleSave(comment.id);
+                            clickEdit(comment.id);
                           }}
                         />
-                      ) : (
-                        ""
-                      )}
-                    </Edit>
-                  </>
-                ) : (
-                  ""
-                )}
-                <CommentAuthorPhoto src={comment.author.photoURL} alt="" />
-                <CommentAuthorName>
-                  {comment.author.displayName || "使用者"}
-                </CommentAuthorName>
 
-                {editReview === comment.id ? (
-                  <>
-                    <ContentEdit
-                      defaultValue={comment.content}
-                      onChange={(e) => {
-                        setCommentContent(e.target.value);
-                      }}
-                    />
-                  </>
-                ) : (
-                  <>{comment.content}</>
-                )}
+                        {editReview === comment.id ? (
+                          <DoneIcon
+                            onClick={() => {
+                              toggleSave(comment.id);
+                            }}
+                          />
+                        ) : (
+                          ""
+                        )}
+                      </Edit>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                  <CommentAuthorPhoto src={comment.author.photoURL} alt="" />
+                  <CommentAuthorName>
+                    {comment.author.displayName || "使用者"}
+                  </CommentAuthorName>
 
-                {comment.createdAt.toDate().toLocaleString()}
-                <hr />
-              </CommentContent>
-            </>
-          );
-        })}
-      </CommentTag>
-    </div>
+                  {editReview === comment.id ? (
+                    <>
+                      <ContentEdit
+                        defaultValue={comment.content}
+                        onChange={(e) => {
+                          setCommentContent(e.target.value);
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <>{comment.content}</>
+                  )}
+
+                  {comment.createdAt.toDate().toLocaleString()}
+                  <hr />
+                </CommentContent>
+              </>
+            );
+          })}
+        </CommentTag> */}
+      {/* </PopupInner> */}
+    </Mask>
   );
 }
 

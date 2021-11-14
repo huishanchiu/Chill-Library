@@ -1,0 +1,24 @@
+.slide {
+  /* outline: red solid; */
+}
+.section1 {
+  background-color: #f1faf7;
+}
+.S1 {
+  /* outline: blue solid; */
+
+  display: flex;
+}
+.theme__1__img {
+  /* outline: red solid; */
+  width: 70vmin;
+}
+.content {
+  font-size: 18px;
+  line-height: 2rem;
+  /* margin-top: 100px; */
+  margin: 30px;
+  /* height: 700px; */
+  /* outline: red solid; */
+  /* width: 500px; */
+}

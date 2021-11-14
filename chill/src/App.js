@@ -12,24 +12,43 @@ import SideBooks from "./Components/SideBooks";
 import Searching from "./Components/Searching";
 import EachSearchBook from "./Components/EachSearchBook";
 import BookState from "./Components/Mybooks/BookState";
+import bk from "./images/bk.png";
+import SideAuthors from "./Components/SideAuthors";
 
 const Main = styled.div`
   display: flex;
   justify-content: space-between;
   color: white;
-  background-image: linear-gradient(to right, #2c213b, #4f3a6c);
+  /* background-image: url(${bk}); */
+  /* background-repeat: no-repeat; */
+  background-position: top;
+  background-size: cover;
+  /* background-image: linear-gradient(to right, #2c213b, #4f3a6c); */
+  background-image: 
+  /* linear-gradient(
+      rgba(211, 211, 211, 0.1),
+      rgba(255, 255, 255, 0.1)
+    ), */ url(${bk});
 `;
+
 const SideRight = styled.div`
+  padding: 10px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-shadow: 0 0px 6px 0 hsla(0, 0%, 0%, 0.3);
 `;
 function App() {
   return (
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={Landing} />
-        <Route exact path="/themes" component={Themes} />
+        <Route exact path="/themes">
+          <Main>
+            <SideMenu />
+            <Themes />
+          </Main>
+        </Route>
         <Route exact path="/news">
           <Main>
             <SideMenu />
@@ -79,7 +98,8 @@ function App() {
             <EachBook />
             <SideRight>
               <Header />
-              <SideBooks />
+              <SideAuthors />
+              {/* <SideBooks /> */}
             </SideRight>
           </Main>
         </Route>

@@ -8,7 +8,16 @@ import toastGrey from "../images/toast_grey.png";
 import toastYellow from "../images/toast_gold.png";
 import Loading from "./Loading";
 import Comment from "./Comment";
+import Comments from "./Comments";
+import { BsFillChatTextFill } from "react-icons/bs";
 
+const TextIcon = styled(BsFillChatTextFill)`
+  cursor: pointer;
+  position: absolute;
+  color: #bdbcbc;
+  width: 26px;
+  height: 100%;
+`;
 const Star = ({ starId, marked }) => {
   return (
     <span star-id={starId} style={{ color: "#ff9933" }}>
@@ -23,26 +32,25 @@ const Div = styled.div`
   align-items: center;
 `;
 const ReviewTag = styled.div`
+  color: rgba(255, 240, 221, 0.6);
+  border-bottom: rgba(254, 174, 32, 0.3) 1px solid;
   margin-top: 20px;
   padding: 15px;
-  background-color: #f1faf7;
-  border-radius: 10px;
-  color: grey;
-  width: 600px;
+  background-color: rgba(213, 219, 219, 0.1);
 `;
 const ReviewAuthorLink = styled(Link)``;
 const ReviewAuthorDiv = styled.div``;
 const ReviewAuthor = styled.div`
   align-items: center;
-  color: #2c213b;
+  color: rgba(254, 240, 221, 0.8);
   text-decoration: none;
   display: flex;
   margin: 20px;
 `;
 const ReviewAuthorImg = styled.img`
   margin-right: 10px;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border-radius: 20px;
 `;
 const Rate = styled.div`
@@ -51,6 +59,7 @@ const Rate = styled.div`
   margin-left: auto;
 `;
 const Question = styled.h3`
+  color: rgba(255, 240, 221, 1);
   display: flex;
   align-items: center;
   height: 60px;
@@ -68,6 +77,10 @@ const HashtagContainer = styled.div`
   margin: 10px;
   display: flex;
 `;
+const ContentDiv = styled.div`
+  font-size: 15px;
+  color: rgba(255, 240, 221, 0.8);
+`;
 
 const Beer = styled.div`
   display: flex;
@@ -79,22 +92,24 @@ const Beer = styled.div`
 const BeerIcon = styled.img`
   cursor: pointer;
   width: 35px;
-  padding: 5px;
+  margin-left: 30px;
 `;
 
 const BeerYellow = styled.img`
   cursor: pointer;
   width: 35px;
-  padding: 5px;
+  /* padding: 5px; */
+  margin-left: 30px;
 `;
-const BeerText = styled.p``;
+const BeerText = styled.p`
+  color: rgba(255, 240, 221, 0.6);
+`;
 const LikeCount = styled.div`
   font-size: 12px;
-  background-color: #ff9933;
-  color: white;
+  color: #ff9933;
   width: 15px;
   height: 15px;
-  border-radius: 10px;
+  border-radius: 20px;
   text-align: center;
 `;
 const Quote = styled.h3`
@@ -102,7 +117,9 @@ const Quote = styled.h3`
   color: tomato;
 `;
 const LikeDiv = styled.div`
+  position: relative;
   display: flex;
+  /* align-items: center; */
 `;
 
 function EachReview() {
@@ -116,6 +133,7 @@ function EachReview() {
     timeZone: "Asia/Taipei",
   };
   const [reviews, setReviews] = useState([]);
+  const [open, setOpen] = useState(false);
   const bookid = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [comments, setComments] = useState([]);
@@ -136,16 +154,7 @@ function EachReview() {
       });
   }, []);
   console.log(reviews);
-  // useEffect(() => {
-  //   const db = firebase.firestore();
-  //   reviews.author &&
-  //     db
-  //       .collection("users")
-  //       .where("uid", "==", reviews.author.uid)
-  //       .onSnapshot((doc) => {
-  //         console.log(doc.data());
-  //       });
-  // }, [reviews.author]);
+
   const toggleLiked = (e, isLiked) => {
     const uid = firebase.auth().currentUser.uid;
     console.log(e.target);
@@ -181,72 +190,76 @@ function EachReview() {
               firebase.auth().currentUser.uid
             );
             return (
-              <ReviewTag>
-                <ReviewAuthor>
-                  <ReviewAuthorLink
-                    to={`/mybooks/${review.author.uid}/collection`}
-                  >
-                    <ReviewAuthorImg src={review.author.photoURL} alt="" />
-                  </ReviewAuthorLink>
-                  {review.author.displayName}
+              <>
+                <ReviewTag>
+                  <ReviewAuthor>
+                    <ReviewAuthorLink
+                      to={`/mybooks/${review.author.uid}/collection`}
+                    >
+                      <ReviewAuthorImg src={review.author.photoURL} alt="" />
+                    </ReviewAuthorLink>
+                    {review.author.displayName}
 
-                  <Quote>{review.quote}</Quote>
-                  <Rate>
-                    去憂指數：
-                    {Array.from({ length: 5 }, (v, i) => (
-                      <Star marked={review.rating > i} />
-                    ))}
-                  </Rate>
-                </ReviewAuthor>
-                <div>{review.content}</div>
-                <Question>
-                  這本書幫我解決了
-                  <HashtagContainer>
-                    {review.hashtag1 ? (
-                      <Hashtag>#{review.hashtag1}</Hashtag>
-                    ) : (
-                      ""
-                    )}
-                    {review.hashtag2 ? (
-                      <Hashtag>#{review.hashtag2}</Hashtag>
-                    ) : (
-                      ""
-                    )}
-                    {review.hashtag3 ? (
-                      <Hashtag>#{review.hashtag3}</Hashtag>
-                    ) : (
-                      ""
-                    )}
-                  </HashtagContainer>
-                  的問題!
-                </Question>
-                <LikeDiv>
-                  <Beer>
-                    {isLiked ? (
-                      <BeerYellow
-                        onClick={(e) => toggleLiked(e, isLiked)}
-                        data-id={review.id}
-                        src={toastYellow}
-                      />
-                    ) : (
-                      <BeerIcon
-                        onClick={(e) => toggleLiked(e, isLiked)}
-                        data-id={review.id}
-                        src={toastGrey}
-                      />
-                    )}
-                    <LikeCount>
-                      {review.likedBy && review.likedBy.length}
-                    </LikeCount>
-                  </Beer>
-                  <BeerText>覺得很讚，賞作者一杯啤酒!</BeerText>
-                </LikeDiv>
-                {new Date(review.createdAt.seconds * 1000).toLocaleString(
-                  "en-US",
-                  options
-                )}
-                <Comment review={review} />
-              </ReviewTag>
+                    <Quote>{review.quote}</Quote>
+                    <Rate>
+                      去憂指數：
+                      {Array.from({ length: 5 }, (v, i) => (
+                        <Star marked={review.rating > i} />
+                      ))}
+                    </Rate>
+                  </ReviewAuthor>
+                  <ContentDiv>{review.content}</ContentDiv>
+                  <Question>
+                    這本書幫我解決了
+                    <HashtagContainer>
+                      {review.hashtag1 ? (
+                        <Hashtag>#{review.hashtag1}</Hashtag>
+                      ) : (
+                        ""
+                      )}
+                      {review.hashtag2 ? (
+                        <Hashtag>#{review.hashtag2}</Hashtag>
+                      ) : (
+                        ""
+                      )}
+                      {review.hashtag3 ? (
+                        <Hashtag>#{review.hashtag3}</Hashtag>
+                      ) : (
+                        ""
+                      )}
+                    </HashtagContainer>
+                    的問題!
+                  </Question>
+                  <LikeDiv>
+                    <TextIcon onClick={() => setOpen(true)} />
+                    <Beer>
+                      {isLiked ? (
+                        <BeerYellow
+                          onClick={(e) => toggleLiked(e, isLiked)}
+                          data-id={review.id}
+                          src={toastYellow}
+                        />
+                      ) : (
+                        <BeerIcon
+                          onClick={(e) => toggleLiked(e, isLiked)}
+                          data-id={review.id}
+                          src={toastGrey}
+                        />
+                      )}
+                      <LikeCount>
+                        {review.likedBy && review.likedBy.length}
+                      </LikeCount>
+                    </Beer>
+                    <BeerText>覺得很讚，賞作者一杯啤酒!</BeerText>
+                  </LikeDiv>
+                  {new Date(review.createdAt.seconds * 1000).toLocaleString(
+                    "en-US",
+                    options
+                  )}
+                  {open && <Comment close={setOpen} review={review} />}
+                </ReviewTag>
+                <Comments review={review} />
+              </>
             );
           })}
         </Div>

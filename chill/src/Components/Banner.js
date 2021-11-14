@@ -15,13 +15,13 @@ const Div = styled.div`
   outline: red solid;
 `;
 const Img = styled.img`
-  border-radius: 10px;
-  width: 600px;
+  border-radius: 20px;
+  width: 700px;
   /* height: 100%; */
 `;
 const Sliders = styled(Slider)`
-  /* outline: red solid; */
-  width: 600px;
+  margin: auto;
+  width: 700px;
 `;
 function Banner() {
   const settings = {

@@ -7,7 +7,8 @@ import firebase from "../utils/firebase";
 
 const SearchBar = styled.div`
   background-color: #f7f7f7;
-  border: #0d6663 1px solid;
+  box-shadow: 0 2px 6px 0 hsla(0, 0%, 0%, 0.2);
+  /* border: #0d6663 1px solid; */
   border-radius: 30px;
   height: 40px;
   width: 250px;
@@ -106,6 +107,7 @@ const Header = () => {
         {reviews.map((review) => {
           return (
             <Hashtag
+              key={review.id}
               onClick={(e) => {
                 onsubmit(e);
               }}

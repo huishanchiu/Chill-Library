@@ -5,7 +5,9 @@ import { IoIosCompass } from "react-icons/io";
 import { IoMdBeer } from "react-icons/io";
 import { RiBook3Fill } from "react-icons/ri";
 import { RiHome5Line } from "react-icons/ri";
-import userEvent from "@testing-library/user-event";
+import shortLogo from "../images/shortLogo.png";
+import Header from "../Components/Header";
+
 const HomeIcon = styled(RiHome5Line)`
   width: 30px;
   height: 100%;
@@ -25,6 +27,7 @@ const BookIcon = styled(RiBook3Fill)`
 const HeaderNav = styled.div`
   z-index: 2;
   position: fixed;
+  /* background-color: #343434; */
   background-color: #2c213b;
   display: flex;
   align-items: center;
@@ -39,16 +42,23 @@ const NavLink = styled(Link)`
     0 0 20px #ffa500;
   color: #fff6a9; */
 `;
+const Logo = styled.img`
+  display: block;
+  margin: 20px auto;
+  width: 150px;
+`;
 const Btn = styled.div`
+  width: 150px;
   display: flex;
   align-items: center;
   position: relative;
   text-decoration: none;
   border-radius: 50rem;
   padding: 0.3rem 0.6rem;
-  color: #2c213b;
-  background-color: #f93c10;
-  box-shadow: 0px 3px 0 #1abea7;
+  color: #feae29;
+  border: rgb(254, 239, 222) 1px solid;
+  /* background-color: #f93c10; */
+  box-shadow: 0px 3px 0 rgb(254, 239, 222, 0.7);
   transition: all 0.1s ease-in-out;
   &:hover {
     bottom: -7px;
@@ -59,6 +69,9 @@ const Btn = styled.div`
 const LandingHeader = () => {
   return (
     <HeaderNav>
+      {/* <NavLink to="/">
+        <Logo src={shortLogo} alt="" />
+      </NavLink> */}
       <NavLink to="/news">
         <Btn>
           <FindIcon />
@@ -71,13 +84,6 @@ const LandingHeader = () => {
           去憂主題
         </Btn>
       </NavLink>
-
-      {/* <NavLink to="/mybooks">
-        <Btn>
-          <BookIcon />
-          我的書櫃
-        </Btn>
-      </NavLink> */}
     </HeaderNav>
   );
 };

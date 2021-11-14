@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import shortLogo from "../images/shortLogo.png";
 import { IoIosCompass } from "react-icons/io";
 import { IoMdBeer } from "react-icons/io";
@@ -10,7 +10,6 @@ import { MdMood } from "react-icons/md";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import SignIn from "./SignIn";
 import { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import firebase from "../utils/firebase";
 
 const AvatarImg = styled.img`
@@ -27,8 +26,10 @@ const Avatar = styled(MdMood)`
 `;
 const SideNav = styled.div`
   width: 300px;
-  height: 100vh;
-  background-color: #2c213b;
+  /* height: 100vmin; */
+  /* background-color: #323741; */
+  /* background-color: #343434; */
+  background-color: rgba(44, 33, 59, 0.6);
 `;
 const Logo = styled.img`
   display: block;
@@ -52,7 +53,7 @@ const ThemeIcon = styled(IoMdBeer)`
 `;
 const FindIcon = styled(IoIosCompass)`
   padding-right: 10px;
-  width: 30px;
+  width: 35px;
   height: 100%;
 `;
 const BookIcon = styled(RiBook3Fill)`
@@ -90,16 +91,17 @@ const Btn = styled.div`
   text-decoration: none;
   border-radius: 50rem;
   padding: 0.3rem 0.6rem;
-  color: #2c213b;
-  background-color: #f93c10;
-  box-shadow: 0px 3px 0 #1abea7;
+  color: #feae29;
+  border: rgb(254, 239, 222) 1px solid;
+  /* background-color: #f93c10; */
+  box-shadow: 0px 3px 0 rgb(254, 239, 222, 0.7);
   transition: all 0.1s ease-in-out;
   &:hover {
     bottom: -7px;
     box-shadow: 0px 0px 0 #000;
   }
 `;
-
+console.log(firebase.auth().currentUser);
 const SideMenu = () => {
   const [userId, setUserId] = useState("");
   const history = useHistory();
@@ -126,18 +128,6 @@ const SideMenu = () => {
       });
   }, []);
 
-  // useEffect(() => {
-  //   let isUnmount = false;
-  //   firebase.auth().onAuthStateChanged((currentUser) => {
-  //     if (!isUnmount) {
-  //       setUser(currentUser);
-  //       setUserId(currentUser.uid);
-  //     }
-  //   });
-  //   return () => {
-  //     isUnmount = true;
-  //   };
-  // }, []);
   useEffect(() => {
     firebase.auth().currentUser ? (
       firebase.auth().onAuthStateChanged((currentUser) => {

@@ -31,16 +31,8 @@ const DoneIcon = styled(MdFileDownloadDone)`
 `;
 
 const Mask = styled.div`
-  /* background-image: url(${"https://products.ls.graphics/paaatterns/images/Ngaruroro-3.jpg"}); */
-  /* background-image: linear-gradient(
-      rgba(211, 211, 211, 0.6),
-      rgba(255, 255, 255, 0.1)
-    ),
-    url(${bookShelf}); */
-  /* background-size: contain; */
   display: flex;
   justify-content: center;
-
   position: fixed;
   top: 0;
   bottom: 0;

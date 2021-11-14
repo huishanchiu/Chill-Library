@@ -32,6 +32,14 @@ import LocomotiveScroll from "locomotive-scroll";
 import ReactFullpage from "@fullpage/react-fullpage";
 import scroll from "../images/scroll.gif";
 import Scrollmagic from "scrollmagic";
+import { Link } from "react-router-dom";
+import { GiClick } from "react-icons/gi";
+
+const ClickIcon = styled(GiClick)`
+  padding-right: 10px;
+  width: 30px;
+  height: 100%;
+`;
 // gsap.registerPlugin(ScrollTrigger);
 // const locoScroll = new LocomotiveScroll({
 //   el: document.querySelector(".background"),
@@ -635,6 +643,10 @@ function Landing() {
             <span className="logo__green">]</span>
           </div>
           <div className="logo__orange">Chill Library</div>
+          <Link className="btn" to="/themes">
+            <ClickIcon />
+            進入去憂圖書館
+          </Link>
         </div>
       </div>
 
