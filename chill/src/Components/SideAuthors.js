@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react/cjs/react.development";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import { Link } from "react-router-dom";
@@ -11,42 +11,22 @@ const Img = styled.img`
   border-radius: 50px;
   margin-right: 10px;
 `;
-const Side = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 250px;
-  margin-top: 50px;
-`;
 
-const SideBookTag = styled(Link)`
-  margin: 20px;
-  text-decoration: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: rgba(241, 250, 247, 0.5);
-  width: 250px;
-`;
-const SideBookImg = styled.img`
-  margin-top: 30px;
-  width: 100px;
-`;
-const SideBookName = styled.div`
-  background-color: #f1faf7;
-  font-size: 20px;
-  font-weight: 500;
-  color: #0d6663;
+const Count = styled.div`
+  font-size: 14px;
+  color: #a8abac;
 `;
 const UserInfo = styled.div`
   margin-top: 20px;
   display: flex;
+
   align-items: center;
 `;
 const User = styled.div`
   font-size: 16px;
   font-weight: 400;
 `;
-const Div = styled.h2`
+const Div = styled.h3`
   margin-top: 50px;
 `;
 const Info = styled.div``;
@@ -56,7 +36,6 @@ const SelfInfo = styled.div`
 
 function SideAuthors() {
   const [user, setUser] = useState("");
-  const [reviews, setReviews] = useState([]);
   const [allReviews, setAllReviews] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   useEffect(() => {
@@ -76,7 +55,8 @@ function SideAuthors() {
     user &&
       db
         .collection("users")
-        .where("uid", "!=", user.uid)
+        .orderBy("reviewCount", "desc")
+        .limit(5)
         .onSnapshot((collectionSnapshot) => {
           const data = collectionSnapshot.docs.map((docSnapshot) => {
             return { ...docSnapshot.data() };
@@ -84,6 +64,7 @@ function SideAuthors() {
           setAllUsers(data);
         });
   }, [user]);
+
   useEffect(() => {
     const db = firebase.firestore();
     db.collection("reviews").onSnapshot((collectionSnapshot) => {
@@ -94,23 +75,26 @@ function SideAuthors() {
       setAllReviews(data);
     });
   }, []);
-
+  console.log(allUsers);
   return (
     <div>
+      <Div>值得關注</Div>
       {allUsers.map((item) => {
         return (
-          <Div>
-            值得關注
-            <UserInfo>
+          <>
+            <UserInfo key={item.uid}>
               <Link to={`/mybooks/${item.uid}/collection`}>
                 <Img src={item.URL} alt="" />
               </Link>
               <User>
                 <Info>{item.userName}</Info>
-                <SelfInfo>{item.selfInfo}</SelfInfo>
               </User>
             </UserInfo>
-          </Div>
+            <div>
+              <SelfInfo>{item.selfInfo}</SelfInfo>
+              <Count>發表了#{item.reviewCount}篇去憂</Count>
+            </div>
+          </>
         );
       })}
     </div>

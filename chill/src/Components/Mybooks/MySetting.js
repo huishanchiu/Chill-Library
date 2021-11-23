@@ -1,4 +1,5 @@
 import React from "react";
+import Swal from "sweetalert2";
 import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { useState, useEffect } from "react";
@@ -7,6 +8,7 @@ import firebase from "../../utils/firebase";
 import bookCover from "../../images/021.jpeg";
 import { BsCamera } from "react-icons/bs";
 import { useParams } from "react-router-dom";
+import Loading from "../Loading";
 import "firebase/storage";
 
 const CameraIcon = styled(BsCamera)`
@@ -24,7 +26,7 @@ const CloseIcon = styled(AiOutlineCloseCircle)`
   cursor: pointer;
 `;
 const Icon = styled.div`
-  width: 680px;
+  width: 100%;
   padding: 0 10px;
   display: flex;
   justify-content: space-between;
@@ -40,7 +42,7 @@ const Btn = styled.div`
   font-weight: 500;
 `;
 const Mask = styled.div`
-  z-index: 1;
+  z-index: 4;
   color: #1abea7;
   position: fixed;
   top: 0;
@@ -56,12 +58,15 @@ const Mask = styled.div`
 `;
 
 const PopupInner = styled.div`
-  z-index: 2;
+  z-index: 5;
   position: fixed;
   padding: 15px 0;
-  width: 700px;
+  width: 50%;
   background-color: #f1faf7;
   border-radius: 1rem;
+  /* @media (max-width: 900px) {
+    width: 500px;
+  } */
 `;
 const Banner = styled.div`
   background-image: linear-gradient(
@@ -69,7 +74,7 @@ const Banner = styled.div`
       rgba(39, 55, 70, 0.6)
     ),
     url(${(props) => props.bannerPhoto});
-  width: 700px;
+  width: 100%;
   height: 200px;
   display: flex;
   justify-content: center;
@@ -130,51 +135,129 @@ const IconDiv = styled.div`
 `;
 
 function MySetting({ close, userInfo }) {
+  const [isLoading, setIsLoading] = useState(false);
   const [displayName, setDisplayName] = useState(userInfo.userName);
   const [selfInfo, setSelfInfo] = useState(userInfo.selfInfo);
   const [file, setFile] = useState(null);
   const [userImg, setUserImg] = useState(null);
   const previewUrl = file ? URL.createObjectURL(file) : userInfo.imageUrl;
-
   const previemUserImg = userImg ? URL.createObjectURL(userImg) : userInfo.URL;
-  console.log(userInfo);
+
   function onSubmit() {
+    setIsLoading(true);
     const documentRef = firebase
       .firestore()
       .collection("users")
       .doc(userInfo.uid);
-    if (file || displayName || selfInfo) {
+    if (file === null && userImg === null) {
+      documentRef.update({
+        userName: displayName || "",
+        selfInfo: selfInfo || "",
+      });
+      setIsLoading(false);
+      close(false);
+      Swal.fire({
+        text: "成功修改",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
+    } else if (userImg === null) {
       const fileRef = firebase.storage().ref("bookshelf-image/" + userInfo.uid);
       const metadata = {
         contentType: file.type,
       };
-
       fileRef.put(file, metadata).then(() => {
         fileRef.getDownloadURL().then((imageUrl) => {
           documentRef.update({
+            imageUrl: imageUrl,
             userName: displayName || "",
             selfInfo: selfInfo || "",
-            imageUrl: imageUrl || "",
           });
         });
       });
-    } else if (userImg) {
-      const doctRef = firebase
-        .firestore()
-        .collection("users")
-        .doc(userInfo.uid);
+      setIsLoading(false);
+      close(false);
+      Swal.fire({
+        text: "成功修改",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
+    } else if (file === null) {
       const userImgRef = firebase.storage().ref("user-photo/" + userInfo.uid);
       const metadata2 = {
         contentType: userImg.type,
       };
       userImgRef.put(userImg, metadata2).then(() => {
         userImgRef.getDownloadURL().then((userImageUrl) => {
-          doctRef.update({
+          documentRef.update({
             URL: userImageUrl,
+            userName: displayName || "",
+            selfInfo: selfInfo || "",
           });
         });
       });
+      Swal.fire({
+        text: "成功修改",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
+      setIsLoading(false);
+      close(false);
+    } else {
+      const fileRef = firebase.storage().ref("bookshelf-image/" + userInfo.uid);
+      const metadata = {
+        contentType: file.type,
+      };
+      fileRef.put(file, metadata).then(() => {
+        fileRef.getDownloadURL().then((imageUrl) => {
+          documentRef.update({
+            imageUrl: imageUrl,
+            userName: displayName || "",
+            selfInfo: selfInfo || "",
+          });
+        });
+      });
+      const userImgRef = firebase.storage().ref("user-photo/" + userInfo.uid);
+      const metadata2 = {
+        contentType: userImg.type,
+      };
+      userImgRef.put(userImg, metadata2).then(() => {
+        userImgRef.getDownloadURL().then((userImageUrl) => {
+          documentRef.update({
+            URL: userImageUrl,
+            userName: displayName || "",
+            selfInfo: selfInfo || "",
+          });
+        });
+      });
+      Swal.fire({
+        text: "成功修改",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
+      setIsLoading(false);
+      close(false);
     }
+
+    // else if (userImg) {
+    //   const doctRef = firebase
+    //     .firestore()
+    //     .collection("users")
+    //     .doc(userInfo.uid);
+    //   const userImgRef = firebase.storage().ref("user-photo/" + userInfo.uid);
+    //   const metadata2 = {
+    //     contentType: userImg.type,
+    //   };
+    //   userImgRef.put(userImg, metadata2).then(() => {
+    //     userImgRef.getDownloadURL().then((userImageUrl) => {
+    //       doctRef.update({
+    //         URL: userImageUrl,
+    //       });
+    //       setIsLoading(false);
+    //       close(false);
+    //     });
+    //   });
+    //   Swal.fire({
+    //     text: "成功修改",
+    //     confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+    //   });
+    // }
   }
   console.log(userInfo);
   return (
@@ -231,6 +314,7 @@ function MySetting({ close, userInfo }) {
           />
         </Edit>
       </PopupInner>
+      {isLoading ? <Loading /> : ""}
     </Mask>
   );
 }

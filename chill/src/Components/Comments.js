@@ -1,18 +1,67 @@
 import { React, useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import styled from "styled-components";
-import { IoMdBeer } from "react-icons/io";
-import { Link } from "react-router-dom";
 import firebase from "../utils/firebase";
-import { useHistory, useParams } from "react-router-dom";
-import toastGrey from "../images/toast_grey.png";
-import toastYellow from "../images/toast_gold.png";
-import Loading from "./Loading";
 import { BsPencilSquare } from "react-icons/bs";
 import { MdFileDownloadDone } from "react-icons/md";
 import { AiOutlineCloseCircle } from "react-icons/ai";
+import toastGrey from "../images/toast_grey.png";
+import toastYellow from "../images/toast_gold.png";
+import { BsFillChatTextFill } from "react-icons/bs";
+import Comment from "../Components/Comment";
+import { useSelector } from "react-redux";
+
+const TextIcon = styled(BsFillChatTextFill)`
+  cursor: pointer;
+  position: absolute;
+  color: #bdbcbc;
+  width: 26px;
+  height: 100%;
+`;
+
+const Beer = styled.div`
+  display: flex;
+  width: 70px;
+  height: 100%;
+  padding: 5px;
+`;
+
+const BeerIcon = styled.img`
+  cursor: pointer;
+  width: 35px;
+  margin-left: 30px;
+`;
+
+const BeerYellow = styled.img`
+  cursor: pointer;
+  width: 35px;
+  /* padding: 5px; */
+  margin-left: 30px;
+`;
+
+const BeerText = styled.p``;
+const LikeCount = styled.div`
+  color: orange;
+  font-weight: 500;
+  font-size: 13px;
+  /* color: white; */
+  width: 15px;
+  height: 15px;
+  border-radius: 10px;
+  text-align: center;
+`;
+const Quote = styled.h3`
+  margin-right: 20px;
+  color: tomato;
+`;
+const LikeDiv = styled.div`
+  position: relative;
+  display: flex;
+`;
+
 const CloseIcon = styled(AiOutlineCloseCircle)`
   display: none;
-  color: #1abea7;
+  color: rgba(211, 211, 211, 0.8);
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -38,42 +87,24 @@ const DoneIcon = styled(MdFileDownloadDone)`
   height: 30px;
 `;
 const Edit = styled.div`
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
 `;
 
 const CommentTag = styled.div`
+  width: 100%;
   color: rgba(255, 240, 221, 0.6);
   padding-bottom: 20px;
-  width: 100vmin;
-  border-bottom: rgba(254, 174, 32, 0.3) 1px solid;
+
   position: relative;
 `;
 
-const CommentDiv = styled.textarea`
-  font-size: 18px;
-  ::placeholder {
-    color: rgba(211, 211, 211, 0.8);
-  }
-  border: none;
-  outline: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-  resize: none;
-  width: 99%;
-  height: 300px;
-  border-bottom-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
-`;
-const CommentBtn = styled.div`
+const CommentCount = styled.div`
   cursor: pointer;
-  width: 40px;
-  border: grey solid 1px;
-  background-color: #f2f2f2;
-  color: #0d6663;
+  width: 100%;
+  color: rgba(255, 240, 221, 0.8);
+  padding: 10px 0;
 `;
-const CommentCount = styled.h4``;
 const CommentAuthorPhoto = styled.img`
   width: 30px;
   height: 30px;
@@ -83,10 +114,12 @@ const CommentAuthorName = styled.div`
   margin-left: 10px;
 `;
 const CommentContent = styled.div`
+  padding: 20px 0;
+  border-bottom: rgba(254, 174, 32, 0.3) 1px solid;
   position: relative;
-  &:hover :first-child {
+  /* &:hover :first-child {
     display: block;
-  }
+  } */
 `;
 const ContentEdit = styled.textarea``;
 const AuthorDiv = styled.div`
@@ -98,6 +131,9 @@ const Text = styled.div`
 `;
 
 function Comments({ review }) {
+  const currentUser = useSelector((state) => state.currentUser);
+  const [commentOpen, setCommentOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [comments, setComments] = useState([]);
   const [editReview, setEditReview] = useState(undefined);
   const [commentContent, setCommentContent] = useState("");
@@ -114,33 +150,77 @@ function Comments({ review }) {
       console.log(editReview);
     }
   }
-  const toggleSave = (id) => {
+  const toggleSave = (reviewId, commentId) => {
     setEditReview(false);
-    AddToFirebase(id);
+    AddToFirebase(reviewId, commentId);
   };
-  function AddToFirebase(commentId) {
+
+  function AddToFirebase(reviewId, commentId) {
     firebase
       .firestore()
       .collection("reviews")
-      .doc(review.id)
+      .doc(reviewId)
       .collection("comments")
       .doc(commentId)
       .update({
         content: `${commentContent}`,
       });
   }
+  const toggleLiked = (e, isLiked) => {
+    const uid = firebase.auth().currentUser.uid;
+    firebase
+      .firestore()
+      .collection("reviews")
+      .doc(e.target.dataset.id)
+      .update({
+        likedCount: firebase.firestore.FieldValue.increment(1),
+        likedBy: firebase.firestore.FieldValue.arrayUnion(uid),
+      });
+  };
 
   function toggleRemove(commentId) {
-    if (window.confirm("確定要刪除這篇留言嗎？")) {
-      firebase
-        .firestore()
-        .collection("reviews")
-        .doc(review.id)
-        .collection("comments")
-        .doc(commentId)
-        .delete();
-    }
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons
+      .fire({
+        text: "確定要刪除留言嗎？",
+        // icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "確認",
+        cancelButtonText: "再想想",
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          swalWithBootstrapButtons.fire({
+            text: "刪除成功",
+          });
+          firebase
+            .firestore()
+            .collection("reviews")
+            .doc(review.id)
+            .collection("comments")
+            .doc(commentId)
+            .delete();
+        } else if (
+          /* Read more about handling dismissals below */
+          result.dismiss === Swal.DismissReason.cancel
+        ) {
+          swalWithBootstrapButtons.fire(
+            "Cancelled",
+            "Your imaginary file is safe :)",
+            "error"
+          );
+        }
+      });
   }
+
   useEffect(() => {
     firebase
       .firestore()
@@ -154,71 +234,118 @@ function Comments({ review }) {
           return { ...docSnapshot.data(), id };
         });
         setComments(data);
-        console.log(data);
       });
   }, []);
+
+  const isLiked = review.likedBy?.includes(currentUser?.uid);
+  function showComment() {
+    if (commentOpen) {
+      setCommentOpen(false);
+    } else {
+      setCommentOpen(true);
+    }
+  }
   return (
-    <div>
-      <CommentTag>
-        <CommentCount>共{comments.length || 0}則留言</CommentCount>
-        {comments.map((comment) => {
-          return (
-            <>
-              <CommentContent key={comment.id}>
-                {comment.author.uid === firebase.auth().currentUser.uid ? (
-                  <>
-                    <Close>
-                      <CloseIcon onClick={(e) => toggleRemove(comment.id)} />
-                    </Close>
+    <>
+      {currentUser ? (
+        <CommentTag>
+          <LikeDiv>
+            <TextIcon onClick={() => setOpen(true)} />
+            <Beer>
+              {isLiked ? (
+                <BeerYellow
+                  onClick={(e) => toggleLiked(e, isLiked)}
+                  data-id={review.id}
+                  src={toastYellow}
+                />
+              ) : (
+                <BeerIcon
+                  onClick={(e) => toggleLiked(e, isLiked)}
+                  data-id={review.id}
+                  src={toastGrey}
+                />
+              )}
+              {/* <LikeCount>{review.likedBy && review.likedBy.length}</LikeCount> */}
+              {review.likedCount >= 1 ? (
+                <LikeCount>{review.likedCount && review.likedCount}</LikeCount>
+              ) : (
+                ""
+              )}
+            </Beer>
+            {/* <BeerText>覺得很讚，賞作者一杯啤酒!</BeerText> */}
+          </LikeDiv>
+          <CommentCount onClick={showComment}>
+            共{comments.length || 0}則留言
+          </CommentCount>
+          {open && <Comment review={review} close={setOpen} />}
+          {comments.map((comment) => {
+            return (
+              <div key={comment.id}>
+                {commentOpen && (
+                  <CommentContent>
+                    {comment.author.uid === firebase.auth().currentUser.uid ? (
+                      <>
+                        <Close>
+                          <CloseIcon
+                            onClick={(e) => toggleRemove(comment.id)}
+                          />
+                        </Close>
 
-                    <Edit>
-                      <EditIcon
-                        onClick={() => {
-                          clickEdit(comment.id);
-                        }}
+                        <Edit>
+                          <EditIcon
+                            onClick={() => {
+                              clickEdit(comment.id);
+                            }}
+                          />
+
+                          {editReview === comment.id ? (
+                            <DoneIcon
+                              onClick={() => {
+                                toggleSave(comment.docId, comment.id);
+                              }}
+                            />
+                          ) : (
+                            ""
+                          )}
+                        </Edit>
+                      </>
+                    ) : (
+                      ""
+                    )}
+                    <AuthorDiv>
+                      <CommentAuthorPhoto
+                        src={comment.author.photoURL}
+                        alt=""
                       />
+                      <CommentAuthorName>
+                        {comment.author.displayName || "使用者"}
+                      </CommentAuthorName>
+                    </AuthorDiv>
 
-                      {editReview === comment.id ? (
-                        <DoneIcon
-                          onClick={() => {
-                            toggleSave(comment.id);
+                    {editReview === comment.id ? (
+                      <>
+                        <ContentEdit
+                          defaultValue={comment.content}
+                          onChange={(e) => {
+                            setCommentContent(e.target.value);
                           }}
                         />
-                      ) : (
-                        ""
-                      )}
-                    </Edit>
-                  </>
-                ) : (
-                  ""
-                )}
-                <AuthorDiv>
-                  <CommentAuthorPhoto src={comment.author.photoURL} alt="" />
-                  <CommentAuthorName>
-                    {comment.author.displayName || "使用者"}
-                  </CommentAuthorName>
-                </AuthorDiv>
+                      </>
+                    ) : (
+                      <Text>{comment.content}</Text>
+                    )}
 
-                {editReview === comment.id ? (
-                  <>
-                    <ContentEdit
-                      defaultValue={comment.content}
-                      onChange={(e) => {
-                        setCommentContent(e.target.value);
-                      }}
-                    />
-                  </>
-                ) : (
-                  <Text>{comment.content}</Text>
+                    {comment.createdAt.toDate().toLocaleString()}
+                  </CommentContent>
                 )}
-
-                {comment.createdAt.toDate().toLocaleString()}
-              </CommentContent>
-            </>
-          );
-        })}
-      </CommentTag>
-    </div>
+              </div>
+            );
+          })}
+        </CommentTag>
+      ) : (
+        ""
+      )}
+    </>
   );
 }
 

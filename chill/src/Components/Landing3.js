@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from "react";
-
+import React, { useEffect } from "react";
 import styled from "styled-components";
-import { gsap, Scrollbar } from "gsap";
+import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "../styles3.css";
 import roadPng from "../images/grayRoad.png";
@@ -25,13 +24,8 @@ import theme__5 from "../images/theme__5.png";
 import theme__6 from "../images/theme__6.png";
 import car from "../images/car.png";
 import logo from "../images/ch.png";
-import dining from "../images/dining.png";
 import LandingHeader from "./LandingHeader";
-import ReactScrollJacker from "react-scroll-jacker";
-import LocomotiveScroll from "locomotive-scroll";
-import ReactFullpage from "@fullpage/react-fullpage";
 import scroll from "../images/scroll.gif";
-import Scrollmagic from "scrollmagic";
 import { Link } from "react-router-dom";
 import { GiClick } from "react-icons/gi";
 
@@ -40,57 +34,15 @@ const ClickIcon = styled(GiClick)`
   width: 30px;
   height: 100%;
 `;
-// gsap.registerPlugin(ScrollTrigger);
-// const locoScroll = new LocomotiveScroll({
-//   el: document.querySelector(".background"),
-//   smooth: true,
-// });
-// locoScroll.on("scroll", ScrollTrigger.update);
-// ScrollTrigger.scrollerProxy(".smooth-scroll", {
-//   scrollTop(value) {
-//     return arguments.length
-//       ? locoScroll.scrollTo(value, 0, 0)
-//       : locoScroll.scroll.instance.scroll.y;
-//   }, // we don't have to define a scrollLeft because we're only scrolling vertically.
-//   getBoundingClientRect() {
-//     return {
-//       top: 0,
-//       left: 0,
-//       width: window.innerWidth,
-//       height: window.innerHeight,
-//     };
-//   },
-//   // LocomotiveScroll handles things completely differently on mobile devices - it doesn't even transform the container at all! So to get the correct behavior and avoid jitters, we should pin things with position: fixed on mobile. We sense it by checking to see if there's a transform applied to the container (the LocomotiveScroll-controlled element).
-//   pinType: document.querySelector(".smooth-scroll").style.transform
-//     ? "transform"
-//     : "fixed",
-// });
-// const scroll = new LocomotiveScroll({
-//   el: document.querySelector(".background"),
-//   smooth: true,
-//   lerp: 0.01,
-//   repeat: true,
-//   tablet: {
-//     smooth: true,
-//     breakpoint: 250,
-//   },
-//   smartphone: {
-//     smooth: false,
-//   },
-// });
 
 function Landing() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-
     gsap.to(".scroll", {
       scrollTrigger: {
         trigger: ".scroll",
-        start: "top 30%",
-        // endTrigger: ".theme__1",
-        // end: "top 400px",
+        start: "bottom 30%",
         scrub: 3,
-        // pin: true,
         id: "scroll",
         // markers: true,
       },
@@ -101,204 +53,136 @@ function Landing() {
     });
     let t1 = gsap.timeline({
       scrollTrigger: {
-        scroller: ".themes",
-        // trigger: ".scroll",
-        start: "bottom 30%",
-        endTrigger: ".theme__2",
-        end: "top 600px",
-        // end: "+=80px",
         scrub: 40,
         id: "theme__111111",
-        // markers: true,
-        // ease: "back",
       },
     });
     t1.to(".theme__1 ", {
       opacity: 1,
-      duration: 15,
+      duration: 5,
     }).to(".theme__1", {
       xPercent: 100,
-      // x: 20,
       y: -15,
-      opacity: 0,
-      duration: 10,
     });
 
     ScrollTrigger.create({
       animation: t1,
       trigger: ".theme__1",
       start: "top top",
-      end: "+=800px",
-      scrub: 20,
+      end: "+=1500px",
+      scrub: 5,
       pin: true,
-      anticipatePin: 1,
-      // duration: 10,
+      anticipatePin: 4,
     });
 
     let t2 = gsap.timeline({
       scrollTrigger: {
-        trigger: ".theme__1",
-        start: "bottom 20%",
-        endTrigger: ".theme__3",
-        end: "top 500px",
-        // end: "+=80px",
-        scrub: 30,
+        scrub: 40,
         id: "theme__2",
-        // markers: true,
-
-        ease: "back",
       },
     });
     t2.to(".theme__2", {
       opacity: 1,
-      duration: 15,
+      duration: 5,
     }).to(".theme__2", {
-      x: 20,
-      y: 15,
-      opacity: 0,
-      duration: 10,
+      xPercent: 100,
     });
     let t3 = gsap.timeline({
       scrollTrigger: {
-        trigger: ".theme__2",
-        start: "top 0%",
-        endTrigger: ".theme__4",
-        end: "top 600px",
-        // end: "+=30px",
-        pin: true,
-        scrub: 30,
+        scrub: 40,
         id: ".theme__3",
-        // markers: true,
-        ease: "back",
       },
     });
     t3.to(".theme__3", {
       opacity: 1,
-      duration: 15,
+      duration: 5,
     }).to(".theme__3", {
-      x: -20,
-      opacity: 0,
-      duration: 3,
+      xPercent: 100,
     });
     let t4 = gsap.timeline({
       scrollTrigger: {
-        trigger: ".theme__3",
-        start: "bottom 30%",
-        endTrigger: ".theme__5",
-        end: "top 200px",
-        // pin: true,
-        scrub: 30,
+        scrub: 40,
         id: "t4",
-        ease: "back",
-        // markers: true,
       },
     });
     t4.to(".theme__4", {
       opacity: 1,
-      duration: 15,
+      duration: 5,
     }).to(".theme__4", {
-      x: 10,
-      y: 15,
-      opacity: 0,
-      duration: 3,
+      xPercent: 100,
     });
     let t5 = gsap.timeline({
       scrollTrigger: {
-        trigger: ".theme__4",
-        start: "bottom 40%",
-        endTrigger: ".theme__6",
-        end: "top 300px",
-        // pin: true,
-        scrub: 30,
+        scrub: 40,
         id: "light__5__right",
-        // markers: true,
       },
     });
     t5.to(".theme__5", {
       opacity: 1,
-      duration: 15,
-    }).to(".theme__5", {
-      x: -20,
-      y: -15,
-      opacity: 0,
-      duration: 3,
-    });
+      duration: 5,
+    }).to(".theme__5", {});
     let t6 = gsap.timeline({
       scrollTrigger: {
-        trigger: ".theme__5",
-        start: "bottom 40%",
-        endTrigger: ".logo",
-        end: "top 100px",
-        // pin: true,
-        scrub: 30,
+        scrub: 40,
         id: ".theme__6",
-        // markers: true,
       },
     });
     t6.to(".theme__6", {
       opacity: 1,
-      duration: 15,
-    });
-    t6.to(".theme__6", {
-      x: -20,
-      y: 15,
-      opacity: 0,
       duration: 3,
     });
-    let t7 = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".theme__6",
-        start: "top -420%",
-        // pin: true,
-        scrub: 20,
-        id: ".777",
-        // markers: true,
-      },
+    t6.to(".theme__6", {
+      xPercent: 100,
     });
-    t7.to(".logo", {
-      opacity: 1,
-      duration: 4,
+
+    ScrollTrigger.create({
+      animation: t2,
+      trigger: ".theme__2",
+      start: "top top",
+      end: "+=1500px",
+      scrub: 20,
+      pin: true,
+      anticipatePin: 4,
     });
     ScrollTrigger.create({
       animation: t3,
       trigger: ".theme__3",
       start: "top top",
-      end: "+=800px",
+      end: "+=1500px",
       scrub: 20,
       pin: true,
-      anticipatePin: 1,
+      anticipatePin: 4,
     });
     ScrollTrigger.create({
       animation: t4,
       trigger: ".theme__4",
       start: "top top",
-      end: "+=800px",
+      end: "+=1500px",
       scrub: 20,
       pin: true,
-      anticipatePin: 1,
+      anticipatePin: 4,
     });
 
     ScrollTrigger.create({
       animation: t5,
       trigger: ".theme__5",
       start: "top top",
-      end: "+=800px",
-      scrub: 10,
+      end: "+=1500px",
+      scrub: 20,
       pin: true,
-      anticipatePin: 1,
+      anticipatePin: 4,
       ease: "back",
     });
     ScrollTrigger.create({
       animation: t6,
       trigger: ".theme__6",
       start: "top top",
-      end: "+=800px",
+      end: "+=1500px",
       scrub: 20,
       pin: true,
-      anticipatePin: 1,
+      anticipatePin: 4,
     });
-  }, []);
-  useEffect(() => {
+
     gsap.registerPlugin(ScrollTrigger);
     gsap.to(".triangle", {
       rotation: 360,
@@ -313,7 +197,7 @@ function Landing() {
         start: "bottom 40%",
         endTrigger: ".theme__1",
         end: "bottom 100px",
-        scrub: 20,
+        scrub: 10,
         id: "l1",
         // markers: true,
       },
@@ -330,6 +214,7 @@ function Landing() {
         end: "bottom 50px",
         scrub: 20,
         id: "r1",
+
         // markers: true,
       },
       x: 60,
@@ -355,12 +240,12 @@ function Landing() {
         start: "top 20%",
         endTrigger: ".theme__3",
         end: "top 500px",
-        scrub: 70,
+        scrub: 50,
         id: "l2-2",
         // markers: true,
       },
-      x: -300,
-      y: 500,
+      x: -360,
+      y: 600,
     });
     gsap.to(".light__2__right", {
       scrollTrigger: {
@@ -379,12 +264,12 @@ function Landing() {
         start: "top 20%",
         endTrigger: ".theme__3",
         end: "top 500px",
-        scrub: 70,
+        scrub: 50,
         id: "r2-2",
         // markers: true,
       },
-      x: 300, //300
-      y: 500, //500
+      x: 360, //300
+      y: 600, //500
       duration: 25,
     });
 
@@ -405,12 +290,12 @@ function Landing() {
         start: "top 40%",
         endTrigger: ".theme__4",
         end: "top 600px",
-        scrub: 60,
+        scrub: 40,
         id: "l3-2",
         // markers: true,
       },
-      x: -300,
-      y: 500,
+      x: -360,
+      y: 600,
       duration: 25,
     });
     gsap.to(".light__3__right", {
@@ -430,12 +315,12 @@ function Landing() {
         start: "top 40%",
         endTrigger: ".theme__4",
         end: "top 600px",
-        scrub: 60,
+        scrub: 40,
         id: "l3-2",
         // markers: true,
       },
-      x: 300,
-      y: 500,
+      x: 360,
+      y: 600,
       // duration: 5,
     });
 
@@ -456,12 +341,12 @@ function Landing() {
         start: "top 30%",
         endTrigger: ".theme__5",
         end: "top 500px",
-        scrub: 70,
+        scrub: 50,
         id: "l4-2",
         // markers: true,
       },
-      x: -300,
-      y: 500,
+      x: -360,
+      y: 600,
       duration: 25,
     });
 
@@ -483,19 +368,19 @@ function Landing() {
         start: "top 30%",
         endTrigger: ".theme__5",
         end: "top 500px",
-        scrub: 70,
+        scrub: 50,
         id: "l4-2",
         // markers: true,
       },
-      x: 300,
-      y: 500,
+      x: 330,
+      y: 550,
       duration: 25,
     });
     gsap.to(".light__5__right", {
       scrollTrigger: {
         trigger: ".theme__5",
         start: "bottom 40%",
-        scrub: 20,
+        scrub: 5,
         id: "l5",
         // markers: true,
       },
@@ -504,26 +389,38 @@ function Landing() {
     });
     gsap.to(".light__5__right", {
       scrollTrigger: {
-        trigger: ".theme__4",
+        trigger: ".theme__5",
         start: "bottom 40%",
         endTrigger: ".theme__6",
         end: "top 300px",
-        scrub: 20,
+        scrub: 30,
         id: "l5-2",
         // markers: true,
       },
-      x: 270,
-      y: 450,
+      x: 330,
+      y: 550,
       duration: 25,
     });
 
     gsap.to(".middle__6", {
       scrollTrigger: {
-        trigger: ".theme__5",
-        start: "bottom 40%",
+        trigger: ".theme__6",
+        start: "bottom 20%",
         endTrigger: ".logo",
         end: "top 100px",
-        scrub: 10,
+        scrub: 20,
+        id: "l5",
+        // markers: true,
+      },
+      opacity: 1,
+      duration: 4,
+    });
+    gsap.to(".logo", {
+      scrollTrigger: {
+        trigger: ".theme__6",
+        start: "bottom 20%",
+
+        scrub: 20,
         id: "l5",
         // markers: true,
       },
@@ -591,49 +488,69 @@ function Landing() {
         <div className="theme theme__1">
           <img className="theme__1__img" src={theme__1} alt="" />
           <div className="theme__1__content">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque
-            tempora maxime dolorum debitis perspiciatis expedita rem ipsam eum
-            ipsum est aliquid neque, nobis vitae quis, aut numquam non in iste.
+            <strong>宅在家好發慌？</strong>
+            <br />
+            <strong>
+              「慢一點，好讓靈魂跟上來！」安頓自我第一步，啟動心靈連線。疫病時代，一個重新靠近、傾聽自己的最佳契機。
+            </strong>
           </div>
         </div>
         <div className="theme theme__2">
           <img className="theme__2__img" src={theme__2} alt="" />
           <div className="theme__2__content">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque
-            tempora maxime dolorum debitis perspiciatis expedita rem ipsam eum
-            ipsum est aliquid neque, nobis vitae quis, aut numquam non in iste.
+            <strong>錢錢去哪了？</strong>
+            <br />
+            <strong>
+              認真工作的你，為什麼總是為錢所困？只有「讓錢為你工作」，才能實現財富自由！本書將讓你從一位勞動者，轉身成為資本家，透過財富的力量，讓自己擁有選擇的自由。
+            </strong>
           </div>
         </div>
         <div className="theme theme__3">
           <img className="theme__3__img" src={theme__3} alt="" />
           <div className="theme__3__content">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque
-            tempora maxime dolorum debitis perspiciatis expedita rem ipsam eum
-            ipsum est aliquid neque, nobis vitae quis, aut numquam non in iste.
+            <strong>一個人好孤單？</strong>
+            <br />
+            <strong>
+              停下腳步，按下暫停鍵，跟久違的自己相遇！
+              變動時代的日常喘息，忙碌身心的安頓練習。
+              一個重新靠近自己，傾聽內在聲音的最佳時機。
+            </strong>
           </div>
         </div>
         <div className="theme theme__4">
           <img className="theme__4__img" src={theme__4} alt="" />
           <div className="theme__4__content">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque
-            tempora maxime dolorum debitis perspiciatis expedita rem ipsam eum
-            ipsum est aliquid neque, nobis vitae quis, aut numquam non in iste.
+            <strong>想不出好點子？</strong>
+            <br />
+            <strong>
+              筆記抄滿紙，不及畫一張圖！ 秒懂重點 × 找出邏輯 × 瞬間溝通 ×
+              引爆創意 沒想法OUT，好點子GET！
+            </strong>
           </div>
         </div>
         <div className="theme theme__5">
           <img className="theme__5__img" src={theme__5} alt="" />
           <div className="theme__5__content">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque
-            tempora maxime dolorum debitis perspiciatis expedita rem ipsam eum
-            ipsum est aliquid neque, nobis vitae quis, aut numquam non in iste.
+            <strong>如何上火箭？</strong>
+            <br />
+            <strong>
+              我們都得了「覺得自己不夠好」這種病！ 你自卑，常覺得自己不完美；
+              你沒自信，必須等一切到位再說； 你找藉口，各種理由一大堆……
+              請問你還要讓這種負面想法寄生多久？
+              否定自己，請到此為止；認識自己，從現在開始！
+            </strong>
           </div>
         </div>
         <div className="theme theme__6">
           <img className="theme__6__img" src={theme__6} alt="" />
           <div className="theme__6__content">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque
-            tempora maxime dolorum debitis perspiciatis expedita rem ipsam eum
-            ipsum est aliquid neque, nobis vitae quis, aut numquam non in iste.
+            <strong>心裡總是卡卡的？</strong>
+            <br />
+            <strong>
+              這世界變得愈來愈快， 但總有些文字能撫平內心的皺摺， 療癒困難的心，
+              願你能學會「和自己相處」， 從「我」了解「我們」，
+              看見自己和別人身上的光。
+            </strong>
           </div>
         </div>
         <div className="logo">

@@ -1,4 +1,5 @@
 import React from "react";
+import Swal from "sweetalert2";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import firebase from "../../utils/firebase";
@@ -31,6 +32,7 @@ const DoneIcon = styled(MdFileDownloadDone)`
 `;
 
 const Mask = styled.div`
+  z-index: 4;
   display: flex;
   justify-content: center;
   position: fixed;
@@ -39,12 +41,13 @@ const Mask = styled.div`
   left: 0;
   min-width: 100vw;
   min-height: 100vh;
-  background-color: rgba(211, 211, 211, 0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
 `;
 
 const PopupInner = styled.div`
+  z-index: 5;
   background-image: linear-gradient(
       rgba(241, 250, 247, 0.9),
       rgba(241, 250, 247, 0.7)
@@ -52,21 +55,40 @@ const PopupInner = styled.div`
     url(${book});
 
   display: flex;
+  justify-content: center;
   position: relative;
-  padding: 30px;
-  width: 700px;
+  padding: 10px;
+  width: 50%;
   background-color: #f1faf7;
   border-radius: 1rem;
+  @media (max-width: 1250px) {
+    width: 60%;
+  }
+
+  @media (max-width: 1000px) {
+    flex-direction: column;
+    align-items: center;
+    /* width: 60%; */
+  }
+  @media (max-width: 768px) {
+    width: 80%;
+  }
 `;
 const BookImg = styled.img`
   cursor: pointer;
-  width: 200px;
+  width: 25%;
   height: 100%;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.19),
+    10px 10px 10px rgba(0, 0, 0, 0.23);
   margin: 20px 30px;
+  @media (max-width: 699px) {
+    width: 40%;
+  }
 `;
+
 const Div = styled.div`
   margin: 20px 10px;
+  width: 90%;
 `;
 const Inner = styled.div`
   color: #1aa98f;
@@ -84,10 +106,17 @@ const Inline = styled.div`
   outline: red solid;
 `;
 const BtnDiv = styled.div`
+  width: 100%;
   margin-top: 50px;
   display: flex;
+  @media (max-width: 699px) {
+    flex-direction: column;
+    width: 90%;
+    margin: auto;
+  }
 `;
 const Btn = styled.div`
+  white-space: nowrap;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -115,9 +144,7 @@ function BookState() {
   const [borrowPerson, setbBorrowPerson] = useState(false);
   const [person, setPerson] = useState("");
   let BookName = useParams();
-  console.log(BookName.userid);
-  console.log(check);
-  console.log(borrow);
+
   function addToFirebase(bookInfo) {
     firebase
       .firestore()
@@ -132,9 +159,12 @@ function BookState() {
       });
     setEdit(false);
     setbBorrowPerson(false);
+    Swal.fire({
+      text: "已儲存",
+      confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+    });
   }
-  console.log(BookName.id);
-  console.log(BookName.userid);
+
   useEffect(() => {
     firebase
       .firestore()
@@ -163,24 +193,53 @@ function BookState() {
         setBook(doc.data());
       });
   }, []);
+
   function toggleUncellect(title) {
-    if (window.confirm("確定要移除這本書嗎？")) {
-      firebase
-        .firestore()
-        .collection("books")
-        .doc(title)
-        .update({
-          collectedBy: firebase.firestore.FieldValue.arrayRemove(
-            BookName.userid
-          ),
-        });
-      history.push(`/mybooks/${BookName.userid}/collection`);
-      // window.location.href = `/mybooks/${BookName.userid}/collection`;
-    }
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons
+      .fire({
+        text: "確定要移除這本書嗎？",
+        // icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "確認",
+        cancelButtonText: "再想想",
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          swalWithBootstrapButtons.fire({
+            text: "刪除成功",
+          });
+          firebase
+            .firestore()
+            .collection("books")
+            .doc(title)
+            .update({
+              collectedBy: firebase.firestore.FieldValue.arrayRemove(
+                BookName.userid
+              ),
+            });
+          history.push(`/mybooks/${BookName.userid}/collection`);
+        } else if (
+          /* Read more about handling dismissals below */
+          result.dismiss === Swal.DismissReason.cancel
+        ) {
+          swalWithBootstrapButtons.fire(
+            "Cancelled",
+            "Your imaginary file is safe :)",
+            "error"
+          );
+        }
+      });
   }
-  // console.log(Object.keys(bookShelf).length >= 0);
-  // console.log(bookShelf);
-  // console.log(bookShelf.read);
+
   return (
     <>
       <Mask>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import firebase from "../../utils/firebase";
 import { Link, useParams } from "react-router-dom";
 import bookShelf from "../../images/bookShelf.jpeg";
+import Loading from "../Loading";
 
 const AllBook = styled.div`
   color: #0b4d4a;
@@ -16,22 +17,19 @@ const AllBook = styled.div`
     ),
     url(${bookShelf});
   justify-content: space-around;
-  width: 700px;
+  width: 100%;
   padding: 20px;
   display: flex;
   flex-wrap: wrap;
 `;
 const BookTag = styled(Link)`
   position: relative;
-  padding: 20px 10px 0;
+  padding: 10px 10px 0;
   text-decoration: none;
   width: 150px;
   margin: 10px 20px 0;
-  &:hover {
-    display: block;
-  }
 `;
-const BookContent = styled.p`
+const BookContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -48,16 +46,21 @@ const BookImg = styled.img`
   cursor: pointer;
   height: 220px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  &:hover {
+    height: 230px;
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.19),
+      10px 20px 10px rgba(0, 0, 0, 0.23);
+  }
 `;
 const BookName = styled.div`
   margin-top: 10px;
-  /* background-color: #f1faf7; */
   font-size: 18px;
   font-weight: 900;
   color: #2c213b;
 `;
 
-function Collection() {
+function Collection({ setActiveItem, userIdOnly }) {
+  const [isLoading, setIsLoading] = useState(false);
   const [uid, setUid] = useState("");
   let userId = useParams();
   const [bookList, setBookList] = useState([]);
@@ -65,21 +68,28 @@ function Collection() {
   useEffect(() => {
     setUid(firebase.auth().currentUser?.uid);
   }, []);
+
   useEffect(() => {
-    db.collection("books")
-      .where("collectedBy", "array-contains", userId.userid)
+    setIsLoading(true);
+    const unsubscribe = db
+      .collection("books")
+      .where("collectedBy", "array-contains", userIdOnly)
       .onSnapshot((collectionSnapshot) => {
         const data = collectionSnapshot.docs.map((docSnapshot) => {
           return { ...docSnapshot.data() };
         });
         setBookList(data);
+        setIsLoading(false);
+        setActiveItem("collection");
       });
-  }, []);
-  console.log(userId.userid);
+    return () => {
+      unsubscribe();
+    };
+  }, [userIdOnly]);
 
-  console.log(bookList);
   return (
     <>
+      {isLoading ? <Loading /> : ""}
       {bookList.length > 0 ? (
         <AllBook>
           {bookList.map((item) => {
@@ -88,7 +98,7 @@ function Collection() {
 
             return (
               <BookTag
-                to={`/mybooks/${userId.userid}/collection/${item.title}`}
+                to={`/mybooks/${userIdOnly}/collection/${item.title}`}
                 key={item.id}
               >
                 <BookContent>

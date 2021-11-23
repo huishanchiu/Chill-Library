@@ -4,13 +4,26 @@ import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react/cjs/react.development";
+import { useState, useEffect } from "react";
 import firebase from "../utils/firebase";
+import { v4 as uuidv4 } from "uuid";
 
 const Sliders = styled(Slider)`
   display: flex;
   margin: 10px auto 20px;
-  width: 750px;
+  width: 700px;
+  @media (max-width: 1250px) {
+    width: 600px;
+  }
+  @media (max-width: 1080px) {
+    width: 550px;
+  }
+  @media (max-width: 768px) {
+    width: 500px;
+  }
+  @media (max-width: 600px) {
+    display: none;
+  }
 `;
 const SideBookTag = styled(Link)`
   border-radius: 15px;
@@ -23,19 +36,17 @@ const SideBookTag = styled(Link)`
   background-color: rgba(241, 250, 247, 0.5);
 `;
 const SideBookImg = styled.img`
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  align-self: center;
+  justify-self: center;
   margin: auto;
   height: 150px;
-`;
-const SideBookName = styled.div`
-  background-color: #f1faf7;
-  font-size: 20px;
-  font-weight: 500;
-  color: #0d6663;
 `;
 
 const Hashtag = styled.div`
   color: rgba(52, 52, 52);
   margin: 10px 5px;
+  font-weight: 700;
 `;
 const Hashtags = styled.div`
   display: flex;
@@ -90,12 +101,11 @@ function SlideBooks() {
     infinite: true,
     speed: 500,
     slidesToShow: 3,
-    slidesToScroll: 1,
+    slidesToScroll: 2,
     autoplay: true,
     autoplaySpeed: 6000,
   };
-  console.log(allReviews);
-  console.log(reviews);
+
   return (
     <div>
       {allReviews.length > 0 ? (
@@ -103,12 +113,14 @@ function SlideBooks() {
           <Sliders {...settings}>
             {allReviews.map((item) => {
               return (
-                <>
-                  <SideBookTag key={item.id} to={`/book/${item.bookName}`}>
+                <div key={uuidv4()}>
+                  <SideBookTag to={`/book/${item.bookName}`}>
                     <SideBookImg />
                     {/* <SideBookName>{item.bookName}</SideBookName> */}
                     <SideBookImg
-                      src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
+                      src={`https://books.google.com/books/publisher/content/images/frontcover/${
+                        item.id || item.bookId
+                      }?fife=w400-h600`}
                       alt=""
                     />
 
@@ -118,7 +130,7 @@ function SlideBooks() {
                       {item.hashtag3 ? <Hashtag>#{item.hashtag3}</Hashtag> : ""}
                     </Hashtags>
                   </SideBookTag>
-                </>
+                </div>
               );
             })}
           </Sliders>

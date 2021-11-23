@@ -1,5 +1,5 @@
 import React from "react";
-
+import Swal from "sweetalert2";
 import styled from "styled-components";
 import EachReview from "./EachReview";
 import { useState, useEffect } from "react";
@@ -7,104 +7,186 @@ import NewReviewOnSearch from "./NewReviewOnSearch";
 import firebase from "../utils/firebase";
 import { useParams } from "react-router-dom";
 import { BsBookmarkFill, BsBookmark } from "react-icons/bs";
+import { IoIosPricetags } from "react-icons/io";
+import { HiOutlineHashtag } from "react-icons/hi";
+import { BsEyeglasses } from "react-icons/bs";
+import { HiOutlineLibrary } from "react-icons/hi";
+import SlideBooks from "./SlideBooks";
+import Loading from "./Loading";
+import UserCategory from "./UserCategory";
+import hand from "../images/Hands.png";
+import parse from "html-react-parser";
 
+const PlaceIcon = styled(HiOutlineLibrary)`
+  width: 20px;
+  height: 100%;
+`;
+
+const ReadIcon = styled(BsEyeglasses)`
+  width: 20px;
+  height: 100%;
+`;
+const Tag = styled(HiOutlineHashtag)`
+  color: #484141;
+`;
+const CategoriesIcon = styled(IoIosPricetags)`
+  color: #f3e5d3;
+  width: 20px;
+  height: 100%;
+`;
+const BtnTagIcon = styled(IoIosPricetags)`
+  cursor: pointer;
+  width: 20px;
+  height: 100%;
+  color: #feae29;
+`;
 const BookCollection = styled(BsBookmarkFill)`
   cursor: pointer;
   width: 20px;
   height: 100%;
-  color: tomato;
+  color: #feae29;
 `;
 const BookUnCollection = styled(BsBookmark)`
   cursor: pointer;
   width: 20px;
   height: 100%;
-  color: tomato;
+  color: #feae29;
 `;
 const Div = styled.div`
-  display: flex;
-  justify-content: space-between;
+  width: 50%;
   color: white;
-  background-image: #2c213b;
+  @media (max-width: 1250px) {
+    width: 70%;
+  }
+  @media (max-width: 875px) {
+    width: 90%;
+  }
 `;
 const Content = styled.div`
   display: flex;
   flex-direction: column;
   padding: 20px;
-  width: 650px;
-  @media (max-width: 1200px) {
-    max-width: 650px;
-  }
-  @media (max-width: 900px) {
-  }
 `;
 const BookTag = styled.div`
   padding: 20px;
-  text-decoration: none;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  background-color: #fbe192;
-  margin-top: 20px;
-`;
-const BookContent = styled.div`
   display: flex;
   flex-direction: column;
-  width: 400px;
-  margin-left: 20px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+`;
+const BookInfoUp = styled.div`
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  padding: 30px;
+  border-bottom: rgba(254, 174, 32, 0.3) 1px solid;
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+const BookContent = styled.div`
+  width: 40vmin;
+  display: flex;
+  flex-direction: column;
+  margin: 0 30px;
 `;
 const BookImg = styled.img`
-  height: 250px;
-  box-shadow: 3px 3px 6px grey;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  height: 300px;
+  @media (max-width: 600px) {
+    width: 300px;
+    height: 100%;
+  }
 `;
 const BookTitle = styled.div`
+  padding-bottom: 15px;
+  border-bottom: rgba(254, 174, 32, 0.3) 1px solid;
   font-size: 24px;
-  font-weight: 500;
-  color: grey;
+  font-weight: 900;
+  color: rgba(255, 240, 221, 1);
 `;
 const BookSummary = styled.div`
-  color: grey;
+  white-space: pre-line;
+  /* word-break: break-all; */
+  color: rgba(255, 240, 221, 1);
   margin: 15px;
 `;
 const BookDetail = styled.div`
   color: grey;
 `;
-const BookInfo = styled.h4``;
+const BookInfo = styled.div`
+  font-size: 16px;
+  flex-wrap: 500;
+  color: rgba(255, 240, 221, 0.8);
+  margin-top: 10px;
+`;
+const BookCategories = styled(BookInfo)`
+  margin: 20px 0;
+  display: flex;
+  justify-content: flex-start;
+`;
 const Btn = styled.div`
-  margin: 15px auto;
-  position: relative;
-  text-decoration: none;
-  border-radius: 50rem;
-  padding: 0.3rem 0.6rem;
-  color: #2c213b;
-  background-color: #f93c10;
-  box-shadow: 0px 3px 0 #1abea7;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 10px 0;
+  font-weight: 500;
+
+  border-radius: 10px;
+  padding: 0.4rem 0.7rem;
+  color: #feae29;
+  border: rgb(254, 239, 222) 1px solid;
+  background-color: rgba(15, 101, 98, 0.6);
+  box-shadow: 0px 3px 0 rgb(254, 239, 222, 0.9);
   transition: all 0.1s ease-in-out;
   &:hover {
     bottom: -7px;
     box-shadow: 0px 0px 0 #000;
   }
   cursor: pointer;
+  @media (max-width: 600px) {
+    margin: 0 10px;
+  }
 `;
 const ReviewTag = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
 `;
 const Category = styled.div`
-  background-color: white;
-  width: 130px;
+  background-color: rgba(255, 240, 221, 0.8);
+  width: 170px;
+  box-shadow: 0 2px 6px 0 hsla(0, 0%, 0%, 0.2);
+  padding: 5px;
   margin: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #484141;
   cursor: pointer;
 `;
-
+const BtnTag = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-top: auto;
+  @media (max-width: 600px) {
+    flex-direction: row;
+  }
+`;
 function EachSearchBook() {
-  const [checkBook, setCheckBook] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [popup, setPopup] = useState(false);
   const [bookInfo, setBookInfo] = useState({});
   const [book, setBook] = useState({});
   const [bookTitle, setBookTitle] = useState("");
-  const [categoriesExist, setCategoriesExist] = useState(false);
-  // const [categories, setCategories] = useState([]);
+  const [bookArr, setBookArr] = useState({});
+
   const search = useParams();
   function linkToRead() {
     window.open(
@@ -119,6 +201,7 @@ function EachSearchBook() {
     );
   }
   useEffect(() => {
+    setIsLoading(true);
     fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${search.id}`, {
       method: "GET",
     })
@@ -126,6 +209,7 @@ function EachSearchBook() {
       .then((datas) => {
         setBookInfo(datas.items[0]);
         setBookTitle(datas.items[0].volumeInfo.title);
+        setIsLoading(false);
         // setBook(datas.items[0]);
       })
       .then(() => {})
@@ -133,6 +217,20 @@ function EachSearchBook() {
         console.log(error);
       });
   }, [bookTitle]);
+
+  useEffect(() => {
+    bookInfo.id &&
+      fetch(`https://www.googleapis.com/books/v1/volumes/${bookInfo.id}`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setBookArr(data?.volumeInfo?.description);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+  }, [bookInfo.id]);
 
   function addToFirebase(bookInfo) {
     const uid = firebase.auth().currentUser.uid;
@@ -195,33 +293,6 @@ function EachSearchBook() {
           setBook(docSnapshot.data());
         });
   }, [bookTitle]);
-  console.log(bookTitle);
-  useEffect(() => {
-    firebase
-      .firestore()
-      .collection("books")
-      .where("title", "==", bookTitle)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          // console.log(doc.data());
-          setBook(doc.data());
-          if (Object.keys(doc.data()).length > 0) {
-            setCheckBook(true);
-          } else {
-            setCheckBook(false);
-          }
-        });
-      });
-    // .onSnapshot((collectionSnapshot) => {
-    //   console.log(collectionSnapshot.docs);
-    //   if (collectionSnapshot.docs.length > 0) {
-    //     setCheckBook(true);
-    //   } else {
-    //     setCheckBook(false);
-    //   }
-    // });
-  }, []);
 
   function toggleCollected(bookInfo) {
     const uid = firebase.auth().currentUser.uid;
@@ -233,6 +304,10 @@ function EachSearchBook() {
         .update({
           collectedBy: firebase.firestore.FieldValue.arrayRemove(uid),
         });
+      Swal.fire({
+        text: "成功移除收藏，我們等你回來～",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
     } else {
       firebase
         .firestore()
@@ -241,138 +316,132 @@ function EachSearchBook() {
         .update({
           collectedBy: firebase.firestore.FieldValue.arrayUnion(uid),
         });
+      Swal.fire({
+        title: "收藏成功",
+        text: "可以為書新增標籤以及發表去憂囉",
+        imageUrl: `${hand}`,
+        imageWidth: 100,
+        imageHeight: 200,
+        imageAlt: "Collect image",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
     }
   }
-
   const isCollect = firebase.auth().currentUser
     ? book?.collectedBy?.includes(firebase.auth().currentUser.uid) || ""
     : "";
-
-  function toggleAddCategory(e) {
-    // if (book.categories === undefined) {
-    //   alert("請先收藏本書喔！");
-    // }
-    const isCategory =
-      Object.keys(book).length > 0
-        ? book.categories?.includes(e.target.textContent)
-        : "";
-
-    // console.log(book.categories);
-    // console.log(isCategory);
-    if (isCategory) {
-      firebase
-        .firestore()
-        .collection("books")
-        .doc(bookTitle)
-        .update({
-          categories: firebase.firestore.FieldValue.arrayRemove(
-            `${e.target.textContent}`
-          ),
-        });
+  function toggleAddTag() {
+    if (isCollect) {
+      setPopup(true);
     } else {
-      firebase
-        .firestore()
-        .collection("books")
-        .doc(bookTitle)
-        .update({
-          categories: firebase.firestore.FieldValue.arrayUnion(
-            `${e.target.textContent}`
-          ),
-        });
+      Swal.fire({
+        text: "請先收藏此書",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
     }
   }
-  console.log(book);
-  console.log(bookInfo);
+  function reviewSubmit() {
+    if (isCollect) {
+      setOpen(true);
+    } else {
+      Swal.fire({
+        text: "請先收藏此書",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
+    }
+  }
   return (
     <>
       {firebase.auth().currentUser ? (
         <Div>
+          {isLoading ? <Loading /> : ""}
           {Object.keys(bookInfo).length > 0 ? (
             <Content>
               <BookTag>
-                <BookImg
-                  src={
-                    `https://books.google.com/books/publisher/content/images/frontcover/${bookInfo.id}?fife=w400-h600` ||
-                    "https://i.pinimg.com/564x/8d/98/54/8d9854ecfd84f4daa1561c7b62c6387f.jpg"
-                  }
-                  alt=""
-                />
-                <BookContent>
-                  <BookTitle>{bookInfo.volumeInfo.title}</BookTitle>
-                  <BookDetail>
-                    <BookInfo>作者：{bookInfo.volumeInfo.authors}</BookInfo>
-                    <BookInfo>出版社：{bookInfo.volumeInfo.publisher}</BookInfo>
-                    <BookInfo>
-                      出版日期：{bookInfo.volumeInfo.publishedDate}
-                    </BookInfo>
-                    <BookInfo>去憂分類：{book?.categories || ""}</BookInfo>
+                <BookInfoUp>
+                  <BookImg
+                    src={
+                      `https://books.google.com/books/publisher/content/images/frontcover/${bookInfo.id}?fife=w400-h600` ||
+                      "https://i.pinimg.com/564x/8d/98/54/8d9854ecfd84f4daa1561c7b62c6387f.jpg"
+                    }
+                    alt=""
+                  />
 
-                    {/* {(book === {} && book.categories?.length < 2) ||
+                  <BookContent>
+                    <BookTitle>{bookInfo.volumeInfo.title}</BookTitle>
+                    <BookDetail>
+                      <BookInfo>作者：{bookInfo.volumeInfo.authors}</BookInfo>
+                      <BookInfo>
+                        出版社：{bookInfo.volumeInfo.publisher}
+                      </BookInfo>
+                      <BookInfo>
+                        出版日期：{bookInfo.volumeInfo.publishedDate}
+                      </BookInfo>
+                      {/* <BookInfo>去憂分類：{book?.categories || ""}</BookInfo> */}
+                      <BookInfo>
+                        <BookCategories>
+                          <CategoriesIcon />
+                          去憂分類:
+                        </BookCategories>
+                      </BookInfo>
+                      {/* <Category>{book?.categories || ""}</Category> */}
+                      {book?.categories
+                        ? book.categories.map((category) => {
+                            return (
+                              <Category>
+                                <Tag />
+                                {category}
+                              </Category>
+                            );
+                          })
+                        : ""}
+
+                      {/* {(book === {} && book.categories?.length < 2) ||
                     book.categories === undefined ? ( */}
+                    </BookDetail>
+                  </BookContent>
 
-                    {book?.categories === undefined ||
-                    book?.categories?.length < 1 ? (
-                      <>
-                        <Category
-                          onClick={(e) => {
-                            toggleAddCategory(e);
-                          }}
-                        >
-                          宅在家好發慌？
-                        </Category>
-                        <Category
-                          onClick={(e) => {
-                            toggleAddCategory(e);
-                          }}
-                        >
-                          一個人好孤單？
-                        </Category>
-                        <Category
-                          onClick={(e) => {
-                            toggleAddCategory(e);
-                          }}
-                        >
-                          想不出好點子？
-                        </Category>
-                        <Category
-                          onClick={(e) => {
-                            toggleAddCategory(e);
-                          }}
-                        >
-                          如何上火箭？
-                        </Category>
-                        <Category
-                          onClick={(e) => {
-                            toggleAddCategory(e);
-                          }}
-                        >
-                          心裡總是卡卡的？
-                        </Category>
-                      </>
-                    ) : (
-                      <>收藏後可以為書新增分類唷(最多可新增三個分類)</>
-                    )}
-                  </BookDetail>
-                  <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
-                  <Btn onClick={linkToRead}>試閱</Btn>
+                  <BtnTag>
+                    <Btn onClick={linkToBorrow}>
+                      <PlaceIcon /> 借閱
+                    </Btn>
+                    <Btn onClick={linkToRead}>
+                      <ReadIcon />
+                      試閱
+                    </Btn>
 
-                  {/* {book.categories === undefined ? (
-                    <>收藏後可以為書新增分類唷(最多可新增三個分類)</>
-                  ) : (
-                    ""
-                  )} */}
-                  <div
-                    onClick={() => {
-                      addToFirebase(bookInfo);
-                    }}
-                  >
-                    {isCollect ? <BookCollection /> : <BookUnCollection />}
-                  </div>
-                </BookContent>
-                <BookSummary>{bookInfo.volumeInfo.description}</BookSummary>
+                    <Btn
+                      onClick={() => {
+                        addToFirebase(bookInfo);
+                      }}
+                    >
+                      {isCollect ? <BookCollection /> : <BookUnCollection />}
+                      收藏
+                    </Btn>
+                    <Btn onClick={toggleAddTag}>
+                      <BtnTagIcon />
+                      分類
+                    </Btn>
+
+                    {popup && <UserCategory setPopup={setPopup} book={book} />}
+                  </BtnTag>
+                </BookInfoUp>
+                <div>
+                  <BookInfo> 其他熱門話題</BookInfo>
+                  <SlideBooks />
+                </div>
+
+                <BookSummary>{parse(`<p>${bookArr}</p>`)}</BookSummary>
+
                 <ReviewTag>
                   <EachReview />
-                  <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
+                  <Btn
+                    onClick={() => {
+                      reviewSubmit();
+                    }}
+                  >
+                    發表一篇去憂
+                  </Btn>
                 </ReviewTag>
               </BookTag>
               {open && (
@@ -389,41 +458,68 @@ function EachSearchBook() {
       ) : (
         <>
           <Div>
+            {isLoading ? <Loading /> : ""}
             {Object.keys(bookInfo).length > 0 ? (
               <Content>
                 <BookTag>
-                  <BookImg
-                    src={
-                      `https://books.google.com/books/publisher/content/images/frontcover/${bookInfo.id}?fife=w400-h600` ||
-                      "https://i.pinimg.com/564x/8d/98/54/8d9854ecfd84f4daa1561c7b62c6387f.jpg"
-                    }
-                    alt=""
-                  />
-                  <BookContent>
-                    <BookTitle>{bookInfo.volumeInfo.title}</BookTitle>
-                    <BookDetail>
-                      <BookInfo>作者：{bookInfo.volumeInfo.authors}</BookInfo>
-                      <BookInfo>
-                        出版社：{bookInfo.volumeInfo.publisher}
-                      </BookInfo>
-                      <BookInfo>
-                        出版日期：{bookInfo.volumeInfo.publishedDate}
-                      </BookInfo>
-                      <BookInfo>去憂分類：{book?.categories || ""}</BookInfo>
-                    </BookDetail>
-                    <Btn onClick={linkToBorrow}>圖書館借閱</Btn>
-                    <Btn onClick={linkToRead}>試閱</Btn>
+                  <BookInfoUp>
+                    <BookImg
+                      src={
+                        `https://books.google.com/books/publisher/content/images/frontcover/${bookInfo.id}?fife=w400-h600` ||
+                        "https://i.pinimg.com/564x/8d/98/54/8d9854ecfd84f4daa1561c7b62c6387f.jpg"
+                      }
+                      alt=""
+                    />
+                    <BookContent>
+                      <BookTitle>{bookInfo.volumeInfo.title}</BookTitle>
+                      <BookDetail>
+                        <BookInfo>作者：{bookInfo.volumeInfo.authors}</BookInfo>
+                        <BookInfo>
+                          出版社：{bookInfo.volumeInfo.publisher}
+                        </BookInfo>
+                        <BookInfo>
+                          出版日期：{bookInfo.volumeInfo.publishedDate}
+                        </BookInfo>
+                        <BookInfo>
+                          <BookCategories>
+                            <CategoriesIcon />
+                            去憂分類:
+                          </BookCategories>
+                        </BookInfo>
+                        {book?.categories
+                          ? book.categories.map((category) => {
+                              return (
+                                <Category>
+                                  <Tag />
+                                  {category}
+                                </Category>
+                              );
+                            })
+                          : ""}
+                      </BookDetail>
+                    </BookContent>
 
-                    <div
-                      onClick={() => {
-                        addToFirebase(bookInfo);
-                      }}
-                    ></div>
-                  </BookContent>
+                    <BtnTag>
+                      <Btn onClick={linkToBorrow}>
+                        <PlaceIcon /> 借閱
+                      </Btn>
+                      <Btn onClick={linkToRead}>
+                        <ReadIcon />
+                        試閱
+                      </Btn>
+
+                      {popup && (
+                        <UserCategory setPopup={setPopup} book={book} />
+                      )}
+                    </BtnTag>
+                  </BookInfoUp>
+                  <div>
+                    <BookInfo> 其他熱門話題</BookInfo>
+                    <SlideBooks />
+                  </div>
                   <BookSummary>{bookInfo.volumeInfo.description}</BookSummary>
                   <ReviewTag>
                     <EachReview />
-                    <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
                   </ReviewTag>
                 </BookTag>
                 {open && (

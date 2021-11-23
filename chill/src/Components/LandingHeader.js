@@ -7,6 +7,8 @@ import { RiBook3Fill } from "react-icons/ri";
 import { RiHome5Line } from "react-icons/ri";
 import shortLogo from "../images/shortLogo.png";
 import Header from "../Components/Header";
+import { useState, useEffect } from "react";
+import firebase from "../utils/firebase";
 
 const HomeIcon = styled(RiHome5Line)`
   width: 30px;
@@ -48,11 +50,9 @@ const Logo = styled.img`
   width: 150px;
 `;
 const Btn = styled.div`
-  width: 150px;
+  width: 180px;
   display: flex;
   align-items: center;
-  position: relative;
-  text-decoration: none;
   border-radius: 50rem;
   padding: 0.3rem 0.6rem;
   color: #feae29;
@@ -67,15 +67,26 @@ const Btn = styled.div`
 `;
 
 const LandingHeader = () => {
+  const [news, setNews] = useState("");
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("reviews")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((collectionSnapshot) => {
+        const data = collectionSnapshot.docs.map((docSnapshot) => {
+          const id = docSnapshot.id;
+          return { ...docSnapshot.data(), id };
+        });
+        setNews(data);
+      });
+  }, []);
   return (
     <HeaderNav>
-      {/* <NavLink to="/">
-        <Logo src={shortLogo} alt="" />
-      </NavLink> */}
       <NavLink to="/news">
         <Btn>
           <FindIcon />
-          累積去憂#345
+          累積去憂#{news.length}
         </Btn>
       </NavLink>
       <NavLink to="/themes">

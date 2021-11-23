@@ -1,4 +1,5 @@
 import React from "react";
+import Swal from "sweetalert2";
 import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { BsFacebook } from "react-icons/bs";
@@ -18,7 +19,7 @@ const CloseIcon = styled(AiOutlineCloseCircle)`
   cursor: pointer;
 `;
 const Mask = styled.div`
-  z-index: 1;
+  z-index: 3;
   color: #1abea7;
   position: fixed;
   top: 0;
@@ -32,10 +33,10 @@ const Mask = styled.div`
 `;
 
 const PopupInner = styled.div`
-  z-index: 2;
+  z-index: 99;
   position: fixed;
   padding: 30px;
-  width: 400px;
+  width: 50%;
   background-color: #f6e7db;
   border-radius: 1rem;
 `;
@@ -45,23 +46,19 @@ const Close = styled.div`
   right: 16px;
 `;
 const Btn = styled.div`
-  margin: 15px auto;
-  width: 40px;
-  position: relative;
-  text-decoration: none;
-  border-radius: 50rem;
-  padding: 0.3rem 0.6rem;
-  color: #2c213b;
-  background-color: #f93c10;
-  box-shadow: 0px 3px 0 #1abea7;
-  transition: all 0.1s ease-in-out;
-  &:hover {
-    bottom: -7px;
-    box-shadow: 0px 0px 0 #000;
-  }
+  margin: 20px auto;
+  width: 70px;
+  text-align: center;
   cursor: pointer;
+  padding: 5px 15px;
+  border-radius: 15px;
+  background-color: #0d6662;
+  color: #f1faf7;
+  font-size: 16px;
+  font-weight: 500;
 `;
 const Tab = styled.div`
+  white-space: nowrap;
   color: #b3b3b3;
   font-size: 20px;
   font-weight: 500;
@@ -77,8 +74,8 @@ const Input = styled.input`
   font-size: 16px;
   outline: none;
   border: none;
-  width: 350px;
-  height: 20px;
+  width: 100%;
+  height: 30px;
   padding: 8px;
   border-radius: 10px;
 `;
@@ -110,8 +107,7 @@ const Title = styled.p`
 const SignUpDiv = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 15px 70px;
+  justify-content: space-around;
   color: #868686;
 `;
 const Message = styled.div`
@@ -173,8 +169,13 @@ function SignIn(props) {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(() => {
-          history.push("/");
+          Swal.fire({
+            text: "成功註冊/登入",
+            confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+          });
+          history.push("/themes");
           setIsLoading(false);
+          props.setTrigger(false);
         })
         .catch((error) => {
           switch (error.code) {
@@ -196,14 +197,9 @@ function SignIn(props) {
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then((res) => {
-          history.push("/");
+          history.push("/themes");
           setIsLoading(false);
           AddToFirebase(res);
-          console.log(res);
-          // return res.user.updateProfile({
-          //   displayName: displayName,
-          //   photoURL: "https://cdn-icons-png.flaticon.com/512/5914/5914031.png",
-          // });
         })
 
         .catch((error) => {

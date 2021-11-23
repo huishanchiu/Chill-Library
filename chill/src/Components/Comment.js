@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import styled from "styled-components";
 import { IoMdBeer } from "react-icons/io";
 import { Link } from "react-router-dom";
@@ -38,7 +39,7 @@ const Mask = styled.div`
   left: 0;
   min-width: 100vw;
   min-height: 100vh;
-  background-color: rgba(211, 211, 211, 0.5);
+  background-color: rgba(211, 211, 211, 0.1);
   display: flex;
   align-items: center;
 `;
@@ -48,7 +49,7 @@ const PopupInner = styled.div`
   z-index: 3;
   position: relative;
   padding: 15px 0;
-  width: 70vmin;
+  /* width: 70vmin; */
   background-color: #f1faf7;
   border-radius: 1rem;
 `;
@@ -96,40 +97,20 @@ const CommentDiv = styled.textarea`
   -moz-box-shadow: none;
   box-shadow: none;
   resize: none;
-  width: 99%;
+  width: 100%;
   height: 300px;
   border-bottom-left-radius: 1rem;
   border-bottom-right-radius: 1rem;
 `;
-const CommentBtn = styled.div`
-  cursor: pointer;
-  width: 40px;
-  border: grey solid 1px;
-  background-color: #f2f2f2;
-  color: #0d6663;
-`;
-const CommentCount = styled.h4``;
-const CommentAuthorPhoto = styled.img`
-  width: 30px;
-  height: 30px;
-  border-radius: 20px;
-`;
-const CommentAuthorName = styled.div``;
-const CommentContent = styled.div`
-  position: relative;
-  &:hover :first-child {
-    display: block;
-  }
-`;
-const ContentEdit = styled.textarea``;
 
 function Comment({ review, close }) {
   const [commentContent, setCommentContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [comments, setComments] = useState([]);
-  const [reviewid, setReviewid] = useState([]);
+
   const [editReview, setEditReview] = useState(undefined);
 
+  // console.log(review);
   useEffect(() => {
     firebase
       .firestore()
@@ -143,13 +124,11 @@ function Comment({ review, close }) {
           return { ...docSnapshot.data(), id };
         });
         setComments(data);
-        console.log(data);
+        // console.log(data);
       });
   }, []);
 
   function onSubmit() {
-    // setReviewid(reviewId);
-    console.log(reviewid);
     const firestore = firebase.firestore();
     const batch = firestore.batch();
     const reviewRef = firestore.collection("reviews").doc(review.id);
@@ -171,6 +150,11 @@ function Comment({ review, close }) {
       setCommentContent("");
       setIsLoading(false);
     });
+    close(false);
+    Swal.fire({
+      text: "送出留言",
+      confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+    });
   }
   function clickEdit(docId) {
     if (editReview === false) {
@@ -185,17 +169,7 @@ function Comment({ review, close }) {
       console.log(editReview);
     }
   }
-  function toggleRemove(commentId) {
-    if (window.confirm("確定要刪除這篇留言嗎？")) {
-      firebase
-        .firestore()
-        .collection("reviews")
-        .doc(review.id)
-        .collection("comments")
-        .doc(commentId)
-        .delete();
-    }
-  }
+
   function AddToFirebase(commentId) {
     firebase
       .firestore()
@@ -231,65 +205,6 @@ function Comment({ review, close }) {
           />
         </CommentTag>
       </PopupInner>
-
-      {/* <CommentCount>共{review.commentCount || 0}則留言</CommentCount>
-          {comments.map((comment) => {
-            return (
-              <>
-                <CommentContent>
-                  {comment.author.uid === firebase.auth().currentUser.uid ? (
-                    <>
-                      <Close>
-                        <CloseIcon onClick={(e) => toggleRemove(comment.id)} />
-                      </Close>
-
-                      <Edit>
-                        <EditIcon
-                          onClick={() => {
-                            clickEdit(comment.id);
-                          }}
-                        />
-
-                        {editReview === comment.id ? (
-                          <DoneIcon
-                            onClick={() => {
-                              toggleSave(comment.id);
-                            }}
-                          />
-                        ) : (
-                          ""
-                        )}
-                      </Edit>
-                    </>
-                  ) : (
-                    ""
-                  )}
-                  <CommentAuthorPhoto src={comment.author.photoURL} alt="" />
-                  <CommentAuthorName>
-                    {comment.author.displayName || "使用者"}
-                  </CommentAuthorName>
-
-                  {editReview === comment.id ? (
-                    <>
-                      <ContentEdit
-                        defaultValue={comment.content}
-                        onChange={(e) => {
-                          setCommentContent(e.target.value);
-                        }}
-                      />
-                    </>
-                  ) : (
-                    <>{comment.content}</>
-                  )}
-
-                  {comment.createdAt.toDate().toLocaleString()}
-                  <hr />
-                </CommentContent>
-              </>
-            );
-          })}
-        </CommentTag> */}
-      {/* </PopupInner> */}
     </Mask>
   );
 }

@@ -8,17 +8,17 @@
 }
 .light__1__left .light {
   transform: translateX(140%);
-  height: 180px;
+  height: 29vmin;
 }
 .light__1__left .mid {
-  transform: translateX(500%);
-  height: 80px;
+  transform: translateX(550%);
+  height: 11vmin;
 }
 .light__1__left .big {
   position: fixed;
   bottom: 100px;
   transform: translateX(350%);
-  height: 120px;
+  height: 19vmin;
 }
 
 .light__1__right {
@@ -29,15 +29,15 @@
 }
 .light__1__right .light {
   transform: translateX(40%);
-  height: 180px;
+  height: 28vmin;
 }
 .light__1__right .mid {
   transform: translateX(70%);
-  height: 80px;
+  height: 15vmin;
 }
 .light__1__right .small {
   transform: translateX(50%);
-  height: 65px;
+  height: 10vmin;
 }
 /* ///////////light__2///////////// */
 .light__2__left {
@@ -50,11 +50,11 @@
 }
 .light__2__left .light {
   transform: translateX(100%);
-  height: 180px;
+  height: 28vmin;
 }
 .light__2__left .big {
   transform: translateX(300%);
-  height: 130px;
+  height: 19vmin;
 }
 .light__2__right {
   position: fixed;
@@ -66,11 +66,11 @@
 }
 .light__2__right .light {
   transform: translateX(-10%);
-  height: 180px;
+  height: 28vmin;
 }
 .light__2__right .big {
   transform: translateX(50%);
-  height: 110px;
+  height: 15vmin;
 }
 /* ///////////light__3///////////// */
 .light__3__right {
@@ -82,11 +82,11 @@
 }
 .light__3__right .light {
   transform: translateX(10%);
-  height: 180px;
+  height: 28vmin;
 }
 .light__3__right .small {
   transform: translateX(10%);
-  height: 70px;
+  height: 10vmin;
 }
 .light__3__left {
   opacity: 0;
@@ -98,11 +98,11 @@
 }
 .light__3__left .light {
   transform: translateX(240%);
-  height: 180px;
+  height: 28vmin;
 }
 .light__3__left .mid {
   transform: translateX(160%);
-  height: 100px;
+  height: 15vmin;
 }
 /* ///////////light__4///////////// */
 .light__4__left {
@@ -115,15 +115,15 @@
 }
 .light__4__left .light {
   transform: translateX(250%);
-  height: 180px;
+  height: 28vmin;
 }
 .light__4__left .big {
   transform: translateX(300%);
-  height: 120px;
+  height: 18vmin;
 }
 .light__4__left .mid {
   transform: translateX(450%);
-  height: 80px;
+  height: 13vmin;
 }
 
 .light__4__right {
@@ -135,15 +135,15 @@
 }
 .light__4__right .light {
   transform: translateX(20%);
-  height: 180px;
+  height: 28vmin;
 }
 .light__4__right .mid {
   transform: translateX(50%);
-  height: 100px;
+  height: 18vmin;
 }
 .light__4__right .small {
   transform: translateX(30%);
-  height: 60px;
+  height: 10vmin;
   margin-bottom: 100px;
 }
 /* ///////////__5///////////// */
@@ -156,11 +156,12 @@
 }
 .light__5__right .big {
   transform: translateX(-20%);
-  height: 100px;
+  height: 17vmin;
 }
 
 /* ///////////__6///////////// */
 .middle__6 {
+  /* outline: #fff6a9 solid; */
   opacity: 0;
   position: fixed;
   bottom: 80px;
@@ -169,7 +170,7 @@
 }
 .middle__6 .big {
   transform: translateX(-50%);
-  height: 300px;
+  height: 40vmin;
 }
 /* ///////////basic///////////// */
 .background {
@@ -196,9 +197,9 @@
 }
 .box {
   position: fixed;
-  transform: translateX(1850%);
-  width: 20px;
-  height: 20px;
+  transform: translateX(1880%);
+  width: 3vmin;
+  height: 3vmin;
   background: #3cdde6;
   animation-name: oxxo;
   animation-duration: 1s;
@@ -252,7 +253,8 @@
   left: 50%; */
 
   margin: 250px auto;
-  width: 50vmin;
+  width: 30%;
+  /* width: 50vmin; */
   color: white;
 }
 
@@ -262,7 +264,9 @@
 .theme__4__img,
 .theme__5__img,
 .theme__6__img {
-  width: 50vmin;
+  width: 100%;
+
+  /* width: 50vmin; */
   /* position: relative;
   top: 30px; */
 }
@@ -273,20 +277,19 @@
 .theme__5,
 .theme__6 {
   opacity: 0;
+  /* outline: red solid; */
+  height: 500px;
 }
 .theme__0 {
   /* outline: red solid; */
-  height: 100px;
+  /* outline: red solid; */
+  height: 400px;
 }
 .scroll {
   position: fixed;
-  /* bottom: 0; */
-  bottom: 200px;
+  bottom: 10vmin;
   left: 0;
   right: 0;
-
-  /* left: 0;
-  right: 0; */
   margin: auto;
   width: 250px;
 }
@@ -302,7 +305,7 @@
 
 .car img {
   position: fixed;
-  width: 250px;
+  width: 200px;
   bottom: 40px;
   left: 0;
   right: 0;
@@ -320,6 +323,9 @@
   }
 }
 .logo {
+  /* outline: #fff6a9 solid; */
+  width: 70vmin;
+  height: 40vmin;
   opacity: 0;
   display: flex;
   flex-direction: column;
@@ -328,7 +334,7 @@
   font-family: "Nunito";
   position: fixed;
   font-weight: 900;
-  bottom: 450px;
+  bottom: 350px;
   left: 0;
   right: 0;
   margin: auto;

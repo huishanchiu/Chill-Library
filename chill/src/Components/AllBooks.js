@@ -6,31 +6,50 @@ import firebase from "../utils/firebase";
 import { AiFillPlayCircle } from "react-icons/ai";
 
 const PlayIcon = styled(AiFillPlayCircle)``;
-const AllBook = styled.div``;
+const AllBook = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
 const BookTag = styled.div`
   border-top: rgba(254, 174, 32, 0.3) 1px solid;
-  padding: 40px;
+  padding: 20px;
   display: grid;
   grid-template-columns: 25% 75%;
   grid-template-rows: 100% 100%;
-  /* margin-top: 20px; */
-  height: 200px;
   &:hover {
     background-color: rgba(213, 219, 219, 0.1);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: 45% 55%;
+    grid-template-rows: 100% 100%;
+  }
+  @media (max-width: 600px) {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
   }
 `;
 const BookContent = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 `;
 const BookImg = styled.img`
-  height: 200px;
+  width: 80%;
   -webkit-box-shadow: 10px 10px 0px 0px #cd7f32,
     5px 5px 15px 5px rgba(0, 0, 0, 0);
   box-shadow: 5px 5px 0px 0px #cd7f32, 10px 10px 0px 0px #99a3a4,
     5px 5px 15px 5px rgba(0, 0, 0, 0);
   &:hover {
-    height: 210px;
+    width: 85%;
+  }
+  @media (max-width: 700px) {
+    width: 60%;
+  }
+  @media (max-width: 500px) {
+    width: 70%;
   }
 `;
 const BookName = styled(Link)`
@@ -38,16 +57,19 @@ const BookName = styled(Link)`
   font-size: 20px;
   font-weight: 900;
   color: rgba(255, 240, 221, 1);
-  padding-bottom: 8px;
+  padding-bottom: 3px;
   &:hover {
     color: #cd7f32;
+  }
+  @media (max-width: 600px) {
+    margin-top: 20px;
   }
 `;
 const BookSummary = styled.div`
   color: rgba(255, 240, 221, 0.8);
 `;
 const SubTitle = styled.span`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   color: rgba(254, 157, 104);
 `;
@@ -58,8 +80,12 @@ const Author = styled.div`
   color: rgba(204, 209, 209, 0.6);
 `;
 const Info = styled.div`
+  width: 100%;
   display: flex;
   justify-content: space-between;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 const More = styled(Link)`
   /* background-color: rgba(255, 240, 221, 0.8); */
@@ -74,22 +100,20 @@ function AllBooks({ theme }) {
   useEffect(() => {
     db.collection("books")
       .where("categories", "array-contains", `${theme}`)
-      .get()
-      .then((querySnapshot) => {
+      .onSnapshot((querySnapshot) => {
         const list = [];
         querySnapshot.forEach((doc) => {
           list.push(doc.data());
         });
         setBookList(list);
       });
-  }, []);
+  }, [theme]);
   console.log(bookList);
   return (
     <div>
       <AllBook>
         {bookList.map((item) => {
-          console.log(item);
-          let des = item.description.slice(0, 150);
+          let des = item.description.slice(0, 200);
           item.description = des + "......";
 
           return (
@@ -102,6 +126,7 @@ function AllBooks({ theme }) {
               </Link>
               <BookContent>
                 <BookName to={`/book/${item.title}`}>{item.title}</BookName>
+                <SubTitle>{item?.subtitle}</SubTitle>
                 <Info>
                   <Author>作者：{item.authors}</Author>
                   <Author>
@@ -109,7 +134,6 @@ function AllBooks({ theme }) {
                     {item.publishedDate}
                   </Author>
                 </Info>
-                <SubTitle>{item?.subtitle}</SubTitle>
                 <BookSummary>
                   {item.description}
                   <More to={`/book/${item.title}`}>

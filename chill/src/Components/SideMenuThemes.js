@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import Swal from "sweetalert2";
 import { Link, useHistory } from "react-router-dom";
 import shortLogo from "../images/shortLogo.png";
 import { IoIosCompass } from "react-icons/io";
 import { IoMdBeer } from "react-icons/io";
 import { RiBook3Fill } from "react-icons/ri";
+import { RiHome5Line } from "react-icons/ri";
 import { MdMood } from "react-icons/md";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import SignIn from "./SignIn";
@@ -16,24 +16,24 @@ import { BiMenuAltLeft } from "react-icons/bi";
 import { useSelector } from "react-redux";
 
 const SideNav = styled.div`
-  background-color: rgba(44, 33, 59, 0.8);
+  background-color: rgba(44, 33, 59, 0.6);
   width: 20%;
   display: flex;
   flex-direction: column;
   @media (max-width: 1250px) {
-    width: 40%;
+    width: 30%;
   }
   @media (max-width: 875px) {
     display: ${(props) => (props.show ? "block" : "none")};
     width: 50%;
     position: fixed;
-    z-index: 4;
+    z-index: 2;
   }
   @media (max-width: 500px) {
     display: ${(props) => (props.show ? "block" : "none")};
     width: 100%;
     position: fixed;
-    z-index: 4;
+    z-index: 2;
   }
 `;
 const SideMenuIcon = styled.div`
@@ -41,9 +41,8 @@ const SideMenuIcon = styled.div`
   background-color: rgba(44, 33, 59, 0.6);
   width: 10%;
   @media (max-width: 875px) {
-    /* position: fixed; */
     display: block;
-    z-index: 5;
+    z-index: 3;
   }
 `;
 const MenuIcon = styled(BiMenuAltLeft)`
@@ -136,45 +135,9 @@ const Btn = styled.div`
     box-shadow: 0px 0px 0 #000;
   }
 `;
-const SearchBar = styled.div`
-  background-color: #f7f7f7;
-  box-shadow: 0 2px 6px 0 hsla(0, 0%, 0%, 0.2);
-  border-radius: 30px;
-  height: 40px;
-  width: 180px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-`;
 
-const Input = styled.input`
-  margin-right: auto;
-  border: none;
-  text-decoration: none;
-  width: 130px;
-  font-size: 16px;
-  padding: 8px 5px;
-  background-color: transparent;
-  border-radius: 30px;
-`;
-
-const SearchBtn = styled.div`
-  background-image: url(${search});
-  background-repeat: no-repeat;
-  background-size: 20px;
-  /* background-color: #f7f7f7; */
-  width: 25px;
-  height: 20px;
-  /* padding: 8px; */
-  outline: none;
-  text-decoration: none;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-`;
-
-// console.log(firebase.auth().currentUser);
 const SideMenu = () => {
-  // const currentUser = useSelector((state) => state.currentUser);
+  const currentUserRedux = useSelector((state) => state.currentUser);
   const [showMenu, setShowMenu] = useState(false);
   const [userId, setUserId] = useState("");
   const history = useHistory();
@@ -206,7 +169,7 @@ const SideMenu = () => {
     firebase.auth().onAuthStateChanged((currentUser) => {
       if (!isUnmount) {
         setUser(currentUser);
-        setUserId(currentUser?.uid);
+        // setUserId(currentUserRedux.uid);
       }
     });
     return () => {
@@ -228,7 +191,7 @@ const SideMenu = () => {
     user ? (
       db
         .collection("users")
-        .doc(userId)
+        .doc(currentUserRedux.uid)
         .onSnapshot((docSnapshot) => {
           setAuthorPhoto(docSnapshot.data().URL);
           setAuthorName(docSnapshot.data().userName);
@@ -238,7 +201,7 @@ const SideMenu = () => {
     ) : (
       <></>
     );
-  }, [userId]);
+  }, []);
   function onSubmit() {
     if (search.length <= 0) {
       alert("搜尋不到唷");
@@ -251,7 +214,6 @@ const SideMenu = () => {
       setShowMenu(true);
     }
   }
-  // const userId = user.uid;
 
   return (
     <>
@@ -276,7 +238,7 @@ const SideMenu = () => {
                 去憂主題
               </Btn>
             </NavLink>
-            <NavLink to={`/mybooks/${userId}/collection`}>
+            <NavLink to={`/mybooks/${currentUserRedux.uid}/collection`}>
               <Btn>
                 <BookIcon />
                 我的書櫃
@@ -289,12 +251,7 @@ const SideMenu = () => {
                     .auth()
                     .signOut()
                     .then(() => {
-                      // history.push("/mybooks");
-                      window.location.href = "/themes";
-                      Swal.fire({
-                        text: "已登出",
-                        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-                      });
+                      window.location.href = "/";
                     })
                 }
               >
@@ -302,28 +259,7 @@ const SideMenu = () => {
                 登出
               </Btn>
             </NavLink>
-            <NavSearch>
-              <SearchBar>
-                <Input
-                  onChange={(e) => setSearch(e.target.value)}
-                  value={search}
-                  placeholder="你在煩惱什麼？"
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      if (search === "") {
-                        Swal.fire({
-                          text: "請輸入關鍵字",
-                          confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-                        });
-                      } else {
-                        history.push(`/book/search/${search}`);
-                      }
-                    }
-                  }}
-                ></Input>
-                <SearchBtn onClick={onSubmit} />
-              </SearchBar>
-            </NavSearch>
+            <NavSearch></NavSearch>
             <Nav>
               <AvatarImg src={authorPhoto} alt="" />
             </Nav>
