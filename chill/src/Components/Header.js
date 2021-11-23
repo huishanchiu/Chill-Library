@@ -1,142 +1,149 @@
 import React from "react";
+import Swal from "sweetalert2";
 import styled from "styled-components";
 import search from "../images/search.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import algolia from "../utils/algolia";
-import "../header.css";
-import Search from "search-react-input";
-import Searching from "../Components/Searching";
+import firebase from "../utils/firebase";
+import { useHistory } from "react-router";
 
 const SearchBar = styled.div`
+  cursor: pointer;
   background-color: #f7f7f7;
-  border: #0d6663 1px solid;
+  box-shadow: 0 2px 6px 0 hsla(0, 0%, 0%, 0.2);
   border-radius: 30px;
   height: 40px;
-  width: 250px;
+  width: 200px;
   margin: 10px;
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
+  @media (max-width: 500px) {
+    height: 30px;
+    width: 150px;
+  }
 `;
 
 const Input = styled.input`
+  margin-right: auto;
   outline: none;
   border: none;
   text-decoration: none;
-  width: 200px;
+  width: 190px;
   font-size: 16px;
-  padding: 8px;
+  padding: 8px 5px;
   background-color: transparent;
   border-radius: 30px;
-  /* border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px; */
+  @media (max-width: 500px) {
+    width: 100px;
+    font-size: 12px;
+  }
 `;
 
-const SearchBtn = styled(Link)`
+const SearchBtn = styled.div`
   background-image: url(${search});
   background-repeat: no-repeat;
   background-size: 20px;
-  background-position: 10px;
-  background-color: #f7f7f7;
   width: 25px;
   height: 20px;
-  padding: 8px;
   outline: none;
   text-decoration: none;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
 `;
-const ResultContainer = styled.div`
-  width: 200px;
-  margin: 10px;
-`;
-const Result = styled.div`
-  color: white;
-`;
+
 const Div = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
+  justify-content: flex-start;
 `;
-const ResultDiv = styled.div`
-  color: white;
+const HashtagDiv = styled.div`
+  color: #0d6663;
+  display: flex;
+  flex-wrap: wrap;
 `;
-
+const Hashtag = styled.div`
+  border-radius: 5px;
+  padding: 3px;
+  font-size: 15px;
+  background-color: #0d6663;
+  color: #f7f7f7;
+  margin: 5px;
+  cursor: pointer;
+  @media (max-width: 500px) {
+    font-size: 8px;
+  }
+`;
 const Header = () => {
-  const [open, setOpen] = useState(false);
-  const [book, setBook] = useState("");
+  const history = useHistory();
   const [search, setSearch] = useState("");
-  const [input, setInput] = useState("");
+  const [reviews, setReviews] = useState([]);
+  function onsubmit(e) {
+    setSearch(e.target.textContent);
+  }
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("reviews")
+      .where("hashtag1", "!=", "")
+      .limit(9)
+      .onSnapshot((collectionSnapshot) => {
+        const data = collectionSnapshot.docs.map((docSnapshot) => {
+          const id = docSnapshot.id;
+          return { ...docSnapshot.data(), id };
+        });
+        setReviews(data);
+      });
+  }, []);
 
-  const [results, setResults] = useState([]);
-  // function onSearchChange(e, input) {
-  //   console.log(e.target.value);
-  //   setInput(e.target.value);
-  //   algolia.search(e.target.value).then((result) => {
-  //     console.log(result.hits);
-  //     const searschResults = result.hits.map((hit) => {
-  //       return {
-  //         bookName: hit.bookName,
-  //         quote: hit.quote,
-  //         hashtag1: hit.hashtag1,
-  //         hashtag2: hit.hashtag2,
-  //         hashtag3: hit.hashtag3,
-  //         id: hit.objectID,
-  //       };
-  //     });
-
-  //     setResults(searschResults);
-  //   });
-  //   console.log(results);
-  // }
+  function onSubmit() {
+    if (search === "") {
+      Swal.fire({
+        text: "請輸入關鍵字",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
+    } else {
+      history.push(`/book/search/${search}`);
+      setSearch("");
+    }
+  }
 
   return (
     <Div>
       <SearchBar>
-        {/* firebase///////////////////////////////////////// */}
-        {/* <Input
-          onFocus={() => setOpen(true)}
-          type="text"
-          // onChange={(e) => onSearchChange(e.target.value)}
-          onChange={(e) => {
-            onSearchChange(e, results);
-          }}
-          onSearchChange={onSearchChange}
-          value={input}
-          placeholder="你在煩惱什麼？"
-        ></Input> */}
-        {/* 第三方api///////////////////////////////////////// */}
         <Input
           onChange={(e) => setSearch(e.target.value)}
           value={search}
           placeholder="你在煩惱什麼？"
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              if (search === "") {
+                Swal.fire({
+                  text: "請輸入關鍵字",
+                  confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+                });
+              } else {
+                history.push(`/book/search/${search}`);
+              }
+            }
+          }}
         ></Input>
-        <SearchBtn to={`/book/search/${search}`} />
+        <SearchBtn onClick={onSubmit} />
       </SearchBar>
-
-      {open ? (
-        <ResultDiv>
-          {results.length > 0 ? (
-            <ResultContainer>
-              {results.map((result) => {
-                return (
-                  <Link to={`book/${result.bookName}`}>
-                    <Result>{result.quote}</Result>
-                    {/* <Result>{result.bookName}</Result>
-                    <Result>{result.hashtag1}</Result> */}
-                  </Link>
-                );
-              })}
-            </ResultContainer>
-          ) : (
-            "搜尋不到喔"
-          )}
-        </ResultDiv>
-      ) : (
-        ""
-      )}
+      <HashtagDiv>
+        {reviews.map((review) => {
+          return (
+            <Hashtag
+              key={review.id}
+              onClick={(e) => {
+                onsubmit(e);
+              }}
+            >
+              {review.hashtag1}
+            </Hashtag>
+          );
+        })}
+      </HashtagDiv>
     </Div>
   );
 };

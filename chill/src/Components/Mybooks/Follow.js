@@ -3,20 +3,40 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import firebase from "../../utils/firebase";
 import { Link, useParams } from "react-router-dom";
+import Loading from "../Loading";
+import { useSelector } from "react-redux";
 
 const Div = styled.div`
+  border-radius: 20px;
   display: flex;
-  background-color: #e5e5e3;
+  flex-direction: column;
+  align-items: center;
+  color: rgba(255, 240, 221, 0.8);
+  font-size: 22px;
+  width: 100%;
+  padding: 20px;
+  background-color: rgba(213, 219, 219, 0.1);
+`;
+const FollowsTag = styled.div`
+  background-color: rgba(213, 219, 219, 0.1);
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: rgba(255, 240, 221, 0.8);
 `;
 const PersonTag = styled.div`
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 20px;
   margin: 20px;
-  background-color: #eeeda7;
-  display: flex;
+  border-bottom: rgba(254, 174, 32, 0.3) 1px solid;
 `;
 const PersonName = styled.h3`
-  color: black;
+  color: rgba(213, 219, 219, 1);
   margin: 20px;
 `;
 const PersonImg = styled.img`
@@ -26,86 +46,90 @@ const PersonImg = styled.img`
 `;
 const FollowBtn = styled.div`
   background-color: #0d6663;
-  margin: 20px;
-  width: 80px;
+  margin-left: auto;
   padding: 10px;
   text-align: center;
   border-radius: 10px;
   cursor: pointer;
 `;
 
-function Follow() {
-  const [uid, setUid] = useState("");
-  const [followId, setFollowId] = useState("");
+function Follow({ setActiveItem, userIdOnly }) {
+  const currentUser = useSelector((state) => state.currentUser);
+  const [isLoading, setIsLoading] = useState(false);
+  const [follows, setFollows] = useState([]);
   let userId = useParams();
-  const [followed, setFollowed] = useState([]);
-  console.log(userId);
-  useEffect(() => {
-    setUid(firebase.auth().currentUser?.uid);
-  }, []);
-  useEffect(() => {
-    const db = firebase.firestore();
-    db.collection("users")
-      .where("followBy", "array-contains", userId.userid)
-      .onSnapshot((collectionSnapshot) => {
-        const data = collectionSnapshot.docs.map((docSnapshot) => {
-          const id = docSnapshot.id;
-          console.log(id);
-          setFollowId(id);
-          return { ...docSnapshot.data(), id };
-        });
-      });
-  }, []);
-  console.log(followId);
 
+  console.log(userId.userid);
+  console.log(userIdOnly);
   useEffect(() => {
-    followId &&
-      firebase
+    setIsLoading(true);
+    if (Object.keys(currentUser).length !== 0) {
+      const unsubscribe = firebase
         .firestore()
         .collection("users")
-        .doc(followId)
-        .onSnapshot((docSnapshot) => {
-          console.log(docSnapshot.data());
-          setFollowed(docSnapshot.data());
+        .where("followBy", "array-contains", userIdOnly)
+        .onSnapshot((querySnapshot) => {
+          const data = querySnapshot.docs.map((doc) => {
+            const id = doc.id;
+            return { ...doc.data(), id };
+          });
+          setFollows(data);
+          setIsLoading(false);
+          setActiveItem("follow");
         });
-  }, [followId]);
-  console.log(followed);
-  console.log(uid);
-  function toggleFollowed() {
-    uid.length > 0 &&
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [userIdOnly]);
+
+  function toggleFollowed(followId) {
+    currentUser &&
       firebase
         .firestore()
         .collection("users")
         .doc(followId)
         .update({
-          followBy: firebase.firestore.FieldValue.arrayRemove(uid),
+          followBy: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
         });
   }
+  console.log(currentUser.uid);
 
-  const isFollowed = followed.followBy?.includes(
-    firebase.auth().currentUser.uid
-  );
-
-  // console.log(followed[0].followBy);
-  console.log(isFollowed);
   return (
-    <Div>
-      <PersonTag>
-        {isFollowed ? (
-          <div>
-            <Link to={`/mybooks/${followed.uid}/collection`}>
-              <PersonImg src={followed.URL} alt="" />
-            </Link>
-
-            <PersonName>{followed.userName}</PersonName>
-            <FollowBtn onClick={toggleFollowed}>取消追蹤</FollowBtn>
-          </div>
-        ) : (
-          ""
-        )}
-      </PersonTag>
-      ;
-    </Div>
+    <>
+      {follows.length > 0 ? (
+        <FollowsTag>
+          {isLoading ? <Loading /> : ""}
+          {follows.map((item) => {
+            console.log(item);
+            console.log(userIdOnly);
+            return (
+              <PersonTag key={item.id}>
+                <>
+                  <a href={`/mybooks/${item.uid}/collection`}>
+                    <PersonImg src={item.URL} alt="" />
+                  </a>
+                  <PersonName>{item.userName}</PersonName>
+                  {currentUser.uid === userIdOnly ? (
+                    <FollowBtn
+                      onClick={() => {
+                        toggleFollowed(item.uid);
+                      }}
+                    >
+                      取消追蹤
+                    </FollowBtn>
+                  ) : (
+                    ""
+                  )}
+                </>
+              </PersonTag>
+            );
+          })}
+        </FollowsTag>
+      ) : (
+        <Div>目前還沒追蹤任何人唷</Div>
+      )}
+    </>
   );
 }
 

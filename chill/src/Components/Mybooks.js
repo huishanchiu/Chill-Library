@@ -1,5 +1,7 @@
 import React from "react";
+import Swal from "sweetalert2";
 import styled from "styled-components";
+import "firebase/storage";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import firebase from "../utils/firebase";
@@ -8,56 +10,90 @@ import { Route, BrowserRouter, Switch } from "react-router-dom";
 import Collection from "./Mybooks/Collection";
 import Review from "./Mybooks/Review";
 import Follow from "./Mybooks/Follow";
+import BookState from "./Mybooks/BookState";
+import { FiSettings } from "react-icons/fi";
+import MySetting from "./Mybooks/MySetting";
+import banner from "../images/021.jpeg";
+import { useSelector } from "react-redux";
+
+const SetIcon = styled(FiSettings)`
+  cursor: pointer;
+  color: #f1faf7;
+  width: 20px;
+`;
+const Icon = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(81, 92, 105, 0.7);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  padding: 2px;
+`;
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   padding: 20px;
-  width: 650px;
-  @media (max-width: 1200px) {
-    max-width: 650px;
+  width: 50%;
+  @media (max-width: 1250px) {
+    width: 70%;
   }
-  @media (max-width: 900px) {
+  @media (max-width: 875px) {
+    width: 100%;
   }
 `;
 const QuoteTag = styled.div`
-  color: #1abea7;
-  font-size: 44px;
+  background-size: cover;
+  color: #0d6663;
+  font-size: 37px;
   font-weight: 900;
+  padding: 20px;
+  width: 100%;
+  height: 20vmin;
+  position: relative;
 `;
 
 const MyInfo = styled.div`
+  z-index: 3;
   display: flex;
-  margin-top: 60px;
-  font-size: 30px;
-  align-items: center;
+  justify-content: space-between;
+  margin-top: -30px;
+  margin-left: 30px;
+  width: 100%;
 `;
-const MyInfoDiv = styled.div`
-  display: flex;
-  align-items: center;
-  line-height: 20px;
-`;
+const MyInfoDiv = styled.div``;
 const MyName = styled.div`
   font-size: 30px;
   font-weight: 500;
   color: tomato;
-  margin: 0 10px;
+  padding-left: 5px;
 `;
 const MyImage = styled.img`
   width: 70px;
+  height: 70px;
   background-color: white;
-  border-radius: 50px;
-  margin-right: 10px;
+  border-radius: 70px;
+`;
+const MyIntro = styled.div`
+  color: #999c9d;
+  padding-left: 5px;
+  font-size: 18px;
 `;
 const MyEmail = styled.div`
-  color: #f1faf7;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 10px;
+  color: #999c9d;
+  padding-left: 5px;
   font-size: 18px;
 `;
 const TabTag = styled.div`
+  width: 50vmin;
   display: flex;
+  justify-content: space-around;
 `;
 const Tab = styled(Link)`
   width: 70px;
@@ -75,10 +111,10 @@ const Tab = styled(Link)`
   }
 `;
 const FollowBtn = styled.div`
+  align-self: flex-start;
   background-color: #0d6663;
   margin: 20px;
-  width: 60px;
-  padding: 10px;
+  padding: 10px 20px;
   text-align: center;
   border-radius: 10px;
   cursor: pointer;
@@ -89,90 +125,82 @@ function getRandom(x) {
 }
 
 const Mybooks = () => {
-  const [uid, setUid] = useState("");
+  const currentUser = useSelector((state) => state.currentUser);
+  const [open, setOpen] = useState(false);
+  // const [uid, setUid] = useState("");
   const [follows, setFollows] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [userInfo, setUserInfo] = useState({});
   const [activeItem, setActiveItem] = useState("collection");
-  const [quotes, setQuotes] = useState([]);
+  const [file, setFile] = useState(null);
   const [user, setUser] = useState(null);
   let userId = useParams();
   const db = firebase.firestore();
-  const userRef = db.collection("users").doc(userId.userid);
-  // console.log(userRef);
-  // console.log(firebase.auth().currentUser.uid);
 
-  useEffect(() => {
-    setUid(firebase.auth().currentUser?.uid);
-  }, []);
   const quoteIndex = getRandom(reviews.length);
   useEffect(() => {
-    firebase
+    const unsubscribe = firebase
       .firestore()
       .collection("users")
       .doc(userId.userid)
       .onSnapshot((docSnapshot) => {
         setFollows(docSnapshot.data());
       });
-  }, []);
+    return () => {
+      unsubscribe();
+    };
+  }, [userId.userid]);
 
   useEffect(() => {
     if (user !== "") {
-      db.collection("reviews")
+      const unsubscribe = db
+        .collection("reviews")
         .where("author.uid", "==", userId.userid)
-        .get()
-        .then((collectionSnapshot) => {
+        .onSnapshot((collectionSnapshot) => {
           const data = collectionSnapshot.docs.map((docSnapshot) => {
             const id = docSnapshot.id;
             return { ...docSnapshot.data(), id };
           });
           setReviews(data);
         });
+      return () => {
+        unsubscribe();
+      };
     }
-  }, []);
-  console.log(reviews);
+  }, [userId.userid]);
+
   function toggleFollowed() {
-    if (userId.userid !== uid) {
+    if (userId.userid !== currentUser.uid) {
       if (isFollowed) {
         firebase
           .firestore()
           .collection("users")
           .doc(userId.userid)
           .update({
-            followBy: firebase.firestore.FieldValue.arrayRemove(uid),
+            followBy: firebase.firestore.FieldValue.arrayRemove(
+              currentUser.uid
+            ),
           });
+        Swal.fire({
+          text: "已取消追蹤",
+          confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+        });
       } else {
         firebase
           .firestore()
           .collection("users")
           .doc(userId.userid)
           .update({
-            followBy: firebase.firestore.FieldValue.arrayUnion(uid),
+            followBy: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
           });
+        Swal.fire({
+          text: "已追蹤",
+          confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+        });
       }
     }
   }
 
-  const isFollowed = follows.followBy?.includes(
-    firebase.auth().currentUser.uid
-  );
-  console.log(isFollowed);
-
-  console.log(userId.userid);
-  useEffect(() => {
-    if (userId.userid) {
-      console.log(typeof userId.userid);
-      userRef.get().then((doc) => {
-        console.log(doc.data());
-        setUserInfo({
-          displayName: doc.data().userName,
-          email: doc.data().email,
-          photoURL: doc.data().URL,
-          uid: doc.data().uid,
-        });
-      });
-    }
-  }, []);
+  const isFollowed = follows.followBy?.includes(currentUser.uid);
 
   const active = {
     background: "#F1FAF7",
@@ -195,79 +223,133 @@ const Mybooks = () => {
 
   let { path, url } = useRouteMatch();
 
+  const perviewUrl = file
+    ? URL.createObjectURL(file)
+    : "https://store-images.s-microsoft.com/image/apps.30252.13581223868996394.55d0cdc7-62a9-49a1-baad-f12edad03432.c8c1dee1-8fa1-413e-989b-2d27e219fa4b?w=672&h=378&q=80&mode=letterbox&background=%23FFE4E4E4&format=jpg";
   return (
-    <BrowserRouter>
-      {Object.keys(userInfo) ? (
-        <Content>
-          <QuoteTag>
-            {reviews.length > 0 ? reviews[quoteIndex].quote : ""}
-          </QuoteTag>
+    <>
+      {currentUser ? (
+        <BrowserRouter>
+          {Object.keys(follows) ? (
+            <Content>
+              {follows.imageUrl ? (
+                <QuoteTag
+                  style={{
+                    backgroundImage:
+                      `url(${follows.imageUrl})` || `url(${banner})`,
+                  }}
+                >
+                  {reviews.length > 0 ? reviews[quoteIndex].quote : ""}
 
-          <MyInfo>
-            <MyImage src={userInfo.photoURL} alt="" />
-            <MyName>{userInfo.displayName}</MyName>
-            的去憂書櫃
-          </MyInfo>
-          <MyInfoDiv>
-            <MyEmail>{userInfo.email}</MyEmail>
-            {uid
-              ? userId.userid !== uid && (
-                  <FollowBtn onClick={toggleFollowed}>
-                    {isFollowed ? "Unfollow" : "Follow"}
-                  </FollowBtn>
-                )
-              : ""}
-          </MyInfoDiv>
+                  {userId.userid === firebase.auth().currentUser.uid ? (
+                    <Icon onClick={() => setOpen(true)}>
+                      <SetIcon />
+                    </Icon>
+                  ) : (
+                    ""
+                  )}
 
-          <TabTag>
-            <Tab
-              onClick={() => {
-                setActiveItem("collection");
-              }}
-              style={activeItem === "collection" ? active : []}
-              to={`${url}/collection`}
-            >
-              收藏
-            </Tab>
-            <Tab
-              onClick={() => {
-                setActiveItem("review");
-              }}
-              style={activeItem === "review" ? active : []}
-              to={`${url}/review`}
-            >
-              去憂
-            </Tab>
-            <Tab
-              onClick={() => {
-                setActiveItem("follow");
-              }}
-              style={activeItem === "follow" ? active : []}
-              to={`${url}/follow`}
-            >
-              追蹤
-            </Tab>
-            {/* <Tab
-              onClick={() => {
-                setActiveItem("quote");
-              }}
-              style={activeItem === "quote" ? active : []}
-              to={`${url}/quote`}
-            >
-              Quote
-            </Tab> */}
-          </TabTag>
-          <Switch>
-            <Route exact path={`${path}/collection`} component={Collection} />
-            <Route exact path={`${path}/review`} component={Review} />
-            <Route exact path={`${path}/follow`} component={Follow} />
-            {/* <Route exact path={`${path}/quote`} component={Quote} /> */}
-          </Switch>
-        </Content>
+                  {open && <MySetting userInfo={follows} close={setOpen} />}
+                  {/* <MyImage src={follows.URL} alt="" /> */}
+                </QuoteTag>
+              ) : (
+                <>
+                  <QuoteTag
+                    style={{
+                      backgroundImage: `url(${perviewUrl})`,
+                    }}
+                  >
+                    {reviews.length > 0 ? reviews[quoteIndex].quote : ""}
+                    {userId.userid === firebase.auth().currentUser.uid ? (
+                      <Icon onClick={() => setOpen(true)}>
+                        <SetIcon />
+                      </Icon>
+                    ) : (
+                      ""
+                    )}
+                    {open && <MySetting userInfo={follows} close={setOpen} />}
+                  </QuoteTag>
+                </>
+              )}
+
+              <MyInfo>
+                <MyInfoDiv>
+                  <MyImage src={follows.URL} alt="" />
+                  <MyName>{follows.userName}</MyName>
+                  <MyEmail>{follows.email}</MyEmail>
+                  <MyIntro>{follows.selfInfo}</MyIntro>
+                </MyInfoDiv>
+                {currentUser.uid
+                  ? userId.userid !== currentUser.uid && (
+                      <FollowBtn onClick={toggleFollowed}>
+                        {isFollowed ? "取消追蹤" : "追蹤"}
+                      </FollowBtn>
+                    )
+                  : ""}
+              </MyInfo>
+              <TabTag>
+                <Tab
+                  onClick={() => {
+                    setActiveItem("collection");
+                  }}
+                  style={activeItem === "collection" ? active : []}
+                  to={`${url}/collection`}
+                >
+                  收藏
+                </Tab>
+                <Tab
+                  onClick={() => {
+                    setActiveItem("review");
+                  }}
+                  style={activeItem === "review" ? active : []}
+                  to={`${url}/review`}
+                >
+                  去憂
+                </Tab>
+                <Tab
+                  onClick={() => {
+                    setActiveItem("follow");
+                  }}
+                  style={activeItem === "follow" ? active : []}
+                  to={`${url}/follow`}
+                >
+                  追蹤
+                </Tab>
+              </TabTag>
+              <Switch>
+                <Route exact path={`${path}/collection`}>
+                  <Collection
+                    setActiveItem={setActiveItem}
+                    userIdOnly={userId.userid}
+                  />
+                </Route>
+                <Route exact path={`${path}/review`}>
+                  <Review
+                    setActiveItem={setActiveItem}
+                    userIdOnly={userId.userid}
+                  />
+                </Route>
+                <Route exact path={`${path}/follow`}>
+                  <Follow
+                    setActiveItem={setActiveItem}
+                    userIdOnly={userId.userid}
+                  />
+                </Route>
+                <Route
+                  exact
+                  path={`${path}/collection/:id`}
+                  component={BookState}
+                />
+              </Switch>
+            </Content>
+          ) : (
+            <MyInfo>尚未登入喔！</MyInfo>
+          )}
+        </BrowserRouter>
       ) : (
-        <MyInfo>尚未登入喔！</MyInfo>
+        ""
       )}
-    </BrowserRouter>
+    </>
   );
 };
 

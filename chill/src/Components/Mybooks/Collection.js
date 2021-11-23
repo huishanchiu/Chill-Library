@@ -1,67 +1,66 @@
 import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import { BsBookmarkFill, BsBookmark } from "react-icons/bs";
 import firebase from "../../utils/firebase";
 import { Link, useParams } from "react-router-dom";
-import { AiOutlineCloseCircle } from "react-icons/ai";
-const CloseIcon = styled(AiOutlineCloseCircle)`
-  color: #1abea7;
-  width: 30px;
-  height: 100%;
-  cursor: pointer;
-`;
-const Close = styled.div`
-  display: none;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-`;
+import bookShelf from "../../images/bookShelf.jpeg";
+import Loading from "../Loading";
 
-const BookCollection = styled(BsBookmarkFill)`
-  width: 10px;
-  color: tomato;
-`;
-const BookUnCollection = styled(BsBookmark)`
-  width: 20px;
-  height: 100%;
-  color: tomato;
-`;
-
-const AllBook = styled.div``;
-const BookTag = styled.div`
-  position: relative;
+const AllBook = styled.div`
+  color: #0b4d4a;
+  font-size: 22px;
+  font-weight: 500;
+  border-radius: 20px;
+  background-image: linear-gradient(
+      rgba(211, 211, 211, 0.7),
+      rgba(255, 255, 255, 0.6)
+    ),
+    url(${bookShelf});
+  justify-content: space-around;
+  width: 100%;
   padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+`;
+const BookTag = styled(Link)`
+  position: relative;
+  padding: 10px 10px 0;
   text-decoration: none;
-  display: grid;
-  grid-template-columns: 25% 75%;
-  grid-template-rows: 100% 100%;
-  background-color: #fbe192;
-  margin-top: 20px;
-  height: 200px;
-  &:hover :first-child {
-    display: block;
-  }
+  width: 150px;
+  margin: 10px 20px 0;
 `;
 const BookContent = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+`;
+const ImgTag = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  width: 180px;
 `;
 const BookImg = styled.img`
-  outline: grey solid 1px;
-  height: 150px;
-  width: 100px;
+  cursor: pointer;
+  height: 220px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  &:hover {
+    height: 230px;
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.19),
+      10px 20px 10px rgba(0, 0, 0, 0.23);
+  }
 `;
 const BookName = styled.div`
-  font-size: 24px;
-  font-weight: 500;
-  color: grey;
-`;
-const BookSummary = styled.div`
-  color: grey;
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #2c213b;
 `;
 
-function Collection() {
+function Collection({ setActiveItem, userIdOnly }) {
+  const [isLoading, setIsLoading] = useState(false);
   const [uid, setUid] = useState("");
   let userId = useParams();
   const [bookList, setBookList] = useState([]);
@@ -69,51 +68,56 @@ function Collection() {
   useEffect(() => {
     setUid(firebase.auth().currentUser?.uid);
   }, []);
+
   useEffect(() => {
-    db.collection("books")
-      .where("collectedBy", "array-contains", userId.userid)
+    setIsLoading(true);
+    const unsubscribe = db
+      .collection("books")
+      .where("collectedBy", "array-contains", userIdOnly)
       .onSnapshot((collectionSnapshot) => {
         const data = collectionSnapshot.docs.map((docSnapshot) => {
-          const id = docSnapshot.id;
-          return { ...docSnapshot.data(), id };
+          return { ...docSnapshot.data() };
         });
         setBookList(data);
+        setIsLoading(false);
+        setActiveItem("collection");
       });
-  }, []);
-  console.log(userId.userid);
-  function toggleUncellect(title) {
-    firebase
-      .firestore()
-      .collection("books")
-      .doc(title)
-      .update({
-        collectedBy: firebase.firestore.FieldValue.arrayRemove(userId.userid),
-      });
-  }
+    return () => {
+      unsubscribe();
+    };
+  }, [userIdOnly]);
 
   return (
-    <AllBook>
-      {bookList.map((item) => {
-        let des = item.description.slice(0, 200);
-        item.description = des + "......";
+    <>
+      {isLoading ? <Loading /> : ""}
+      {bookList.length > 0 ? (
+        <AllBook>
+          {bookList.map((item) => {
+            let des = item.description.slice(0, 200);
+            item.description = des + "......";
 
-        return (
-          <BookTag key={item.title}>
-            <Close>
-              <CloseIcon onClick={(e) => toggleUncellect(item.title)} />
-            </Close>
-            <Link to={`/book/${item.title}`}>
-              <BookImg src={item.image} alt="" />
-            </Link>
-
-            <BookContent>
-              <BookName>{item.title}</BookName>
-              <BookSummary>{item.description}</BookSummary>
-            </BookContent>
-          </BookTag>
-        );
-      })}
-    </AllBook>
+            return (
+              <BookTag
+                to={`/mybooks/${userIdOnly}/collection/${item.title}`}
+                key={item.id}
+              >
+                <BookContent>
+                  <ImgTag>
+                    <BookImg
+                      src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
+                      alt=""
+                    />
+                  </ImgTag>
+                  <BookName>{item.title}</BookName>
+                </BookContent>
+              </BookTag>
+            );
+          })}
+        </AllBook>
+      ) : (
+        <AllBook>書櫃空空的唷</AllBook>
+      )}
+    </>
   );
 }
 

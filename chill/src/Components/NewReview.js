@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import "firebase/firestore";
 import firebase from "../utils/firebase";
 import { useHistory, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
 
 const Star = ({ starId, marked }) => {
   return (
@@ -28,19 +30,20 @@ const Mask = styled.div`
   position: fixed;
   top: 0;
   bottom: 0;
+  left: 0;
+  right: 0;
   width: 100%;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  /* justify-content: center; */
   align-items: center;
+  justify-content: center;
 `;
 
 const PopupInner = styled.div`
+  width: 50%;
   position: relative;
   padding: 30px;
-  width: 700px;
-  background-color: #f6e7db;
+  background-color: #f1faf7;
   border-radius: 1rem;
 `;
 const Close = styled.div`
@@ -49,21 +52,16 @@ const Close = styled.div`
   right: 16px;
 `;
 const Btn = styled.div`
-  margin: 15px auto;
-  width: 40px;
-  position: relative;
-  text-decoration: none;
-  border-radius: 50rem;
-  padding: 0.3rem 0.6rem;
-  color: #2c213b;
-  background-color: #f93c10;
-  box-shadow: 0px 3px 0 #1abea7;
-  transition: all 0.1s ease-in-out;
-  &:hover {
-    bottom: -7px;
-    box-shadow: 0px 0px 0 #000;
-  }
+  margin: 20px auto;
+  width: 80px;
+  text-align: center;
   cursor: pointer;
+  padding: 5px 15px;
+  border-radius: 15px;
+  background-color: #0d6662;
+  color: #f1faf7;
+  font-size: 16px;
+  font-weight: 500;
 `;
 
 const ReviewAuthor = styled.div`
@@ -73,13 +71,14 @@ const ReviewAuthor = styled.div`
 `;
 const ReviewAuthorImg = styled.img`
   margin-right: 10px;
-  width: 30px;
-  height: 30px;
-  border-radius: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
 `;
 
 const Question = styled.h3`
   display: flex;
+  flex-direction: column;
   align-items: center;
 `;
 
@@ -92,11 +91,10 @@ const QuoteInput = styled.input`
   font-size: 16px;
   outline: none;
   border: none;
-  width: 350px;
-  height: 20px;
+  width: 100%;
+  height: 40px;
   padding: 8px;
   border-radius: 10px;
-  /* box-shadow: 0px 3px 0 #1abea7; */
 `;
 const ReviewContent = styled.textarea`
   margin: 20px auto;
@@ -105,15 +103,19 @@ const ReviewContent = styled.textarea`
   }
   color: #3f403f;
   font-size: 16px;
-  outline: none;
-  border: none;
-  width: 350px;
+  width: 100%;
   height: 200px;
   padding: 8px;
   border-radius: 10px;
+  border: none;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none;
 `;
 const HashtagInput = styled.input`
-  margin: 0 10px;
+  margin: 10px;
   ::placeholder {
     color: #cdcdcd;
   }
@@ -121,19 +123,24 @@ const HashtagInput = styled.input`
   font-size: 16px;
   outline: none;
   border: none;
-  width: 150px;
-  height: 20px;
+  width: 40%;
+  height: 40px;
   padding: 8px;
   border-radius: 10px;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 function NewReview({ close }) {
+  const currentUser = useSelector((state) => state.currentUser);
   const [selection, setSelection] = useState(0);
   const [rating, setRating] = useState(0);
   // const [userId, setUserId] = useState("");
 
   const db = firebase.firestore();
   let bookid = useParams();
+  const [book, setBook] = useState({});
   const [authorName, setAuthorName] = useState("");
   const [authorPhoto, setAuthorPhoto] = useState("");
   const [authoremail, setAuthoremail] = useState("");
@@ -144,13 +151,12 @@ function NewReview({ close }) {
   const [hashtag2, setHashtag2] = useState("");
   const [hashtag3, setHashtag3] = useState("");
 
-  const userId = firebase.auth().currentUser.uid;
+  // const userId = firebase.auth().currentUser.uid;
 
   useEffect(() => {
     db.collection("users")
-      .doc(userId)
-      .get()
-      .then((docSnapshot) => {
+      .doc(currentUser.uid)
+      .onSnapshot((docSnapshot) => {
         console.log(docSnapshot.data());
         setAuthorPhoto(docSnapshot.data().URL);
         setAuthorName(docSnapshot.data().userName);
@@ -158,13 +164,27 @@ function NewReview({ close }) {
         setAuthorUid(docSnapshot.data().uid);
       });
   }, []);
+  useEffect(() => {
+    db.collection("books")
+      .doc(bookid.id)
+      .get()
+      .then((docSnapshot) => {
+        setBook(docSnapshot.data());
+      });
+  }, [bookid.id]);
+  console.log(book.id);
 
   function onSubmit() {
-    const documentRef = firebase.firestore().collection("reviews").doc();
-    console.log(documentRef);
-    documentRef
-      .set({
+    if (
+      content !== "" &&
+      quote !== "" &&
+      (hashtag1 !== "" || hashtag2 !== "" || hashtag3 !== "")
+    ) {
+      const documentRef = firebase.firestore().collection("reviews").doc();
+      console.log(documentRef);
+      documentRef.set({
         bookName: bookid.id,
+        bookId: book.id,
         content,
         quote,
         hashtag1,
@@ -178,11 +198,23 @@ function NewReview({ close }) {
           uid: authorUid,
           email: authoremail,
         },
-      })
-      .then(() => {
-        // history.push(`/book/${bookid.id}`);
       });
-    close(false);
+      db.collection("users")
+        .doc(currentUser.uid)
+        .update({
+          reviewCount: firebase.firestore.FieldValue.increment(1),
+        });
+      close(false);
+      Swal.fire({
+        text: "成功發表一篇去憂",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
+    } else {
+      Swal.fire({
+        text: "請填入Quote、去憂內容以及至少一個hashtag喔！",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
+    }
   }
   return (
     <Mask>

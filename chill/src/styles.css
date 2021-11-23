@@ -173,16 +173,20 @@
 }
 /* ///////////basic///////////// */
 .background {
+  overflow: hidden;
   z-index: 1;
   position: relative;
   width: 100%;
   background-color: #2c213b;
-  height: 4000px;
+  /* min-height: 8000px; */
+  height: 2000vmin;
+
   margin: auto;
 }
 
 .road {
-  height: 350px;
+  /* height: 350px; */
+  height: 50vmin;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -247,10 +251,16 @@
   width: 400px;
   color: white;
 }
-.theme__1__img {
+.theme__1__img,
+.theme__2__img,
+.theme__3__img,
+.theme__4__img,
+.theme__5__img,
+.theme__6__img {
+  /* outline: blue solid; */
   width: 300px;
   /* position: relative;
-  top: 40px; */
+  top: 30px; */
 }
 .theme__2,
 .theme__3,
@@ -259,32 +269,7 @@
 .theme__6 {
   opacity: 0;
 }
-.theme__2__img {
-  width: 300px;
-  position: relative;
-  top: 40px;
-}
-.theme__3__img {
-  width: 300px;
-  position: relative;
-  top: 40px;
-}
-.theme__4__img {
-  width: 300px;
-  position: relative;
-  top: 40px;
-}
-.theme__5__img {
-  width: 300px;
-  position: relative;
-  top: 40px;
-}
 
-.theme__6__img {
-  width: 300px;
-  position: relative;
-  top: 40px;
-}
 @font-face {
   font-family: "Sacramento";
   src: url("../src/utils/Sacramento-Regular.ttf");
@@ -346,4 +331,15 @@
     0 0 20px rgb(0, 255, 145), 0 0 40px rgb(2, 242, 198),
     0 0 80px rgb(0, 255, 145), 0 0 90px rgb(0, 255, 145),
     0 0 100px rgb(0, 255, 145), 0 0 150px rgb(0, 255, 145);
+}
+@media (max-width: 600px) {
+  .light__3__left {
+    bottom: 150px;
+  }
+  .light__4__left {
+    bottom: 120px;
+  }
+  .light__4__left .light {
+    transform: translateX(230%);
+  }
 }
