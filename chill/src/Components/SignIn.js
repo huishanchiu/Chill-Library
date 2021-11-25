@@ -219,6 +219,7 @@ function SignIn(props) {
         });
     }
   }
+
   return props.trigger ? (
     <Mask>
       <PopupInner>

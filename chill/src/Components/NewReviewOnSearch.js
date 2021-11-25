@@ -228,7 +228,6 @@ function NewReviewOnSearch({ close }) {
         confirmButtonColor: "rgba(15, 101, 98, 0.8)",
       });
     }
-    history.push(`/book/${bookName}`);
   }
 
   return (

@@ -3,7 +3,6 @@ import Swal from "sweetalert2";
 import styled from "styled-components";
 import search from "../images/search.png";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import firebase from "../utils/firebase";
 import { useHistory } from "react-router";
 

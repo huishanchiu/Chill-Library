@@ -1,10 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { AiOutlineCloseCircle } from "react-icons/ai";
-import { useState, useEffect } from "react";
-import firebase from "../utils/firebase";
-import "firebase/firestore";
-import "firebase/storage";
+import firebase from "../../utils/firebase";
+import { addCategory, removeCategory } from "../../utils/firebaseFunction";
 
 const Mask = styled.div`
   z-index: 1;
@@ -16,7 +13,7 @@ const Mask = styled.div`
   left: 0;
   width: 100p;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,48 +58,28 @@ const Btn = styled.div`
 `;
 
 function UserCategory({ setPopup, book }) {
-  console.log(book);
   function toggleAddCategory(e) {
     const isCategory =
       Object.keys(book).length > 0
         ? book.categories?.includes(e.target.textContent)
         : "";
-
-    // console.log(book.categories);
-    // console.log(isCategory);
     if (isCategory) {
-      firebase
-        .firestore()
-        .collection("books")
-        .doc(book.title)
-        .update({
-          categories: firebase.firestore.FieldValue.arrayRemove(
-            `${e.target.textContent}`
-          ),
-        });
+      addCategory(e, book.title);
     } else {
-      firebase
-        .firestore()
-        .collection("books")
-        .doc(book.title)
-        .update({
-          categories: firebase.firestore.FieldValue.arrayUnion(
-            `${e.target.textContent}`
-          ),
-        });
+      removeCategory(e, book.title);
     }
   }
   function closeAddTag() {
     setPopup(false);
   }
-  console.log(book?.categories);
+
   return (
     <>
       {firebase.auth().currentUser ? (
         <Mask>
           <PopupInner>
             幫這本書新增分類吧
-            {book?.categories === undefined || book?.categories?.length < 1 ? (
+            {book?.categories === undefined || book?.categories?.length < 2 ? (
               <>
                 <Category
                   onClick={(e) => {

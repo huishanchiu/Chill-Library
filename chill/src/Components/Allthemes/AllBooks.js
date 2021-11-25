@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import firebase from "../utils/firebase";
+import firebase from "../../utils/firebase";
 import { AiFillPlayCircle } from "react-icons/ai";
 
 const PlayIcon = styled(AiFillPlayCircle)``;
@@ -88,7 +88,6 @@ const Info = styled.div`
   }
 `;
 const More = styled(Link)`
-  /* background-color: rgba(255, 240, 221, 0.8); */
   text-align: center;
   text-decoration: none;
   color: #cd7f32;
@@ -108,7 +107,6 @@ function AllBooks({ theme }) {
         setBookList(list);
       });
   }, [theme]);
-  console.log(bookList);
   return (
     <div>
       <AllBook>

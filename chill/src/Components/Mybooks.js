@@ -127,13 +127,12 @@ function getRandom(x) {
 const Mybooks = () => {
   const currentUser = useSelector((state) => state.currentUser);
   const [open, setOpen] = useState(false);
-  // const [uid, setUid] = useState("");
   const [follows, setFollows] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [activeItem, setActiveItem] = useState("collection");
+  const [activeItem, setActiveItem] = useState("");
   const [file, setFile] = useState(null);
   const [user, setUser] = useState(null);
-  let userId = useParams();
+  let { userId } = useParams();
   const db = firebase.firestore();
 
   const quoteIndex = getRandom(reviews.length);
@@ -141,20 +140,20 @@ const Mybooks = () => {
     const unsubscribe = firebase
       .firestore()
       .collection("users")
-      .doc(userId.userid)
+      .doc(userId)
       .onSnapshot((docSnapshot) => {
         setFollows(docSnapshot.data());
       });
     return () => {
       unsubscribe();
     };
-  }, [userId.userid]);
+  }, [userId]);
 
   useEffect(() => {
     if (user !== "") {
       const unsubscribe = db
         .collection("reviews")
-        .where("author.uid", "==", userId.userid)
+        .where("author.uid", "==", userId)
         .onSnapshot((collectionSnapshot) => {
           const data = collectionSnapshot.docs.map((docSnapshot) => {
             const id = docSnapshot.id;
@@ -166,15 +165,15 @@ const Mybooks = () => {
         unsubscribe();
       };
     }
-  }, [userId.userid]);
+  }, [userId]);
 
   function toggleFollowed() {
-    if (userId.userid !== currentUser.uid) {
+    if (userId !== currentUser.uid) {
       if (isFollowed) {
         firebase
           .firestore()
           .collection("users")
-          .doc(userId.userid)
+          .doc(userId)
           .update({
             followBy: firebase.firestore.FieldValue.arrayRemove(
               currentUser.uid
@@ -188,7 +187,7 @@ const Mybooks = () => {
         firebase
           .firestore()
           .collection("users")
-          .doc(userId.userid)
+          .doc(userId)
           .update({
             followBy: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
           });
@@ -205,8 +204,6 @@ const Mybooks = () => {
   const active = {
     background: "#F1FAF7",
     color: "#0D6663",
-    borderRadius: "20px",
-    cursor: "pointer",
   };
 
   useEffect(() => {
@@ -241,7 +238,7 @@ const Mybooks = () => {
                 >
                   {reviews.length > 0 ? reviews[quoteIndex].quote : ""}
 
-                  {userId.userid === firebase.auth().currentUser.uid ? (
+                  {userId === firebase.auth().currentUser.uid ? (
                     <Icon onClick={() => setOpen(true)}>
                       <SetIcon />
                     </Icon>
@@ -260,7 +257,7 @@ const Mybooks = () => {
                     }}
                   >
                     {reviews.length > 0 ? reviews[quoteIndex].quote : ""}
-                    {userId.userid === firebase.auth().currentUser.uid ? (
+                    {userId === firebase.auth().currentUser.uid ? (
                       <Icon onClick={() => setOpen(true)}>
                         <SetIcon />
                       </Icon>
@@ -280,7 +277,7 @@ const Mybooks = () => {
                   <MyIntro>{follows.selfInfo}</MyIntro>
                 </MyInfoDiv>
                 {currentUser.uid
-                  ? userId.userid !== currentUser.uid && (
+                  ? userId !== currentUser.uid && (
                       <FollowBtn onClick={toggleFollowed}>
                         {isFollowed ? "取消追蹤" : "追蹤"}
                       </FollowBtn>
@@ -318,26 +315,17 @@ const Mybooks = () => {
               </TabTag>
               <Switch>
                 <Route exact path={`${path}/collection`}>
-                  <Collection
-                    setActiveItem={setActiveItem}
-                    userIdOnly={userId.userid}
-                  />
+                  <Collection setActiveItem={setActiveItem} />
                 </Route>
                 <Route exact path={`${path}/review`}>
-                  <Review
-                    setActiveItem={setActiveItem}
-                    userIdOnly={userId.userid}
-                  />
+                  <Review setActiveItem={setActiveItem} />
                 </Route>
                 <Route exact path={`${path}/follow`}>
-                  <Follow
-                    setActiveItem={setActiveItem}
-                    userIdOnly={userId.userid}
-                  />
+                  <Follow setActiveItem={setActiveItem} />
                 </Route>
                 <Route
                   exact
-                  path={`${path}/collection/:id`}
+                  path={`${path}/collection/:bookName`}
                   component={BookState}
                 />
               </Switch>

@@ -2,11 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { useState, useEffect } from "react";
-import "firebase/firestore";
-import firebase from "../utils/firebase";
-import { useHistory, useParams } from "react-router-dom";
+import firebase from "../../utils/firebase";
 import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
+import "firebase/firestore";
+import { getAuthorInfo, getBookInfo } from "../../utils/firebaseFunction";
 
 const Star = ({ starId, marked }) => {
   return (
@@ -132,47 +132,23 @@ const HashtagInput = styled.input`
   }
 `;
 
-function NewReview({ close }) {
+function NewReview({ close, bookName }) {
   const currentUser = useSelector((state) => state.currentUser);
   const [selection, setSelection] = useState(0);
   const [rating, setRating] = useState(0);
-  // const [userId, setUserId] = useState("");
-
   const db = firebase.firestore();
-  let bookid = useParams();
   const [book, setBook] = useState({});
-  const [authorName, setAuthorName] = useState("");
-  const [authorPhoto, setAuthorPhoto] = useState("");
-  const [authoremail, setAuthoremail] = useState("");
-  const [authorUid, setAuthorUid] = useState("");
   const [quote, setQuote] = useState("");
   const [content, setContent] = useState("");
   const [hashtag1, setHashtag1] = useState("");
   const [hashtag2, setHashtag2] = useState("");
   const [hashtag3, setHashtag3] = useState("");
-
-  // const userId = firebase.auth().currentUser.uid;
+  const [author, setAuthor] = useState({});
 
   useEffect(() => {
-    db.collection("users")
-      .doc(currentUser.uid)
-      .onSnapshot((docSnapshot) => {
-        console.log(docSnapshot.data());
-        setAuthorPhoto(docSnapshot.data().URL);
-        setAuthorName(docSnapshot.data().userName);
-        setAuthoremail(docSnapshot.data().email);
-        setAuthorUid(docSnapshot.data().uid);
-      });
-  }, []);
-  useEffect(() => {
-    db.collection("books")
-      .doc(bookid.id)
-      .get()
-      .then((docSnapshot) => {
-        setBook(docSnapshot.data());
-      });
-  }, [bookid.id]);
-  console.log(book.id);
+    getAuthorInfo(currentUser.uid, setAuthor);
+    getBookInfo(bookName, setBook);
+  }, [bookName]);
 
   function onSubmit() {
     if (
@@ -180,25 +156,27 @@ function NewReview({ close }) {
       quote !== "" &&
       (hashtag1 !== "" || hashtag2 !== "" || hashtag3 !== "")
     ) {
-      const documentRef = firebase.firestore().collection("reviews").doc();
-      console.log(documentRef);
-      documentRef.set({
-        bookName: bookid.id,
-        bookId: book.id,
-        content,
-        quote,
-        hashtag1,
-        hashtag2,
-        hashtag3,
-        rating,
-        createdAt: firebase.firestore.Timestamp.now(),
-        author: {
-          displayName: authorName || "",
-          photoURL: authorPhoto || "",
-          uid: authorUid,
-          email: authoremail,
-        },
-      });
+      firebase
+        .firestore()
+        .collection("reviews")
+        .doc()
+        .set({
+          bookName: bookName,
+          bookId: book.id,
+          content,
+          quote,
+          hashtag1,
+          hashtag2,
+          hashtag3,
+          rating,
+          createdAt: firebase.firestore.Timestamp.now(),
+          author: {
+            displayName: author.userName || "",
+            photoURL: author.URL || "",
+            uid: author.uid,
+            email: author.email,
+          },
+        });
       db.collection("users")
         .doc(currentUser.uid)
         .update({
@@ -223,7 +201,7 @@ function NewReview({ close }) {
           <CloseIcon />
         </Close>
         <ReviewAuthor>
-          <ReviewAuthorImg src={authorPhoto} alt="" />
+          <ReviewAuthorImg src={author.URL} alt="" />
         </ReviewAuthor>
         <QuoteInput
           placeholder="寫下本書你最喜歡的一句Quote吧！"

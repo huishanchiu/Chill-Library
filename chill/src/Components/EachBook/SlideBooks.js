@@ -1,12 +1,12 @@
-import React from "react";
+import { React, useState, useEffect } from "react";
 import Slider from "react-slick";
 import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import firebase from "../utils/firebase";
 import { v4 as uuidv4 } from "uuid";
+import { getAllReviews } from "../../utils/firebaseFunction";
+import { bookImgSrc, defaltBookImgSrc } from "../../utils/utils";
 
 const Sliders = styled(Slider)`
   display: flex;
@@ -39,7 +39,7 @@ const SideBookImg = styled.img`
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   align-self: center;
   justify-self: center;
-  margin: auto;
+  margin: 10px auto;
   height: 150px;
 `;
 
@@ -50,51 +50,13 @@ const Hashtag = styled.div`
 `;
 const Hashtags = styled.div`
   display: flex;
+  white-space: nowrap;
 `;
 
-function getRandom(x) {
-  return Math.floor(Math.random() * x);
-}
-
 function SlideBooks() {
-  const [user, setUser] = useState("");
-  const [reviews, setReviews] = useState([]);
   const [allReviews, setAllReviews] = useState([]);
-  const reviewIndex = getRandom(reviews.length);
-  const allReviewIndex = getRandom(allReviews.length);
   useEffect(() => {
-    let isUnmount = false;
-    firebase.auth().onAuthStateChanged((currentUser) => {
-      if (!isUnmount) {
-        setUser(currentUser);
-      }
-    });
-    return () => {
-      isUnmount = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    const db = firebase.firestore();
-    user &&
-      db
-        .collection("reviews")
-        .where("author.uid", "!=", user.uid)
-        .onSnapshot((collectionSnapshot) => {
-          const data = collectionSnapshot.docs.map((docSnapshot) => {
-            return { ...docSnapshot.data() };
-          });
-          setReviews(data);
-        });
-  }, [user]);
-  useEffect(() => {
-    const db = firebase.firestore();
-    db.collection("reviews").onSnapshot((collectionSnapshot) => {
-      const data = collectionSnapshot.docs.map((docSnapshot) => {
-        return { ...docSnapshot.data() };
-      });
-      setAllReviews(data);
-    });
+    getAllReviews(setAllReviews);
   }, []);
   const settings = {
     dots: true,
@@ -116,14 +78,10 @@ function SlideBooks() {
                 <div key={uuidv4()}>
                   <SideBookTag to={`/book/${item.bookName}`}>
                     <SideBookImg />
-                    {/* <SideBookName>{item.bookName}</SideBookName> */}
                     <SideBookImg
-                      src={`https://books.google.com/books/publisher/content/images/frontcover/${
-                        item.id || item.bookId
-                      }?fife=w400-h600`}
+                      src={bookImgSrc(item.bookId) || defaltBookImgSrc()}
                       alt=""
                     />
-
                     <Hashtags>
                       {item.hashtag1 ? <Hashtag>#{item.hashtag1}</Hashtag> : ""}
                       {item.hashtag2 ? <Hashtag>#{item.hashtag2}</Hashtag> : ""}

@@ -59,10 +59,10 @@ const BookName = styled.div`
   color: #2c213b;
 `;
 
-function Collection({ setActiveItem, userIdOnly }) {
+function Collection({ setActiveItem }) {
   const [isLoading, setIsLoading] = useState(false);
   const [uid, setUid] = useState("");
-  let userId = useParams();
+  let { userId } = useParams();
   const [bookList, setBookList] = useState([]);
   const db = firebase.firestore();
   useEffect(() => {
@@ -73,7 +73,7 @@ function Collection({ setActiveItem, userIdOnly }) {
     setIsLoading(true);
     const unsubscribe = db
       .collection("books")
-      .where("collectedBy", "array-contains", userIdOnly)
+      .where("collectedBy", "array-contains", userId)
       .onSnapshot((collectionSnapshot) => {
         const data = collectionSnapshot.docs.map((docSnapshot) => {
           return { ...docSnapshot.data() };
@@ -85,8 +85,7 @@ function Collection({ setActiveItem, userIdOnly }) {
     return () => {
       unsubscribe();
     };
-  }, [userIdOnly]);
-
+  }, [userId]);
   return (
     <>
       {isLoading ? <Loading /> : ""}
@@ -98,7 +97,7 @@ function Collection({ setActiveItem, userIdOnly }) {
 
             return (
               <BookTag
-                to={`/mybooks/${userIdOnly}/collection/${item.title}`}
+                to={`/mybooks/${userId}/collection/${item.title}`}
                 key={item.id}
               >
                 <BookContent>

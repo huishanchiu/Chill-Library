@@ -1,12 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import theme__1 from "../images/theme__1.png";
-import theme__2 from "../images/theme__2.png";
-import theme__3 from "../images/theme__3.png";
-import theme__4 from "../images/theme__4.png";
-import theme__5 from "../images/theme__5.png";
-import theme__6 from "../images/theme__6.png";
-import { useEffect } from "react";
+import theme__1 from "../../images/theme__1.png";
+import theme__2 from "../../images/theme__2.png";
+import theme__3 from "../../images/theme__3.png";
+import theme__4 from "../../images/theme__4.png";
+import theme__5 from "../../images/theme__5.png";
+import theme__6 from "../../images/theme__6.png";
 let themeImg;
 let conetnt;
 const Div = styled.div`
@@ -23,10 +22,6 @@ const ImgTheme = styled.img`
 `;
 
 function AllThemes({ theme }) {
-  console.log(theme);
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
   switch (theme) {
     case "宅在家好發慌？":
       themeImg = theme__1;
@@ -49,6 +44,7 @@ function AllThemes({ theme }) {
           <strong>
             認真工作的你，為什麼總是為錢所困？只有「讓錢為你工作」，才能實現財富自由！本書將讓你從一位勞動者，轉身成為資本家，透過財富的力量，讓自己擁有選擇的自由。
           </strong>
+          <br />
           <br />
           主動積極投資自己的人生：自己決定時間要如何分配，而不是根據別人的指示。檢視你要的生活與夢想，什麼是對你最重要的，然後決心花時間改變，就能擺脫現狀，成為自己想當的那種人。被動地投資金錢，這種不花腦筋、不花時間的投資法，表現得會比那些要收費替你管理資金的投資專家還好。最棒的是：人人都做得來。聽來簡單，為什麼說這是個祕密？因為大部分人都在做相反的事情：被動的投資人生、積極主動投資金錢。花了大把時間企圖戰勝市場，煩惱該買什麼、什麼時候買，什麼時候賣，隨時處於壓力過大的狀況，獲得得報酬卻不如損失的時間、健康與睡眠……。你一定得賺錢，但人生還有許多事情比股市更重要，要簡單、聰明而安全的投資，為人生而投資。
         </>
