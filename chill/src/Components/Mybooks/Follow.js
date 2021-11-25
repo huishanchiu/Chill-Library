@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import firebase from "../../utils/firebase";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Loading from "../Loading";
 import { useSelector } from "react-redux";
 
@@ -53,21 +53,19 @@ const FollowBtn = styled.div`
   cursor: pointer;
 `;
 
-function Follow({ setActiveItem, userIdOnly }) {
+function Follow({ setActiveItem }) {
   const currentUser = useSelector((state) => state.currentUser);
   const [isLoading, setIsLoading] = useState(false);
   const [follows, setFollows] = useState([]);
-  let userId = useParams();
+  let { userId } = useParams();
 
-  console.log(userId.userid);
-  console.log(userIdOnly);
   useEffect(() => {
     setIsLoading(true);
     if (Object.keys(currentUser).length !== 0) {
       const unsubscribe = firebase
         .firestore()
         .collection("users")
-        .where("followBy", "array-contains", userIdOnly)
+        .where("followBy", "array-contains", userId)
         .onSnapshot((querySnapshot) => {
           const data = querySnapshot.docs.map((doc) => {
             const id = doc.id;
@@ -81,7 +79,7 @@ function Follow({ setActiveItem, userIdOnly }) {
         unsubscribe();
       };
     }
-  }, [userIdOnly]);
+  }, [userId]);
 
   function toggleFollowed(followId) {
     currentUser &&
@@ -101,8 +99,6 @@ function Follow({ setActiveItem, userIdOnly }) {
         <FollowsTag>
           {isLoading ? <Loading /> : ""}
           {follows.map((item) => {
-            console.log(item);
-            console.log(userIdOnly);
             return (
               <PersonTag key={item.id}>
                 <>
@@ -110,7 +106,7 @@ function Follow({ setActiveItem, userIdOnly }) {
                     <PersonImg src={item.URL} alt="" />
                   </a>
                   <PersonName>{item.userName}</PersonName>
-                  {currentUser.uid === userIdOnly ? (
+                  {currentUser.uid === userId ? (
                     <FollowBtn
                       onClick={() => {
                         toggleFollowed(item.uid);

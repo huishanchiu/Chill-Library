@@ -1,22 +1,22 @@
 import { Route, BrowserRouter, Switch } from "react-router-dom";
 import styled from "styled-components";
-import Landing from "./Components/Landing3";
-import EachTheme from "./Components/EachTheme";
+import Landing from "./Components/Landing";
+import EachTheme from "./Components/Allthemes/EachTheme";
 import Mybooks from "./Components/Mybooks";
 import NewsWall from "./Components/NewsWall";
 import Themes from "./Components/Themes";
-import EachBook from "./Components/EachBook";
+import EachBook from "./Components/EachBook/EachBook";
 import Header from "./Components/Header";
 import SideMenu from "./Components/SideMenu";
 import SideBooks from "./Components/SideBooks";
 import Searching from "./Components/Searching";
-import EachSearchBook from "./Components/EachSearchBook";
+import EachSearchBook from "./Components/EachBook/EachSearchBook";
 import bk from "./images/bk.png";
 import SideAuthors from "./Components/SideAuthors";
 import SideMenuThemes from "./Components/SideMenuThemes";
 import { useState, useEffect } from "react";
 import firebase from "./utils/firebase";
-import { getCurrentUser } from "./redux/action";
+import { getCurrentUser, getUsers } from "./redux/action";
 import { useDispatch } from "react-redux";
 import Loading from "./Components/Loading";
 import Nomatch from "./Components/Nomatch";
@@ -51,6 +51,7 @@ const Div = styled.div`
 function App() {
   const dispatch = useDispatch();
   const [user, setUser] = useState();
+
   useEffect(() => {
     firebase.auth().onAuthStateChanged((currentUser) => {
       setUser(currentUser);
@@ -85,7 +86,7 @@ function App() {
                   </SideRight>
                 </Main>
               </Route>
-              <Route path="/mybooks/:userid">
+              <Route path="/mybooks/:userId">
                 <Main>
                   <SideMenu />
                   <Mybooks />
@@ -116,7 +117,7 @@ function App() {
                   </SideRight>
                 </Main>
               </Route>
-              <Route exact path="/book/:id">
+              <Route exact path="/book/:bookName">
                 <Main>
                   <SideMenu />
                   <EachBook />
@@ -126,7 +127,7 @@ function App() {
                   </SideRight>
                 </Main>
               </Route>
-              <Route exact path="/book/searching/:id">
+              <Route exact path="/book/searching/:isbn">
                 <Main>
                   <SideMenu />
                   <EachSearchBook />

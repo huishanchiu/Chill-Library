@@ -1,8 +1,9 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import { React, useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Img = styled.img`
   width: 50px;
@@ -33,8 +34,13 @@ const Info = styled.div``;
 const SelfInfo = styled.div`
   color: #a8abac;
 `;
+const OtherUser = styled.div`
+  cursor: pointer;
+`;
 
 function SideAuthors() {
+  const currentUser = useSelector((state) => state.currentUser);
+  const history = useHistory();
   const [user, setUser] = useState("");
   const [allReviews, setAllReviews] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
@@ -52,18 +58,17 @@ function SideAuthors() {
 
   useEffect(() => {
     const db = firebase.firestore();
-    user &&
-      db
-        .collection("users")
-        .orderBy("reviewCount", "desc")
-        .limit(5)
-        .onSnapshot((collectionSnapshot) => {
-          const data = collectionSnapshot.docs.map((docSnapshot) => {
-            return { ...docSnapshot.data() };
-          });
-          setAllUsers(data);
+
+    db.collection("users")
+      .orderBy("reviewCount", "desc")
+      .limit(5)
+      .onSnapshot((collectionSnapshot) => {
+        const data = collectionSnapshot.docs.map((docSnapshot) => {
+          return { ...docSnapshot.data() };
         });
-  }, [user]);
+        setAllUsers(data);
+      });
+  }, []);
 
   useEffect(() => {
     const db = firebase.firestore();
@@ -76,16 +81,28 @@ function SideAuthors() {
     });
   }, []);
   console.log(allUsers);
+  function goOtherShelf(userUid) {
+    currentUser
+      ? history.push(`/mybooks/${userUid}/collection`)
+      : Swal.fire({
+          text: "請先登入",
+          confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+        });
+  }
   return (
     <div>
       <Div>值得關注</Div>
       {allUsers.map((item) => {
         return (
-          <>
-            <UserInfo key={item.uid}>
-              <Link to={`/mybooks/${item.uid}/collection`}>
+          <div key={item.uid}>
+            <UserInfo>
+              <OtherUser
+                onClick={() => {
+                  goOtherShelf(item.uid);
+                }}
+              >
                 <Img src={item.URL} alt="" />
-              </Link>
+              </OtherUser>
               <User>
                 <Info>{item.userName}</Info>
               </User>
@@ -94,7 +111,7 @@ function SideAuthors() {
               <SelfInfo>{item.selfInfo}</SelfInfo>
               <Count>發表了#{item.reviewCount}篇去憂</Count>
             </div>
-          </>
+          </div>
         );
       })}
     </div>

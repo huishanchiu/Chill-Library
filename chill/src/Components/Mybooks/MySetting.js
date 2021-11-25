@@ -2,12 +2,10 @@ import React from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "firebase/firestore";
 import firebase from "../../utils/firebase";
-import bookCover from "../../images/021.jpeg";
 import { BsCamera } from "react-icons/bs";
-import { useParams } from "react-router-dom";
 import Loading from "../Loading";
 import "firebase/storage";
 
@@ -64,9 +62,6 @@ const PopupInner = styled.div`
   width: 50%;
   background-color: #f1faf7;
   border-radius: 1rem;
-  /* @media (max-width: 900px) {
-    width: 500px;
-  } */
 `;
 const Banner = styled.div`
   background-image: linear-gradient(
@@ -234,32 +229,7 @@ function MySetting({ close, userInfo }) {
       setIsLoading(false);
       close(false);
     }
-
-    // else if (userImg) {
-    //   const doctRef = firebase
-    //     .firestore()
-    //     .collection("users")
-    //     .doc(userInfo.uid);
-    //   const userImgRef = firebase.storage().ref("user-photo/" + userInfo.uid);
-    //   const metadata2 = {
-    //     contentType: userImg.type,
-    //   };
-    //   userImgRef.put(userImg, metadata2).then(() => {
-    //     userImgRef.getDownloadURL().then((userImageUrl) => {
-    //       doctRef.update({
-    //         URL: userImageUrl,
-    //       });
-    //       setIsLoading(false);
-    //       close(false);
-    //     });
-    //   });
-    //   Swal.fire({
-    //     text: "成功修改",
-    //     confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-    //   });
-    // }
   }
-  console.log(userInfo);
   return (
     <Mask>
       <PopupInner>
@@ -302,8 +272,6 @@ function MySetting({ close, userInfo }) {
               setDisplayName(e.target.value);
             }}
             defaultValue={userInfo.userName}
-
-            // placeholder={userInfo.userName}
           />
           <Div>個人簡介</Div>
           <Self

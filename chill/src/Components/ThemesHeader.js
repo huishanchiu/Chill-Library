@@ -2,15 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import search from "../images/search.png";
 import { useState, useEffect } from "react";
-import shortLogo from "../images/shortLogo.png";
-
 import { Link, useHistory } from "react-router-dom";
 import firebase from "../utils/firebase";
-import { IoIosCompass } from "react-icons/io";
-import { IoMdBeer } from "react-icons/io";
-import { RiBook3Fill } from "react-icons/ri";
-import { MdMood } from "react-icons/md";
-import { RiLogoutCircleLine } from "react-icons/ri";
 
 const SearchBar = styled.div`
   /* outline: red solid; */

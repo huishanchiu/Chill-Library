@@ -109,18 +109,6 @@ const ReviewTag = styled(Link)`
   text-decoration: none;
 `;
 
-const ReviewBookName = styled(Link)`
-  text-decoration: none;
-  cursor: pointer;
-  border-radius: 20px;
-  display: flex;
-  margin-top: 10px;
-  padding: 5px;
-  color: #f1faf7;
-  background-color: #0d6663;
-  font-size: 16px;
-  font-weight: 500;
-`;
 const ReviewQuote = styled.div`
   border-bottom: rgba(254, 174, 32, 0.3) 1px dashed;
   align-items: center;
@@ -212,10 +200,16 @@ function Searching() {
         setIsLoading(false);
       });
   }, [search.search]);
-  console.log(results);
-  console.log(bookResult);
-  // const All = [...results, ...bookResult];
-  // console
+
+  bookResult?.sort(function (a, b) {
+    return a.volumeInfo.description?.length > b.volumeInfo.description?.length
+      ? -1
+      : 1;
+  });
+  let BookResult = bookResult.filter(function (a) {
+    return a.volumeInfo.description !== undefined;
+  });
+
   return (
     <>
       <AllBook>
@@ -247,7 +241,7 @@ function Searching() {
             );
           })}
         </ReviewContainer>
-        {bookResult.map((item) => {
+        {BookResult.map((item) => {
           return (
             <BookTag key={item.volumeInfo.title}>
               <BookLink

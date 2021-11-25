@@ -4,20 +4,16 @@ import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
-import c__1 from "../images/c1.png";
-import c__2 from "../images/c2.png";
-import c__3 from "../images/c3.png";
-import c__4 from "../images/c4.png";
-import c__5 from "../images/c5.png";
-import c__6 from "../images/c6.png";
+import c__1 from "../../images/c1.png";
+import c__2 from "../../images/c2.png";
+import c__3 from "../../images/c3.png";
+import c__4 from "../../images/c4.png";
+import c__5 from "../../images/c5.png";
+import c__6 from "../../images/c6.png";
 
-const Div = styled.div`
-  outline: red solid;
-`;
 const Img = styled.img`
   border-radius: 20px;
   width: 700px;
-  /* height: 100%; */
 `;
 const Sliders = styled(Slider)`
   margin: auto;

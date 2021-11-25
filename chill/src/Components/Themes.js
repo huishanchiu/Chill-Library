@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect, React } from "react";
 import styled from "styled-components";
 import Header from "./Header";
 import theme__1 from "../images/theme__1.png";
@@ -9,9 +9,15 @@ import theme__5 from "../images/theme__5.png";
 import theme__6 from "../images/theme__6.png";
 import { GiClick } from "react-icons/gi";
 import { Link } from "react-router-dom";
-import { useRouteMatch } from "react-router-dom";
-import { useState, useEffect } from "react";
 import firebase from "../utils/firebase";
+import {
+  getTheme_1Books,
+  getTheme_2Books,
+  getTheme_3Books,
+  getTheme_4Books,
+  getTheme_5Books,
+  getTheme_6Books,
+} from "../utils/firebaseFunction";
 
 const ClickIcon = styled(GiClick)`
   padding-right: 10px;
@@ -23,7 +29,6 @@ const Btn = styled(Link)`
   display: flex;
   text-decoration: none;
   text-align: center;
-
   justify-content: center;
   margin-left: auto;
   border-radius: 50rem;
@@ -56,7 +61,6 @@ const Sections = styled.div`
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  /* width: 120vmin; */
   color: white;
   z-index: 1;
 `;
@@ -71,13 +75,11 @@ const Section = styled.div`
   margin: 20px;
 `;
 const BookAndTitle = styled.div`
-  /* background-color: rgba(255, 255, 255, 0.5); */
   margin: 20px;
 `;
 const Book = styled.div`
   display: flex;
   flex-wrap: wrap;
-  /* margin: 0 10px; */
   @media (max-width: 640px) {
     justify-content: center;
   }
@@ -140,90 +142,16 @@ const Themes = () => {
   const [bookList4, setBookList4] = useState([]);
   const [bookList5, setBookList5] = useState([]);
   const [bookList6, setBookList6] = useState([]);
-  const db = firebase.firestore();
+
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-  useEffect(() => {
-    db.collection("books")
-      .where("categories", "array-contains", `宅在家好發慌？`)
-      .limit(5)
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push(doc.data());
-        });
-        setBookList1(list);
-      });
-  }, []);
-  useEffect(() => {
-    db.collection("books")
-      .where("categories", "array-contains", `錢錢去哪了？`)
-      .limit(5)
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push(doc.data());
-        });
-        setBookList2(list);
-      });
-  }, []);
-  useEffect(() => {
-    db.collection("books")
-      .where("categories", "array-contains", `一個人好孤單？`)
-      .limit(5)
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push(doc.data());
-        });
-        setBookList3(list);
-      });
-  }, []);
-  useEffect(() => {
-    db.collection("books")
-      .where("categories", "array-contains", `想不出好點子？`)
-      .limit(5)
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push(doc.data());
-        });
-        setBookList4(list);
-      });
-  }, []);
-  useEffect(() => {
-    db.collection("books")
-      .where("categories", "array-contains", `如何上火箭？`)
-      .limit(5)
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push(doc.data());
-        });
-        setBookList5(list);
-      });
-  }, []);
-  useEffect(() => {
-    db.collection("books")
-      .where("categories", "array-contains", `心裡總是卡卡的？`)
-      .limit(5)
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push(doc.data());
-        });
-        setBookList6(list);
-      });
+    getTheme_1Books(setBookList1);
+    getTheme_2Books(setBookList2);
+    getTheme_3Books(setBookList3);
+    getTheme_4Books(setBookList4);
+    getTheme_5Books(setBookList5);
+    getTheme_6Books(setBookList6);
   }, []);
 
-  let { path, url } = useRouteMatch();
   return (
     <Div>
       <HeaderDiv>
