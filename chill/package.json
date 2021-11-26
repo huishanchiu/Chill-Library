@@ -9,6 +9,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "algoliasearch": "^4.11.0",
+    "cypress": "^9.1.0",
     "firebase": "^8.10.0",
     "fullpage": "^1.5.1",
     "gsap": "^3.8.0",

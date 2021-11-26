@@ -6,8 +6,9 @@ import { useState } from "react";
 import "firebase/firestore";
 import firebase from "../../utils/firebase";
 import { BsCamera } from "react-icons/bs";
-import Loading from "../Loading";
+import Loading from "../common/Loading";
 import "firebase/storage";
+import { updatePersonalInfo } from "../../utils/firebaseFunction";
 
 const CameraIcon = styled(BsCamera)`
   color: #f1faf7;
@@ -138,6 +139,98 @@ function MySetting({ close, userInfo }) {
   const previewUrl = file ? URL.createObjectURL(file) : userInfo.imageUrl;
   const previemUserImg = userImg ? URL.createObjectURL(userImg) : userInfo.URL;
 
+  // function onSubmit() {
+  //   setIsLoading(true);
+  //   const documentRef = firebase
+  //     .firestore()
+  //     .collection("users")
+  //     .doc(userInfo.uid);
+  //   if (file === null && userImg === null) {
+  //     documentRef.update({
+  //       userName: displayName || "",
+  //       selfInfo: selfInfo || "",
+  //     });
+  //     setIsLoading(false);
+  //     close(false);
+  //     Swal.fire({
+  //       text: "成功修改",
+  //       confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+  //     });
+  //   } else if (userImg === null) {
+  //     const fileRef = firebase.storage().ref("bookshelf-image/" + userInfo.uid);
+  //     const metadata = {
+  //       contentType: file.type,
+  //     };
+  //     fileRef.put(file, metadata).then(() => {
+  //       fileRef.getDownloadURL().then((imageUrl) => {
+  //         documentRef.update({
+  //           imageUrl: imageUrl,
+  //           userName: displayName || "",
+  //           selfInfo: selfInfo || "",
+  //         });
+  //       });
+  //     });
+  //     setIsLoading(false);
+  //     close(false);
+  //     Swal.fire({
+  //       text: "成功修改",
+  //       confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+  //     });
+  //   } else if (file === null) {
+  //     const userImgRef = firebase.storage().ref("user-photo/" + userInfo.uid);
+  //     const metadata2 = {
+  //       contentType: userImg.type,
+  //     };
+  //     userImgRef.put(userImg, metadata2).then(() => {
+  //       userImgRef.getDownloadURL().then((userImageUrl) => {
+  //         documentRef.update({
+  //           URL: userImageUrl,
+  //           userName: displayName || "",
+  //           selfInfo: selfInfo || "",
+  //         });
+  //       });
+  //     });
+  //     Swal.fire({
+  //       text: "成功修改",
+  //       confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+  //     });
+  //     setIsLoading(false);
+  //     close(false);
+  //   } else {
+  //     const fileRef = firebase.storage().ref("bookshelf-image/" + userInfo.uid);
+  //     const metadata = {
+  //       contentType: file.type,
+  //     };
+  //     fileRef.put(file, metadata).then(() => {
+  //       fileRef.getDownloadURL().then((imageUrl) => {
+  //         documentRef.update({
+  //           imageUrl: imageUrl,
+  //           userName: displayName || "",
+  //           selfInfo: selfInfo || "",
+  //         });
+  //       });
+  //     });
+  //     const userImgRef = firebase.storage().ref("user-photo/" + userInfo.uid);
+  //     const metadata2 = {
+  //       contentType: userImg.type,
+  //     };
+  //     userImgRef.put(userImg, metadata2).then(() => {
+  //       userImgRef.getDownloadURL().then((userImageUrl) => {
+  //         documentRef.update({
+  //           URL: userImageUrl,
+  //           userName: displayName || "",
+  //           selfInfo: selfInfo || "",
+  //         });
+  //       });
+  //     });
+  //     Swal.fire({
+  //       text: "成功修改",
+  //       confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+  //     });
+  //     setIsLoading(false);
+  //     close(false);
+  //   }
+  // }
   function onSubmit() {
     setIsLoading(true);
     const documentRef = firebase
@@ -145,6 +238,7 @@ function MySetting({ close, userInfo }) {
       .collection("users")
       .doc(userInfo.uid);
     if (file === null && userImg === null) {
+      updatePersonalInfo();
       documentRef.update({
         userName: displayName || "",
         selfInfo: selfInfo || "",

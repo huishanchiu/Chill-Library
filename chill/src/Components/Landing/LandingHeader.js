@@ -5,10 +5,10 @@ import { IoIosCompass } from "react-icons/io";
 import { IoMdBeer } from "react-icons/io";
 import { RiBook3Fill } from "react-icons/ri";
 import { RiHome5Line } from "react-icons/ri";
-import shortLogo from "../images/shortLogo.png";
-import Header from "../Components/Header";
+import shortLogo from "../../images/shortLogo.png";
+import Header from "../common/Header";
 import { useState, useEffect } from "react";
-import firebase from "../utils/firebase";
+import firebase from "../../utils/firebase";
 
 const HomeIcon = styled(RiHome5Line)`
   width: 30px;

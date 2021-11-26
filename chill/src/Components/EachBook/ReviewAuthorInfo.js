@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import firebase from "../utils/firebase";
+import firebase from "../../utils/firebase";
 
 const Star = ({ starId, marked }) => {
   return (

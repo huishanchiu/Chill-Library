@@ -5,12 +5,12 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import { BsFacebook } from "react-icons/bs";
 import { BsGoogle } from "react-icons/bs";
 import { useState } from "react";
-import firebase from "../utils/firebase";
+import firebase from "../../utils/firebase";
 import { useHistory } from "react-router-dom";
 import Loading from "./Loading";
 import "firebase/auth";
-import socialMediaAuth from "../utils/auth";
-import { facebookProvider, googleProvider } from "../utils/authMethods";
+import socialMediaAuth from "../../utils/auth";
+import { facebookProvider, googleProvider } from "../../utils/authMethods";
 
 const CloseIcon = styled(AiOutlineCloseCircle)`
   color: #1abea7;

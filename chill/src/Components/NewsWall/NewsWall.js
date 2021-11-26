@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import firebase from "../utils/firebase";
+import firebase from "../../utils/firebase";
 import { Link } from "react-router-dom";
-import Comment from "../Components/EachBook/Comment";
-import Comments from "../Components/EachBook/Comments";
+import Comment from "../EachBook/Comment";
+import Comments from "../EachBook/Comments";
 
 const Star = ({ starId, marked }) => {
   return (

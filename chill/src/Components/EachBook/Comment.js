@@ -2,8 +2,9 @@ import { React, useState } from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import Loading from "../Loading";
+import Loading from "../common/Loading";
 import { submitComments } from "../../utils/firebaseFunction";
+
 const Icon = styled.div`
   border-bottom: hsla(0, 0%, 0%, 0.2) 1px solid;
   width: 680px;

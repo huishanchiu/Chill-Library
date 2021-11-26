@@ -1,10 +1,9 @@
-import React from "react";
+import { React, useState, useEffect } from "react";
 import styled from "styled-components";
-import { useState, useEffect } from "react";
-import firebase from "../../utils/firebase";
 import { useParams } from "react-router-dom";
-import Loading from "../Loading";
+import Loading from "../common/Loading";
 import { useSelector } from "react-redux";
+import { getFollows, UnFollowOthers } from "../../utils/firebaseFunction";
 
 const Div = styled.div`
   border-radius: 20px;
@@ -57,41 +56,15 @@ function Follow({ setActiveItem }) {
   const currentUser = useSelector((state) => state.currentUser);
   const [isLoading, setIsLoading] = useState(false);
   const [follows, setFollows] = useState([]);
-  let { userId } = useParams();
+  const { userId } = useParams();
 
   useEffect(() => {
-    setIsLoading(true);
-    if (Object.keys(currentUser).length !== 0) {
-      const unsubscribe = firebase
-        .firestore()
-        .collection("users")
-        .where("followBy", "array-contains", userId)
-        .onSnapshot((querySnapshot) => {
-          const data = querySnapshot.docs.map((doc) => {
-            const id = doc.id;
-            return { ...doc.data(), id };
-          });
-          setFollows(data);
-          setIsLoading(false);
-          setActiveItem("follow");
-        });
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [userId]);
+    getFollows(userId, setFollows, setActiveItem, setIsLoading);
+  }, [userId, setActiveItem, currentUser]);
 
   function toggleFollowed(followId) {
-    currentUser &&
-      firebase
-        .firestore()
-        .collection("users")
-        .doc(followId)
-        .update({
-          followBy: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
-        });
+    UnFollowOthers(followId, currentUser.uid);
   }
-  console.log(currentUser.uid);
 
   return (
     <>

@@ -1,9 +1,9 @@
 import React from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
-import search from "../images/search.png";
+import search from "../../images/search.png";
 import { useState, useEffect } from "react";
-import firebase from "../utils/firebase";
+import firebase from "../../utils/firebase";
 import { useHistory } from "react-router";
 
 const SearchBar = styled.div`

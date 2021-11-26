@@ -1,8 +1,10 @@
-import { useState, React } from "react";
+import { React, useState } from "react";
 import styled from "styled-components";
 import firebase from "../../utils/firebase";
 import Swal from "sweetalert2";
 import { HiDotsVertical } from "react-icons/hi";
+import { editReviewToDB } from "../../utils/firebaseFunction";
+
 const Div = styled.div`
   position: relative;
 `;
@@ -62,15 +64,7 @@ function EditCombo({ review }) {
   const [open, setOpen] = useState(false);
   const [editReview, setEditReview] = useState(undefined);
   function AddToFirebase(docId) {
-    docId &&
-      firebase
-        .firestore()
-        .collection("reviews")
-        .doc(docId)
-        .update({
-          quote: `${quote}`,
-          content: `${content}`,
-        });
+    editReviewToDB(docId, quote, content);
   }
   const toggleSave = (docId) => {
     setEditReview(false);

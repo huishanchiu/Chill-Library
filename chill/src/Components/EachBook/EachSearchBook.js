@@ -9,7 +9,7 @@ import { BsBookmarkFill, BsBookmark, BsEyeglasses } from "react-icons/bs";
 import { IoIosPricetags } from "react-icons/io";
 import { HiOutlineHashtag, HiOutlineLibrary } from "react-icons/hi";
 import SlideBooks from "./SlideBooks";
-import Loading from "../Loading";
+import Loading from "../common/Loading";
 import UserCategory from "./UserCategory";
 import hand from "../../images/Hands.png";
 import parse from "html-react-parser";

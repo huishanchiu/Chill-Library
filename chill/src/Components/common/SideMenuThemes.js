@@ -1,17 +1,17 @@
 import React from "react";
 import styled from "styled-components";
 import { Link, useHistory } from "react-router-dom";
-import shortLogo from "../images/shortLogo.png";
+import shortLogo from "../../images/shortLogo.png";
 import { IoIosCompass } from "react-icons/io";
 import { IoMdBeer } from "react-icons/io";
 import { RiBook3Fill } from "react-icons/ri";
 import { RiHome5Line } from "react-icons/ri";
 import { MdMood } from "react-icons/md";
 import { RiLogoutCircleLine } from "react-icons/ri";
-import SignIn from "./SignIn";
+import SignIn from "../common/SignIn";
 import { useState, useEffect } from "react";
-import firebase from "../utils/firebase";
-import search from "../images/search.png";
+import firebase from "../../utils/firebase";
+import search from "../../images/search.png";
 import { BiMenuAltLeft } from "react-icons/bi";
 import { useSelector } from "react-redux";
 

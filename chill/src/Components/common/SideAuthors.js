@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
-import firebase from "../utils/firebase";
+import firebase from "../../utils/firebase";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -83,7 +83,7 @@ function SideAuthors() {
   console.log(allUsers);
   function goOtherShelf(userUid) {
     currentUser
-      ? history.push(`/mybooks/${userUid}/collection`)
+      ? (window.location.href = `/mybooks/${userUid}/collection`)
       : Swal.fire({
           text: "請先登入",
           confirmButtonColor: "rgba(15, 101, 98, 0.8)",

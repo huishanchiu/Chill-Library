@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import algolia from "../utils/algolia";
+import algolia from "../../utils/algolia";
 import { IoMdBeer } from "react-icons/io";
 import { AiFillPlayCircle } from "react-icons/ai";
-import Loading from "./Loading";
+import Loading from "../common/Loading";
 
 const PlayIcon = styled(AiFillPlayCircle)``;
 const BeerIcon = styled(IoMdBeer)`

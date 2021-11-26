@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import search from "../images/search.png";
+import search from "../../images/search.png";
 import { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
-import firebase from "../utils/firebase";
+import firebase from "../../utils/firebase";
 
 const SearchBar = styled.div`
   /* outline: red solid; */

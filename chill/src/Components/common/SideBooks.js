@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import firebase from "../utils/firebase";
+import firebase from "../../utils/firebase";
 import { Link } from "react-router-dom";
 
 const Img = styled.img`

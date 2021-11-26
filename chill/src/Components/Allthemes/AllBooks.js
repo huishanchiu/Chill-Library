@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import firebase from "../../utils/firebase";
 import { AiFillPlayCircle } from "react-icons/ai";
+import { getThemeBooks } from "../../utils/firebaseFunction";
 
 const PlayIcon = styled(AiFillPlayCircle)``;
 const AllBook = styled.div`
@@ -95,17 +95,8 @@ const More = styled(Link)`
 
 function AllBooks({ theme }) {
   const [bookList, setBookList] = useState([]);
-  const db = firebase.firestore();
   useEffect(() => {
-    db.collection("books")
-      .where("categories", "array-contains", `${theme}`)
-      .onSnapshot((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push(doc.data());
-        });
-        setBookList(list);
-      });
+    getThemeBooks(theme, setBookList);
   }, [theme]);
   return (
     <div>

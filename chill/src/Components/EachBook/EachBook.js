@@ -9,7 +9,7 @@ import { HiOutlineHashtag, HiOutlineLibrary } from "react-icons/hi";
 import EachReview from "./EachReview";
 import NewReview from "./NewReview";
 import SlideBooks from "./SlideBooks";
-import Loading from "../Loading";
+import Loading from "../common/Loading";
 import hand from "../../images/Hands.png";
 import parse from "html-react-parser";
 import UserCategory from "./UserCategory";

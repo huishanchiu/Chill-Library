@@ -1,15 +1,14 @@
 import { useState, useEffect, React } from "react";
 import styled from "styled-components";
-import Header from "./Header";
-import theme__1 from "../images/theme__1.png";
-import theme__2 from "../images/theme__2.png";
-import theme__3 from "../images/theme__3.png";
-import theme__4 from "../images/theme__4.png";
-import theme__5 from "../images/theme__5.png";
-import theme__6 from "../images/theme__6.png";
+import Header from "../common/Header";
+import theme__1 from "../../images/theme__1.png";
+import theme__2 from "../../images/theme__2.png";
+import theme__3 from "../../images/theme__3.png";
+import theme__4 from "../../images/theme__4.png";
+import theme__5 from "../../images/theme__5.png";
+import theme__6 from "../../images/theme__6.png";
 import { GiClick } from "react-icons/gi";
 import { Link } from "react-router-dom";
-import firebase from "../utils/firebase";
 import {
   getTheme_1Books,
   getTheme_2Books,
@@ -17,7 +16,7 @@ import {
   getTheme_4Books,
   getTheme_5Books,
   getTheme_6Books,
-} from "../utils/firebaseFunction";
+} from "../../utils/firebaseFunction";
 
 const ClickIcon = styled(GiClick)`
   padding-right: 10px;

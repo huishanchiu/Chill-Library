@@ -1,10 +1,10 @@
-import React from "react";
+import { React, useState, useEffect } from "react";
 import styled from "styled-components";
-import { useState, useEffect } from "react";
-import firebase from "../../utils/firebase";
 import { Link, useParams } from "react-router-dom";
 import bookShelf from "../../images/bookShelf.jpeg";
-import Loading from "../Loading";
+import Loading from "../common/Loading";
+import { getPersonalBooks } from "../../utils/firebaseFunction";
+import { bookImgSrc, defaltBookImgSrc } from "../../utils/utils";
 
 const AllBook = styled.div`
   color: #0b4d4a;
@@ -61,30 +61,11 @@ const BookName = styled.div`
 
 function Collection({ setActiveItem }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [uid, setUid] = useState("");
-  let { userId } = useParams();
   const [bookList, setBookList] = useState([]);
-  const db = firebase.firestore();
-  useEffect(() => {
-    setUid(firebase.auth().currentUser?.uid);
-  }, []);
+  const { userId } = useParams();
 
   useEffect(() => {
-    setIsLoading(true);
-    const unsubscribe = db
-      .collection("books")
-      .where("collectedBy", "array-contains", userId)
-      .onSnapshot((collectionSnapshot) => {
-        const data = collectionSnapshot.docs.map((docSnapshot) => {
-          return { ...docSnapshot.data() };
-        });
-        setBookList(data);
-        setIsLoading(false);
-        setActiveItem("collection");
-      });
-    return () => {
-      unsubscribe();
-    };
+    getPersonalBooks(userId, setBookList, setIsLoading, setActiveItem);
   }, [userId]);
   return (
     <>
@@ -94,7 +75,6 @@ function Collection({ setActiveItem }) {
           {bookList.map((item) => {
             let des = item.description.slice(0, 200);
             item.description = des + "......";
-
             return (
               <BookTag
                 to={`/mybooks/${userId}/collection/${item.title}`}
@@ -103,7 +83,7 @@ function Collection({ setActiveItem }) {
                 <BookContent>
                   <ImgTag>
                     <BookImg
-                      src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
+                      src={bookImgSrc(item.id) || defaltBookImgSrc()}
                       alt=""
                     />
                   </ImgTag>

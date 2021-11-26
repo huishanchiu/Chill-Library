@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import loadingBook from "../images/bookLoadingw.gif";
+import loadingBook from "../../images/bookLoadingw.gif";
 
 const Mask = styled.div`
   z-index: 3;

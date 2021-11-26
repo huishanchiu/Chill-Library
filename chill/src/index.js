@@ -5,7 +5,7 @@ import "./index.css";
 import App from "./App";
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
-import ScrollToTop from "./Components/ScrollToTop";
+import ScrollToTop from "./Components/common/ScrollToTop";
 
 ReactDOM.render(
   <BrowserRouter>

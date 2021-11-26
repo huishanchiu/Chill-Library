@@ -176,7 +176,8 @@ export const updateReadState = (
   setEdit(false);
   setFunction(false);
 };
-export const getReviews = (userId, setReviews) => {
+export const getReviews = (userId, setReviews, setActiveItem, setIsLoading) => {
+  setIsLoading(true);
   const unsubscribe = firebase
     .firestore()
     .collection("reviews")
@@ -188,6 +189,8 @@ export const getReviews = (userId, setReviews) => {
         return { ...docSnapshot.data(), id };
       });
       setReviews(data);
+      setActiveItem("review");
+      setIsLoading(false);
     });
   return () => {
     unsubscribe();
@@ -343,4 +346,101 @@ export const removeCategory = (e, bookName) => {
         `${e.target.textContent}`
       ),
     });
+};
+
+export const getThemeBooks = (theme, setFunction) => {
+  firebase
+    .firestore()
+    .collection("books")
+    .where("categories", "array-contains", `${theme}`)
+    .onSnapshot((querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        list.push(doc.data());
+      });
+      setFunction(list);
+    });
+};
+
+export const getPersonalBooks = (
+  userId,
+  setBookList,
+  setIsLoading,
+  setActiveItem
+) => {
+  setIsLoading(true);
+  firebase
+    .firestore()
+    .collection("books")
+    .where("collectedBy", "array-contains", userId)
+    .onSnapshot((collectionSnapshot) => {
+      const data = collectionSnapshot.docs.map((docSnapshot) => {
+        return { ...docSnapshot.data() };
+      });
+      setBookList(data);
+      setActiveItem("collection");
+      setIsLoading(false);
+    });
+};
+export const editReviewToDB = (docId, quote, content) => {
+  firebase
+    .firestore()
+    .collection("reviews")
+    .doc(docId)
+    .update({
+      quote: `${quote}`,
+      content: `${content}`,
+    });
+};
+export const getFollows = (userId, setFollows, setActiveItem, setIsLoading) => {
+  setIsLoading(true);
+  const unsubscribe = firebase
+    .firestore()
+    .collection("users")
+    .where("followBy", "array-contains", userId)
+    .onSnapshot((querySnapshot) => {
+      const data = querySnapshot.docs.map((doc) => {
+        const id = doc.id;
+        return { ...doc.data(), id };
+      });
+      setFollows(data);
+      setActiveItem("follow");
+      setIsLoading(false);
+    });
+  return () => {
+    unsubscribe();
+  };
+};
+export const UnFollowOthers = (followId, userId) => {
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(followId)
+    .update({
+      followBy: firebase.firestore.FieldValue.arrayRemove(userId),
+    });
+};
+export const followOthers = (followId, userId) => {
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(followId)
+    .update({
+      followBy: firebase.firestore.FieldValue.arrayUnion(userId),
+    });
+};
+export const updatePersonalInfo = (
+  userId,
+  userImageUrl,
+  imageUrl,
+  displayName,
+  selfInfo
+) => {
+  const documentRef = firebase.firestore().collection("users").doc(userId);
+  documentRef.update({
+    URL: userImageUrl || "",
+    imageUrl: imageUrl || "",
+    userName: displayName || "",
+    selfInfo: selfInfo || "",
+  });
 };

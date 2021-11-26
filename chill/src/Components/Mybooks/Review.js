@@ -1,7 +1,7 @@
 import { useState, useEffect, React } from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
-import Loading from "../Loading";
+import Loading from "../common/Loading";
 import { getReviews } from "../../utils/firebaseFunction";
 import EditCombo from "./EditCombo";
 
@@ -81,11 +81,8 @@ function Review({ setActiveItem }) {
   const { userId } = useParams();
 
   useEffect(() => {
-    setIsLoading(true);
-    getReviews(userId, setReviews);
-    setIsLoading(false);
-    setActiveItem("review");
-  }, [userId]);
+    getReviews(userId, setReviews, setActiveItem, setIsLoading);
+  }, [userId, setActiveItem]);
   console.log(reviews);
   return (
     <>
