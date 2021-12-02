@@ -1,70 +1,57 @@
-# Getting Started with Create React App
+<p align="center">
+<img width="500" alt="截圖 2021-10-20 下午10 25" src="https://user-images.githubusercontent.com/84556615/144163398-8961e4f5-fa89-4896-b637-038b22b8c7bf.png"></p>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+<h1 align="center">Chill Library</h1>
 
-In the project directory, you can run:
+## Intro
+- Chill Library is a platform helping people to figure out their troubles of life by special recommendation books.
+- Add your favorite books in your book shelf, you can also add hashtags and quotes when you comment.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Link
+ <a href="https://chill-library.web.app/">Chill Library website ></a>
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Use email to log in or register a new account
+You can also use default test account below
 
-### `npm test`
+- User: kai@gmail.com
+- Password: 12345678
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Techniques
+### Books data
+- Fetched Google Books Apis
+### Front-End 
+- ReactJS / Redux / React Router
+- styled-components
+- Firebase
+  - authentication
+  - storage
+  - firestore
+  - hosting
+### Miscellaneous 
+- algoliasearch
+- gsap
+- react-slick
+- react-animated-numbers
+- jest
+## Flow Chart
+![flow-chart (1)](https://user-images.githubusercontent.com/84556615/144192756-b74b93d7-6cc5-417e-9c12-dc275c31ea89.png)
+## Features
+- #### Thinking about what you want to figure out?
+![landing-s](https://user-images.githubusercontent.com/84556615/144269852-6b43e273-9f75-497c-9a40-6963f7184a88.gif)
+- #### Collect books to you book shelf!
 
-### `npm run build`
+![theme-s](https://user-images.githubusercontent.com/84556615/144271693-ac046f11-c8c4-4e39-9cb4-28ca8708de17.gif)
+- #### Type your problems or the book name to get other's reviews
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- #### Did it help? Share your opinion and what been solved !
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+![mybook-s](https://user-images.githubusercontent.com/84556615/144270695-c5839452-a745-468b-afa6-e48b9e83e3e6.gif)
+- #### Set your banner, user image and personal information.
+- #### Check books on other's book shelf!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+![mybook-s](https://user-images.githubusercontent.com/84556615/144272624-d7a70769-1532-45e5-be75-16b631d472fb.gif)
+## Future features
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
