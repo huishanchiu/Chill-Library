@@ -11,23 +11,28 @@ export const getBookDescription = (bookId, setFunction) => {
     });
 };
 
-export const getEachBook = (isbn) => {
-  return fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`, {
+// export const getEachBook = (isbn) => {
+//   return fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`, {
+//     method: "GET",
+//   }).then((res) => {
+//     return res.json();
+//   });
+// };
+export const searchBooks = (search) => {
+  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${search}`, {
     method: "GET",
   }).then((res) => {
     return res.json();
   });
 };
 
-getEachBook().then((res) => res);
-
-// export const getEachBook = async (isbn) => {
-//   const res = await fetch(
-//     `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`,
-//     {
-//       method: "GET",
-//     }
-//   );
-//   const json = await res.json();
-//   return json;
-// };
+export const getEachBook = async (isbn) => {
+  const res = await fetch(
+    `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`,
+    {
+      method: "GET",
+    }
+  );
+  const json = await res.json();
+  return json;
+};

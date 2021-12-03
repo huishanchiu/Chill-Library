@@ -1,28 +1,19 @@
-import React from "react";
+import { React, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import algolia from "../../utils/algolia";
-import { IoMdBeer } from "react-icons/io";
 import { AiFillPlayCircle } from "react-icons/ai";
 import Loading from "../common/Loading";
+import { searchBooks } from "../../utils/api";
+import { bookImgSrc, defaltBookImgSrc } from "../../utils/utils";
 
 const PlayIcon = styled(AiFillPlayCircle)``;
-const BeerIcon = styled(IoMdBeer)`
-  color: #f7db15;
-  width: 25px;
-  height: 100%;
-  padding-left: 10px;
-  transform: rotate(-20deg);
-`;
-
 const AllBook = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 50%;
-
   @media (max-width: 1250px) {
     width: 70%;
   }
@@ -170,13 +161,11 @@ function Searching() {
   const [isLoading, setIsLoading] = useState(false);
   const [bookResult, setBookResult] = useState([]);
   const [results, setResults] = useState([]);
-  const search = useParams();
-  console.log(search);
+  const { search } = useParams();
 
   useEffect(() => {
     setIsLoading(true);
-    algolia.search(search.search).then((result) => {
-      console.log(result.hits);
+    algolia.search(search).then((result) => {
       const searschResults = result.hits.map((hit) => {
         return {
           bookName: hit.bookName,
@@ -189,24 +178,14 @@ function Searching() {
       });
       setResults(searschResults);
     });
-    fetch(`https://www.googleapis.com/books/v1/volumes?q=${search.search}`, {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((datas) => {
-        const data = datas.items;
-        console.log(datas);
-        setBookResult(data);
-        setIsLoading(false);
-      });
-  }, [search.search]);
+    searchBooks(search).then((datas) => {
+      const data = datas.items;
+      setBookResult(data);
+      setIsLoading(false);
+    });
+  }, [search]);
 
-  bookResult?.sort(function (a, b) {
-    return a.volumeInfo.description?.length > b.volumeInfo.description?.length
-      ? -1
-      : 1;
-  });
-  let BookResult = bookResult.filter(function (a) {
+  const BookResult = bookResult.filter(function (a) {
     return a.volumeInfo.description !== undefined;
   });
 
@@ -216,7 +195,7 @@ function Searching() {
         <KeyInfo>
           <Keyword>
             您輸入的關鍵字：
-            <span style={{ color: "tomato" }}>{search.search}</span>
+            <span style={{ color: "tomato" }}>{search}</span>
           </Keyword>
           <ResultLength>
             搜尋結果共{bookResult.length + results.length}筆
@@ -231,9 +210,9 @@ function Searching() {
                   <ReviewQuote>
                     #{item.quote}
                     <HashtagContainer>
-                      {item.hashtag1 ? <Hashtag>#{item.hashtag1}</Hashtag> : ""}
-                      {item.hashtag2 ? <Hashtag>#{item.hashtag2}</Hashtag> : ""}
-                      {item.hashtag3 ? <Hashtag>#{item.hashtag3}</Hashtag> : ""}
+                      {item.hashtag1 && <Hashtag>#{item.hashtag1}</Hashtag>}
+                      {item.hashtag2 && <Hashtag>#{item.hashtag2}</Hashtag>}
+                      {item.hashtag3 && <Hashtag>#{item.hashtag3}</Hashtag>}
                     </HashtagContainer>
                   </ReviewQuote>
                 </ReviewTag>
@@ -254,8 +233,8 @@ function Searching() {
                 <BookImg
                   src={
                     item.volumeInfo.imageLinks
-                      ? `https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`
-                      : "https://i.pinimg.com/564x/8d/98/54/8d9854ecfd84f4daa1561c7b62c6387f.jpg"
+                      ? bookImgSrc(item.id)
+                      : defaltBookImgSrc()
                   }
                   alt="book_image"
                 />

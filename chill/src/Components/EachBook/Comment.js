@@ -79,7 +79,9 @@ function Comment({ review, close }) {
   const [isLoading, setIsLoading] = useState(false);
 
   function onSubmit() {
-    submitComments(review.id, setCommentContent, commentContent, setIsLoading);
+    setIsLoading(true);
+    submitComments(review.id, setCommentContent, commentContent);
+    setIsLoading(false);
     close(false);
     Swal.fire({
       text: "送出留言",

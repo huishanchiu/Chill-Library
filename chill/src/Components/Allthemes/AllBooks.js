@@ -1,9 +1,9 @@
-import React from "react";
+import { React, useState, useEffect } from "react";
 import styled from "styled-components";
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { getThemeBooks } from "../../utils/firebaseFunction";
+import { bookImgSrc, defaltBookImgSrc } from "../../utils/utils";
 
 const PlayIcon = styled(AiFillPlayCircle)``;
 const AllBook = styled.div`
@@ -109,7 +109,7 @@ function AllBooks({ theme }) {
             <BookTag key={item.title}>
               <Link to={`/book/${item.title}`}>
                 <BookImg
-                  src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
+                  src={bookImgSrc(item.id) || defaltBookImgSrc()}
                   alt=""
                 />
               </Link>

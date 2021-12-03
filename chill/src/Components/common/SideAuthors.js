@@ -1,16 +1,19 @@
 import { React, useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
-import firebase from "../../utils/firebase";
-import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { getOtherShelf } from "../../utils/utils";
+import { getAuthorByReviewsCount } from "../../utils/firebaseFunction";
 
 const Img = styled.img`
   width: 50px;
   height: 50px;
   background-color: white;
-  border-radius: 50px;
+  border-radius: 30px;
   margin-right: 10px;
+  &:hover {
+    border-radius: 20px;
+  }
 `;
 
 const Count = styled.div`
@@ -40,55 +43,12 @@ const OtherUser = styled.div`
 
 function SideAuthors() {
   const currentUser = useSelector((state) => state.currentUser);
-  const history = useHistory();
-  const [user, setUser] = useState("");
-  const [allReviews, setAllReviews] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
-  useEffect(() => {
-    let isUnmount = false;
-    firebase.auth().onAuthStateChanged((currentUser) => {
-      if (!isUnmount) {
-        setUser(currentUser);
-      }
-    });
-    return () => {
-      isUnmount = true;
-    };
-  }, []);
 
   useEffect(() => {
-    const db = firebase.firestore();
-
-    db.collection("users")
-      .orderBy("reviewCount", "desc")
-      .limit(5)
-      .onSnapshot((collectionSnapshot) => {
-        const data = collectionSnapshot.docs.map((docSnapshot) => {
-          return { ...docSnapshot.data() };
-        });
-        setAllUsers(data);
-      });
+    getAuthorByReviewsCount(setAllUsers);
   }, []);
 
-  useEffect(() => {
-    const db = firebase.firestore();
-    db.collection("reviews").onSnapshot((collectionSnapshot) => {
-      const data = collectionSnapshot.docs.map((docSnapshot) => {
-        const id = docSnapshot.id;
-        return { ...docSnapshot.data(), id };
-      });
-      setAllReviews(data);
-    });
-  }, []);
-  console.log(allUsers);
-  function goOtherShelf(userUid) {
-    currentUser
-      ? (window.location.href = `/mybooks/${userUid}/collection`)
-      : Swal.fire({
-          text: "請先登入",
-          confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-        });
-  }
   return (
     <div>
       <Div>值得關注</Div>
@@ -98,7 +58,7 @@ function SideAuthors() {
             <UserInfo>
               <OtherUser
                 onClick={() => {
-                  goOtherShelf(item.uid);
+                  getOtherShelf(item.uid, currentUser, "請先登入");
                 }}
               >
                 <Img src={item.URL} alt="" />

@@ -9,11 +9,11 @@ import ScrollToTop from "./Components/common/ScrollToTop";
 
 ReactDOM.render(
   <BrowserRouter>
-    <Provider store={store}>
-      <ScrollToTop>
+    <ScrollToTop>
+      <Provider store={store}>
         <App />
-      </ScrollToTop>
-    </Provider>
+      </Provider>
+    </ScrollToTop>
   </BrowserRouter>,
   document.getElementById("root")
 );

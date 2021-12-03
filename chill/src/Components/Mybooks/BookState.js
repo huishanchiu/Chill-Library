@@ -162,7 +162,8 @@ function BookState() {
         confirmButton: "btn btn-success",
         cancelButton: "btn btn-danger",
       },
-      buttonsStyling: false,
+      buttonsStyling: true,
+      confirmButtonColor: "rgba(15, 101, 98, 0.8)",
     });
     swalWithBootstrapButtons
       .fire({

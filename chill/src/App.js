@@ -13,10 +13,9 @@ import Searching from "./Components/common/Searching";
 import EachSearchBook from "./Components/EachBook/EachSearchBook";
 import bk from "./images/bk.png";
 import SideAuthors from "./Components/common/SideAuthors";
-import SideMenuThemes from "./Components/common/SideMenuThemes";
 import { useState, useEffect } from "react";
 import firebase from "./utils/firebase";
-import { getCurrentUser, getUsers } from "./redux/action";
+import { getCurrentUser } from "./redux/action";
 import { useDispatch } from "react-redux";
 import Loading from "./Components/common/Loading";
 import Nomatch from "./Components/common/Nomatch";
@@ -68,11 +67,9 @@ function App() {
           <Div>
             <Switch>
               <Route exact path="/" component={Landing} />
-
               <Route exact path="/themes">
                 <Main>
                   <SideMenu />
-                  {/* <SideMenuThemes /> */}
                   <Themes />
                 </Main>
               </Route>

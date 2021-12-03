@@ -78,6 +78,10 @@ const MyInfo = styled.div`
   width: 100%;
 `;
 const MyInfoDiv = styled.div``;
+const Message = styled.h2`
+  display: flex;
+  align-items: center;
+`;
 const MyName = styled.div`
   font-size: 30px;
   font-weight: 500;
@@ -146,7 +150,10 @@ const Mybooks = () => {
   const quoteIndex = getRandom(reviews.length);
 
   useEffect(() => {
-    getReviews(userId, setReviews, setActiveItem, setIsLoading);
+    setIsLoading(true);
+    getReviews(userId, setReviews);
+    setActiveItem("review");
+    setIsLoading(false);
     getAuthorInfo(userId, setFollows);
   }, [userId]);
 
@@ -168,7 +175,7 @@ const Mybooks = () => {
     }
   }
 
-  const isFollowed = follows.followBy?.includes(currentUser.uid);
+  const isFollowed = follows.followBy?.includes(currentUser?.uid);
   const active = {
     background: "#F1FAF7",
     color: "#0D6663",
@@ -285,11 +292,11 @@ const Mybooks = () => {
               {isLoading ? <Loading /> : ""}
             </Content>
           ) : (
-            <MyInfo>尚未登入喔！</MyInfo>
+            ""
           )}
         </BrowserRouter>
       ) : (
-        ""
+        <Message>尚未登入喔！</Message>
       )}
     </>
   );

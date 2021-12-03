@@ -271,7 +271,9 @@ function Book() {
                   </Btn>
                   {book?.categories?.length === 0 ? (
                     <Btn
-                      onClick={() => collectAlert(isCollect, setPopup, Swal)}
+                      onClick={() =>
+                        collectAlert(isCollect, setPopup, "請先收藏此書！")
+                      }
                     >
                       <BtnTagIcon />
                       分類

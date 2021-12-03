@@ -1,10 +1,9 @@
-import React from "react";
-import Swal from "sweetalert2";
+import { React, useState, useEffect } from "react";
 import styled from "styled-components";
 import search from "../../images/search.png";
-import { useState, useEffect } from "react";
-import firebase from "../../utils/firebase";
 import { useHistory } from "react-router";
+import { getHeaderHashtags } from "../../utils/firebaseFunction";
+import { searchKeyWord } from "../../utils/utils";
 
 const SearchBar = styled.div`
   cursor: pointer;
@@ -52,6 +51,7 @@ const SearchBtn = styled.div`
 `;
 
 const Div = styled.div`
+  width: 80%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -81,31 +81,8 @@ const Header = () => {
     setSearch(e.target.textContent);
   }
   useEffect(() => {
-    firebase
-      .firestore()
-      .collection("reviews")
-      .where("hashtag1", "!=", "")
-      .limit(9)
-      .onSnapshot((collectionSnapshot) => {
-        const data = collectionSnapshot.docs.map((docSnapshot) => {
-          const id = docSnapshot.id;
-          return { ...docSnapshot.data(), id };
-        });
-        setReviews(data);
-      });
+    getHeaderHashtags(setReviews);
   }, []);
-
-  function onSubmit() {
-    if (search === "") {
-      Swal.fire({
-        text: "請輸入關鍵字",
-        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-      });
-    } else {
-      history.push(`/book/search/${search}`);
-      setSearch("");
-    }
-  }
 
   return (
     <Div>
@@ -117,17 +94,18 @@ const Header = () => {
           onKeyPress={(e) => {
             if (e.key === "Enter") {
               if (search === "") {
-                Swal.fire({
-                  text: "請輸入關鍵字",
-                  confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-                });
+                searchKeyWord(search, setSearch, history, "請輸入關鍵字");
               } else {
                 history.push(`/book/search/${search}`);
               }
             }
           }}
         ></Input>
-        <SearchBtn onClick={onSubmit} />
+        <SearchBtn
+          onClick={() =>
+            searchKeyWord(search, setSearch, history, "請輸入關鍵字")
+          }
+        />
       </SearchBar>
       <HashtagDiv>
         {reviews.map((review) => {

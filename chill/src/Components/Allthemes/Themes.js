@@ -1,6 +1,7 @@
 import { useState, useEffect, React } from "react";
 import styled from "styled-components";
 import Header from "../common/Header";
+import Loading from "../common/Loading";
 import theme__1 from "../../images/theme__1.png";
 import theme__2 from "../../images/theme__2.png";
 import theme__3 from "../../images/theme__3.png";
@@ -83,7 +84,6 @@ const Book = styled.div`
     justify-content: center;
   }
 `;
-
 const ThemeTag = styled.div`
   display: flex;
   align-items: flex-start;
@@ -132,9 +132,13 @@ const Title = styled.div`
 `;
 const HeaderDiv = styled.div`
   width: 20%;
+  @media (max-width: 1250px) {
+    display: none;
+  }
 `;
 
 const Themes = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [bookList1, setBookList1] = useState([]);
   const [bookList2, setBookList2] = useState([]);
   const [bookList3, setBookList3] = useState([]);
@@ -143,16 +147,19 @@ const Themes = () => {
   const [bookList6, setBookList6] = useState([]);
 
   useEffect(() => {
+    setIsLoading(true);
     getTheme_1Books(setBookList1);
     getTheme_2Books(setBookList2);
     getTheme_3Books(setBookList3);
     getTheme_4Books(setBookList4);
     getTheme_5Books(setBookList5);
     getTheme_6Books(setBookList6);
+    setIsLoading(false);
   }, []);
 
   return (
     <Div>
+      {isLoading ? <Loading /> : ""}
       <HeaderDiv>
         <Header />
       </HeaderDiv>
