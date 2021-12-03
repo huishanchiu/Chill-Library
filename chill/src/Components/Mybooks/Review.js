@@ -1,9 +1,11 @@
 import { useState, useEffect, React } from "react";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
-import Loading from "../Loading";
-import { getReviews } from "../../utils/firebaseFunction";
+import Loading from "../common/Loading";
 import EditCombo from "./EditCombo";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { getReviews } from "../../utils/firebaseFunction";
+import { bookImgSrc, defaltBookImgSrc } from "../../utils/utils";
 
 const Div = styled.div`
   border-radius: 20px;
@@ -13,7 +15,6 @@ const Div = styled.div`
   color: rgba(255, 240, 221, 0.8);
   font-size: 22px;
   width: 100%;
-  padding: 20px;
   background-color: rgba(213, 219, 219, 0.1);
 `;
 const DivContainer = styled(Div)`
@@ -28,7 +29,7 @@ const ReviewTag = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 30px;
+  padding: 20px;
   text-decoration: none;
   color: rgba(255, 240, 221, 0.8);
   border-bottom: rgba(254, 174, 32, 0.3) 1px solid;
@@ -57,6 +58,7 @@ const HashtagContainer = styled.div`
   display: flex;
 `;
 const BookImg = styled.img`
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   margin-right: 20px;
   width: 25%;
   @media (max-width: 1250px) {
@@ -76,17 +78,17 @@ const BookImgTag = styled.div`
 `;
 
 function Review({ setActiveItem }) {
+  const currentUser = useSelector((state) => state.currentUser);
   const [isLoading, setIsLoading] = useState(false);
   const [reviews, setReviews] = useState([]);
   const { userId } = useParams();
 
   useEffect(() => {
     setIsLoading(true);
-    getReviews(userId, setReviews);
+    getReviews(userId, setReviews, setActiveItem);
     setIsLoading(false);
-    setActiveItem("review");
-  }, [userId]);
-  console.log(reviews);
+  }, [userId, setActiveItem]);
+
   return (
     <>
       {isLoading ? <Loading /> : ""}
@@ -97,28 +99,26 @@ function Review({ setActiveItem }) {
               reviews.map((review) => {
                 return (
                   <ReviewTag key={review.id}>
-                    <EditCombo review={review} />
+                    {userId === currentUser.uid ? (
+                      <EditCombo review={review} />
+                    ) : (
+                      ""
+                    )}
                     <BookName>-{review.bookName}</BookName>
                     <BookImgTag>
                       <HashtagContainer>
-                        {review.hashtag1 ? (
+                        {review.hashtag1 && (
                           <Hashtag>#{review.hashtag1}</Hashtag>
-                        ) : (
-                          ""
                         )}
-                        {review.hashtag2 ? (
+                        {review.hashtag2 && (
                           <Hashtag>#{review.hashtag2}</Hashtag>
-                        ) : (
-                          ""
                         )}
-                        {review.hashtag3 ? (
+                        {review.hashtag3 && (
                           <Hashtag>#{review.hashtag3}</Hashtag>
-                        ) : (
-                          ""
                         )}
                       </HashtagContainer>
                       <BookImg
-                        src={`https://books.google.com/books/publisher/content/images/frontcover/${review.bookId}?fife=w400-h600`}
+                        src={bookImgSrc(review.bookId) || defaltBookImgSrc()}
                         alt=""
                       />
                     </BookImgTag>

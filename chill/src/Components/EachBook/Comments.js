@@ -6,6 +6,7 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import toastGrey from "../../images/toast_grey.png";
 import toastYellow from "../../images/toast_gold.png";
 import Comment from "./Comment";
+import CommentAuthorInfo from "./CommentAuthorInfo";
 import { useSelector } from "react-redux";
 import {
   addLikedReviews,
@@ -86,14 +87,6 @@ const CommentCount = styled.div`
   color: rgba(255, 240, 221, 0.8);
   padding: 10px 0;
 `;
-const CommentAuthorPhoto = styled.img`
-  width: 30px;
-  height: 30px;
-  border-radius: 20px;
-`;
-const CommentAuthorName = styled.div`
-  margin-left: 10px;
-`;
 const CommentContent = styled.div`
   padding: 20px 0;
   border-bottom: rgba(254, 174, 32, 0.3) 1px solid;
@@ -101,10 +94,6 @@ const CommentContent = styled.div`
   &:hover :first-child {
     display: block;
   }
-`;
-const AuthorDiv = styled.div`
-  display: flex;
-  align-items: center;
 `;
 const Text = styled.div`
   margin: 20px;
@@ -115,6 +104,7 @@ function Comments({ review }) {
   const [commentOpen, setCommentOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [comments, setComments] = useState([]);
+
   const toggleLiked = (reviewId) => {
     addLikedReviews(reviewId, currentUser.uid);
   };
@@ -148,7 +138,6 @@ function Comments({ review }) {
   useEffect(() => {
     getComments(review.id, setComments);
   }, []);
-
   const isLiked = review.likedBy?.includes(currentUser?.uid);
   function showComment() {
     if (commentOpen) {
@@ -198,15 +187,7 @@ function Comments({ review }) {
                     ) : (
                       <Close></Close>
                     )}
-                    <AuthorDiv>
-                      <CommentAuthorPhoto
-                        src={comment.author.photoURL}
-                        alt=""
-                      />
-                      <CommentAuthorName>
-                        {comment.author.displayName || "使用者"}
-                      </CommentAuthorName>
-                    </AuthorDiv>
+                    <CommentAuthorInfo comment={comment} />
                     <Text>{comment.content}</Text>
                     {comment.createdAt.toDate().toLocaleString()}
                   </CommentContent>

@@ -3,10 +3,15 @@ import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { useState, useEffect } from "react";
 import firebase from "../../utils/firebase";
-import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import "firebase/firestore";
-import { getAuthorInfo, getBookInfo } from "../../utils/firebaseFunction";
+import {
+  getAuthorInfo,
+  getBookInfo,
+  postReview,
+} from "../../utils/firebaseFunction";
+import { alert, addNewReview } from "../../utils/utils";
+import { v4 as uuidv4 } from "uuid";
 
 const Star = ({ starId, marked }) => {
   return (
@@ -26,6 +31,7 @@ const CloseIcon = styled(AiOutlineCloseCircle)`
   cursor: pointer;
 `;
 const Mask = styled.div`
+  z-index: 5;
   color: #1abea7;
   position: fixed;
   top: 0;
@@ -40,11 +46,13 @@ const Mask = styled.div`
 `;
 
 const PopupInner = styled.div`
+  z-index: 6;
   width: 50%;
-  position: relative;
+  position: fixed;
   padding: 30px;
   background-color: #f1faf7;
   border-radius: 1rem;
+  color: #0d6662;
 `;
 const Close = styled.div`
   position: absolute;
@@ -136,7 +144,6 @@ function NewReview({ close, bookName }) {
   const currentUser = useSelector((state) => state.currentUser);
   const [selection, setSelection] = useState(0);
   const [rating, setRating] = useState(0);
-  const db = firebase.firestore();
   const [book, setBook] = useState({});
   const [quote, setQuote] = useState("");
   const [content, setContent] = useState("");
@@ -144,6 +151,25 @@ function NewReview({ close, bookName }) {
   const [hashtag2, setHashtag2] = useState("");
   const [hashtag3, setHashtag3] = useState("");
   const [author, setAuthor] = useState({});
+  console.log(bookName);
+
+  const commentData = {
+    bookName: bookName,
+    bookId: book.id,
+    content,
+    quote,
+    hashtag1,
+    hashtag2,
+    hashtag3,
+    rating,
+    createdAt: firebase.firestore.Timestamp.now(),
+    author: {
+      displayName: author?.userName || "",
+      photoURL: author?.URL || "",
+      uid: author?.uid,
+      email: author?.email,
+    },
+  };
 
   useEffect(() => {
     getAuthorInfo(currentUser.uid, setAuthor);
@@ -151,51 +177,20 @@ function NewReview({ close, bookName }) {
   }, [bookName]);
 
   function onSubmit() {
-    if (
-      content !== "" &&
-      quote !== "" &&
-      (hashtag1 !== "" || hashtag2 !== "" || hashtag3 !== "")
-    ) {
-      firebase
-        .firestore()
-        .collection("reviews")
-        .doc()
-        .set({
-          bookName: bookName,
-          bookId: book.id,
-          content,
-          quote,
-          hashtag1,
-          hashtag2,
-          hashtag3,
-          rating,
-          createdAt: firebase.firestore.Timestamp.now(),
-          author: {
-            displayName: author.userName || "",
-            photoURL: author.URL || "",
-            uid: author.uid,
-            email: author.email,
-          },
-        });
-      db.collection("users")
-        .doc(currentUser.uid)
-        .update({
-          reviewCount: firebase.firestore.FieldValue.increment(1),
-        });
-      close(false);
-      Swal.fire({
-        text: "成功發表一篇去憂",
-        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-      });
-    } else {
-      Swal.fire({
-        text: "請填入Quote、去憂內容以及至少一個hashtag喔！",
-        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-      });
-    }
+    addNewReview(
+      content,
+      quote,
+      hashtag1,
+      hashtag2,
+      hashtag3,
+      commentData,
+      currentUser.uid,
+      close
+    );
   }
   return (
-    <Mask>
+    <>
+      <Mask onClick={() => close(false)} />
       <PopupInner>
         <Close onClick={() => close(false)}>
           <CloseIcon />
@@ -213,6 +208,7 @@ function NewReview({ close, bookName }) {
         >
           {Array.from({ length: 5 }, (v, i) => (
             <Star
+              key={uuidv4()}
               starId={i + 1}
               marked={selection ? selection > i : rating > i}
             />
@@ -243,7 +239,7 @@ function NewReview({ close, bookName }) {
         </Question>
         <Btn onClick={onSubmit}>送出</Btn>
       </PopupInner>
-    </Mask>
+    </>
   );
 }
 

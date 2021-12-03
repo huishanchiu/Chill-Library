@@ -9,7 +9,7 @@ import { BsBookmarkFill, BsBookmark, BsEyeglasses } from "react-icons/bs";
 import { IoIosPricetags } from "react-icons/io";
 import { HiOutlineHashtag, HiOutlineLibrary } from "react-icons/hi";
 import SlideBooks from "./SlideBooks";
-import Loading from "../Loading";
+import Loading from "../common/Loading";
 import UserCategory from "./UserCategory";
 import hand from "../../images/Hands.png";
 import parse from "html-react-parser";
@@ -28,6 +28,7 @@ import {
   linkToBorrow,
   defaltBookImgSrc,
   bookImgSrc,
+  alert,
 } from "../../utils/utils";
 const PlaceIcon = styled(HiOutlineLibrary)`
   width: 20px;
@@ -229,10 +230,11 @@ function EachSearchBook() {
   function toggleCollected(bookName) {
     if (isCollect) {
       removeCollectedBook(currentUser.uid, bookName);
-      Swal.fire({
-        text: "成功移除收藏，我們等你回來～",
-        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-      });
+      alert("成功移除收藏，我們等你回來～");
+      // Swal.fire({
+      //   text: "成功移除收藏，我們等你回來～",
+      //   confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      // });
     } else {
       addCollectedBook(currentUser.uid, bookName);
       Swal.fire({
@@ -308,7 +310,9 @@ function EachSearchBook() {
                     {book?.categories === undefined ||
                     book?.categories.length === 0 ? (
                       <Btn
-                        onClick={() => collectAlert(isCollect, setPopup, Swal)}
+                        onClick={() =>
+                          collectAlert(isCollect, setPopup, "請先收藏此書！")
+                        }
                       >
                         <BtnTagIcon />
                         分類
@@ -333,7 +337,7 @@ function EachSearchBook() {
               {currentUser ? (
                 <Btn
                   onClick={() => {
-                    collectAlert(isCollect, setOpen, Swal);
+                    collectAlert(isCollect, setOpen, "請先收藏此書！");
                   }}
                 >
                   發表一篇去憂

@@ -179,15 +179,12 @@
   position: relative;
   width: 100%;
   background-color: #2c213b;
-  /* background-color: #343434; */
-  /* min-height: 8000px; */
   height: 2000vmin;
 
   margin: auto;
 }
 
 .road {
-  /* height: 350px; */
   height: 50vmin;
   position: fixed;
   bottom: 0;

@@ -9,7 +9,7 @@ import { HiOutlineHashtag, HiOutlineLibrary } from "react-icons/hi";
 import EachReview from "./EachReview";
 import NewReview from "./NewReview";
 import SlideBooks from "./SlideBooks";
-import Loading from "../Loading";
+import Loading from "../common/Loading";
 import hand from "../../images/Hands.png";
 import parse from "html-react-parser";
 import UserCategory from "./UserCategory";
@@ -271,7 +271,9 @@ function Book() {
                   </Btn>
                   {book?.categories?.length === 0 ? (
                     <Btn
-                      onClick={() => collectAlert(isCollect, setPopup, Swal)}
+                      onClick={() =>
+                        collectAlert(isCollect, setPopup, "請先收藏此書！")
+                      }
                     >
                       <BtnTagIcon />
                       分類

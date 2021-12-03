@@ -15,7 +15,6 @@ const Star = ({ starId, marked }) => {
 function StarsRating(rate) {
   const [selection, setSelection] = React.useState(0);
   const [rating, setRating] = React.useState(0);
-  console.log(rating);
 
   return (
     <div onClick={(event) => setRating(event.target.getAttribute("star-id"))}>

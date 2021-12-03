@@ -2,30 +2,30 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import "../styles.css";
-import roadPng from "../images/grayRoad.png";
-import lightPng from "../images/yellowLight.png";
-import treePng from "../images/tree.png";
-import buildingPng from "../images/skyline.png";
-import building2Png from "../images/building2.png";
-import hospitalPng from "../images/hospital.png";
-import subwayPng from "../images/subway.png";
-import busPng from "../images/bus.png";
-import marketPng from "../images/market.png";
-import playPng from "../images/playground.png";
-import trianglePng from "../images/triangle.png";
-import traficPng from "../images/trafic.png";
-import logoPng from "../images/logo.png";
-import theme__1 from "../images/theme__1.png";
-import theme__2 from "../images/theme__2.png";
-import theme__3 from "../images/theme__3.png";
-import theme__4 from "../images/theme__4.png";
-import theme__5 from "../images/theme__5.png";
-import theme__6 from "../images/theme__6.png";
-import car from "../images/car.png";
-import logo from "../images/ch.png";
+import "../../styles.css";
+import roadPng from "../../images/grayRoad.png";
+import lightPng from "../../images/yellowLight.png";
+import treePng from "../../images/tree.png";
+import buildingPng from "../../images/skyline.png";
+import building2Png from "../../images/building2.png";
+import hospitalPng from "../../images/hospital.png";
+import subwayPng from "../../images/subway.png";
+import busPng from "../../images/bus.png";
+import marketPng from "../../images/market.png";
+import playPng from "../../images/playground.png";
+import trianglePng from "../../images/triangle.png";
+import traficPng from "../../images/trafic.png";
+import logoPng from "../../images/logo.png";
+import theme__1 from "../../images/theme__1.png";
+import theme__2 from "../../images/theme__2.png";
+import theme__3 from "../../images/theme__3.png";
+import theme__4 from "../../images/theme__4.png";
+import theme__5 from "../../images/theme__5.png";
+import theme__6 from "../../images/theme__6.png";
+import car from "../../images/car.png";
+import logo from "../../images/ch.png";
 import LandingHeader from "./LandingHeader";
-import scroll from "../images/scroll.gif";
+import scroll from "../../images/scroll.gif";
 import { Link } from "react-router-dom";
 import { GiClick } from "react-icons/gi";
 
@@ -44,7 +44,6 @@ function Landing() {
         start: "bottom 30%",
         scrub: 3,
         id: "scroll",
-        // markers: true,
       },
       y: -10,
       opacity: 0,
@@ -134,7 +133,6 @@ function Landing() {
     t6.to(".theme__6", {
       xPercent: 100,
     });
-
     ScrollTrigger.create({
       animation: t2,
       trigger: ".theme__2",
@@ -162,7 +160,6 @@ function Landing() {
       pin: true,
       anticipatePin: 4,
     });
-
     ScrollTrigger.create({
       animation: t5,
       trigger: ".theme__5",
@@ -199,7 +196,6 @@ function Landing() {
         end: "bottom 100px",
         scrub: 10,
         id: "l1",
-        // markers: true,
       },
       x: -60,
       y: 100,
@@ -214,8 +210,6 @@ function Landing() {
         end: "bottom 50px",
         scrub: 20,
         id: "r1",
-
-        // markers: true,
       },
       x: 60,
       y: 100,
@@ -229,7 +223,6 @@ function Landing() {
         start: "top 20%",
         scrub: 5,
         id: "l2",
-        // markers: true,
       },
       opacity: 1,
       duration: 2,
@@ -242,7 +235,6 @@ function Landing() {
         end: "top 500px",
         scrub: 50,
         id: "l2-2",
-        // markers: true,
       },
       x: -360,
       y: 600,
@@ -253,7 +245,6 @@ function Landing() {
         start: "top 20%",
         scrub: 5,
         id: "r2",
-        // markers: true,
       },
       opacity: 1,
       duration: 3,
@@ -266,71 +257,63 @@ function Landing() {
         end: "top 500px",
         scrub: 50,
         id: "r2-2",
-        // markers: true,
-      },
-      x: 360, //300
-      y: 600, //500
-      duration: 25,
-    });
-
-    gsap.to(".light__3__left", {
-      scrollTrigger: {
-        trigger: ".theme__3",
-        start: "top 60%",
-        scrub: 5,
-        id: "l3",
-        // markers: true,
-      },
-      opacity: 1,
-      duration: 1,
-    });
-    gsap.to(".light__3__left", {
-      scrollTrigger: {
-        trigger: ".theme__3",
-        start: "top 40%",
-        endTrigger: ".theme__4",
-        end: "top 600px",
-        scrub: 40,
-        id: "l3-2",
-        // markers: true,
-      },
-      x: -360,
-      y: 600,
-      duration: 25,
-    });
-    gsap.to(".light__3__right", {
-      scrollTrigger: {
-        trigger: ".theme__3",
-        start: "top 60%",
-        scrub: 5,
-        id: "l3",
-        // markers: true,
-      },
-      opacity: 1,
-      duration: 1,
-    });
-    gsap.to(".light__3__right", {
-      scrollTrigger: {
-        trigger: ".theme__3",
-        start: "top 40%",
-        endTrigger: ".theme__4",
-        end: "top 600px",
-        scrub: 40,
-        id: "l3-2",
-        // markers: true,
       },
       x: 360,
       y: 600,
-      // duration: 5,
+      duration: 25,
     });
 
+    gsap.to(".light__3__left", {
+      scrollTrigger: {
+        trigger: ".theme__3",
+        start: "top 60%",
+        scrub: 5,
+        id: "l3",
+      },
+      opacity: 1,
+      duration: 1,
+    });
+    gsap.to(".light__3__left", {
+      scrollTrigger: {
+        trigger: ".theme__3",
+        start: "top 40%",
+        endTrigger: ".theme__4",
+        end: "top 600px",
+        scrub: 40,
+        id: "l3-2",
+      },
+      x: -360,
+      y: 600,
+      duration: 25,
+    });
+    gsap.to(".light__3__right", {
+      scrollTrigger: {
+        trigger: ".theme__3",
+        start: "top 60%",
+        scrub: 5,
+        id: "l3",
+      },
+      opacity: 1,
+      duration: 1,
+    });
+    gsap.to(".light__3__right", {
+      scrollTrigger: {
+        trigger: ".theme__3",
+        start: "top 40%",
+        endTrigger: ".theme__4",
+        end: "top 600px",
+        scrub: 40,
+        id: "l3-2",
+      },
+      x: 360,
+      y: 600,
+    });
     gsap.to(".light__4__left", {
       scrollTrigger: {
         trigger: ".theme__4",
         start: "top 30%",
         scrub: 5,
         id: "l4",
-        // markers: true,
       },
       opacity: 1,
       duration: 3,
@@ -343,7 +326,6 @@ function Landing() {
         end: "top 500px",
         scrub: 50,
         id: "l4-2",
-        // markers: true,
       },
       x: -360,
       y: 600,
@@ -356,8 +338,6 @@ function Landing() {
         start: "top 30%",
         scrub: 5,
         id: "l4",
-
-        // markers: true,
       },
       opacity: 1,
       duration: 3,
@@ -370,7 +350,6 @@ function Landing() {
         end: "top 500px",
         scrub: 50,
         id: "l4-2",
-        // markers: true,
       },
       x: 330,
       y: 550,
@@ -382,7 +361,6 @@ function Landing() {
         start: "bottom 40%",
         scrub: 5,
         id: "l5",
-        // markers: true,
       },
       opacity: 1,
       duration: 3,
@@ -395,13 +373,11 @@ function Landing() {
         end: "top 300px",
         scrub: 30,
         id: "l5-2",
-        // markers: true,
       },
       x: 330,
       y: 550,
       duration: 25,
     });
-
     gsap.to(".middle__6", {
       scrollTrigger: {
         trigger: ".theme__6",
@@ -410,7 +386,6 @@ function Landing() {
         end: "top 100px",
         scrub: 20,
         id: "l5",
-        // markers: true,
       },
       opacity: 1,
       duration: 4,
@@ -419,10 +394,8 @@ function Landing() {
       scrollTrigger: {
         trigger: ".theme__6",
         start: "bottom 20%",
-
         scrub: 20,
         id: "l5",
-        // markers: true,
       },
       opacity: 1,
       duration: 4,

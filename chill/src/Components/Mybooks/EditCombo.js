@@ -1,17 +1,20 @@
-import { useState, React } from "react";
+import { React, useState } from "react";
 import styled from "styled-components";
 import firebase from "../../utils/firebase";
 import Swal from "sweetalert2";
 import { HiDotsVertical } from "react-icons/hi";
+import { editReviewToDB } from "../../utils/firebaseFunction";
+
 const Div = styled.div`
   position: relative;
 `;
 const EditMenuIcon = styled(HiDotsVertical)`
+  width: 20px;
+  height: 100%;
   cursor: pointer;
 `;
 const Edit = styled.div`
   cursor: pointer;
-
   display: flex;
   position: absolute;
   top: 0;
@@ -44,6 +47,9 @@ const ContentEdit = styled.textarea`
   box-shadow: none;
   resize: none;
 `;
+const Content = styled.div`
+  margin: 20px;
+`;
 const EditIcons = styled.div`
   padding: 5px;
   text-align: center;
@@ -56,21 +62,28 @@ const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
+const Btn = styled.div`
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: #0d6663;
+  color: #f1faf7;
+  text-align: center;
+  margin: 10px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+`;
+
 function EditCombo({ review }) {
   const [content, setContent] = useState([]);
   const [quote, setQuote] = useState("");
   const [open, setOpen] = useState(false);
   const [editReview, setEditReview] = useState(undefined);
   function AddToFirebase(docId) {
-    docId &&
-      firebase
-        .firestore()
-        .collection("reviews")
-        .doc(docId)
-        .update({
-          quote: `${quote}`,
-          content: `${content}`,
-        });
+    editReviewToDB(docId, quote, content);
   }
   const toggleSave = (docId) => {
     setEditReview(false);
@@ -81,10 +94,11 @@ function EditCombo({ review }) {
   function toggleRemove(reviewId) {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
-        confirmButton: "btn ",
-        cancelButton: "btn ",
+        confirmButton: "btn",
+        cancelButton: "btn",
       },
-      buttonsStyling: false,
+      buttonsStyling: true,
+      confirmButtonColor: "rgba(15, 101, 98, 0.8)",
     });
 
     swalWithBootstrapButtons
@@ -163,7 +177,7 @@ function EditCombo({ review }) {
       ) : (
         <>
           <Quote>{review.quote}</Quote>
-          <div>{review.content}</div>
+          <Content>{review.content}</Content>
         </>
       )}
     </Div>

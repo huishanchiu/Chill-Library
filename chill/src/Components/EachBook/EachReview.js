@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Comment from "./Comment";
 import Comments from "./Comments";
 import { useSelector } from "react-redux";
-import ReviewAuthorInfo from "../ReviewAuthorInfo";
+import ReviewAuthorInfo from "./ReviewAuthorInfo";
 import { getReviewsWithBook } from "../../utils/firebaseFunction";
 
 const Div = styled.div`

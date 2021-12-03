@@ -1,19 +1,20 @@
-import React from "react";
+import { React, useState, useEffect } from "react";
 import styled from "styled-components";
+import AnimatedNumbers from "react-animated-numbers";
+import firebase from "../../utils/firebase";
 import Swal from "sweetalert2";
+import SignIn from "../common/SignIn";
+import Loading from "../common/Loading";
+import shortLogo from "../../images/shortLogo.png";
+import search from "../../images/search.png";
 import { Link, useHistory } from "react-router-dom";
-import shortLogo from "../images/shortLogo.png";
-import { IoIosCompass } from "react-icons/io";
-import { IoMdBeer } from "react-icons/io";
-import { RiBook3Fill } from "react-icons/ri";
+import { IoIosCompass, IoMdBeer } from "react-icons/io";
+import { RiBook3Fill, RiLogoutCircleLine } from "react-icons/ri";
 import { MdMood } from "react-icons/md";
-import { RiLogoutCircleLine } from "react-icons/ri";
-import SignIn from "./SignIn";
-import { useState, useEffect } from "react";
-import firebase from "../utils/firebase";
-import search from "../images/search.png";
 import { BiMenuAltLeft } from "react-icons/bi";
 import { useSelector } from "react-redux";
+import { getAllReviews, getAuthorInfo } from "../../utils/firebaseFunction";
+import { searchKeyWord } from "../../utils/utils";
 
 const SideNav = styled.div`
   background-color: rgba(44, 33, 59, 0.8);
@@ -59,15 +60,16 @@ const Div = styled.div`
 const AvatarImg = styled.img`
   width: 60px;
   height: 60px;
-  border-radius: 50px;
+  border-radius: 30px;
+  &:hover {
+    border-radius: 20px;
+  }
 `;
-
 const Avatar = styled(MdMood)`
   width: 30px;
   height: 100%;
   padding: 5px;
 `;
-
 const Logo = styled.img`
   display: block;
   margin: 20px auto;
@@ -100,8 +102,19 @@ const Nav = styled.div`
   font-style: italic;
   font-weight: 600;
   padding: 0.5rem;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
+`;
+const SelfInfo = styled.div`
+  margin-left: 20%;
+  font-style: italic;
+  font-size: 16px;
+  color: #a8abac;
+`;
+const Name = styled(SelfInfo)`
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
 `;
 const NavSearch = styled(Nav)`
   display: none;
@@ -116,7 +129,7 @@ const NavLink = styled(Link)`
   font-style: italic;
   font-weight: 600;
   padding: 0.5rem;
-  font-size: 20px;
+  font-size: 18px;
   text-decoration: none;
 `;
 const Btn = styled.div`
@@ -148,6 +161,7 @@ const SearchBar = styled.div`
 const Input = styled.input`
   margin-right: auto;
   border: none;
+  outline: none;
   text-decoration: none;
   width: 130px;
   font-size: 16px;
@@ -170,44 +184,21 @@ const SearchBtn = styled.div`
 
 const SideMenu = () => {
   const currentUser = useSelector((state) => state.currentUser);
-  const [showMenu, setShowMenu] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
+  const [showMenu, setShowMenu] = useState(false);
   const [buttonPopup, setButtonPopup] = useState(false);
-  const db = firebase.firestore();
-  const [authorName, setAuthorName] = useState("");
-  const [authorPhoto, setAuthorPhoto] = useState("");
   const [news, setNews] = useState("");
   const [search, setSearch] = useState("");
+  const [currentUserInfo, setCurrentUserInfo] = useState([]);
 
   useEffect(() => {
-    firebase
-      .firestore()
-      .collection("reviews")
-      .orderBy("createdAt", "desc")
-      .onSnapshot((collectionSnapshot) => {
-        const data = collectionSnapshot.docs.map((docSnapshot) => {
-          const id = docSnapshot.id;
-          return { ...docSnapshot.data(), id };
-        });
-        setNews(data);
-      });
-  }, []);
+    setIsLoading(true);
+    getAllReviews(setNews);
+    getAuthorInfo(currentUser?.uid, setCurrentUserInfo);
+    setIsLoading(false);
+  }, [currentUser?.uid]);
 
-  // useEffect(() => {
-  //   currentUser &&
-  //     db
-  //       .collection("users")
-  //       .doc(currentUser.uid)
-  //       .onSnapshot((docSnapshot) => {
-  //         setAuthorPhoto(docSnapshot.data().URL);
-  //         setAuthorName(docSnapshot.data().userName);
-  //       });
-  // }, [currentUser.uid]);
-  function onSubmit() {
-    if (search.length <= 0) {
-      alert("搜尋不到唷");
-    }
-  }
   function showSideMenu() {
     if (showMenu) {
       setShowMenu(false);
@@ -229,7 +220,14 @@ const SideMenu = () => {
           <NavLink to="/news">
             <Btn>
               <FindIcon />
-              累積去憂#{news.length}
+              累積去憂#
+              <AnimatedNumbers
+                animateToNumber={news.length}
+                fontStyle={{ fontSize: 24 }}
+                configs={(number, index) => {
+                  return { mass: 2, tension: 200 * (index + 1), friction: 70 };
+                }}
+              ></AnimatedNumbers>
             </Btn>
           </NavLink>
           <NavLink to="/themes">
@@ -240,12 +238,14 @@ const SideMenu = () => {
           </NavLink>
           {currentUser ? (
             <>
-              <NavLink to={`/mybooks/${currentUser.uid}/collection`}>
-                <Btn>
-                  <BookIcon />
-                  我的書櫃
-                </Btn>
-              </NavLink>
+              <Nav>
+                <a href={`/mybooks/${currentUser.uid}/collection`}>
+                  <Btn>
+                    <BookIcon />
+                    我的書櫃
+                  </Btn>
+                </a>
+              </Nav>
               <Nav>
                 <Btn
                   onClick={() =>
@@ -253,7 +253,6 @@ const SideMenu = () => {
                       .auth()
                       .signOut()
                       .then(() => {
-                        // history.push("/mybooks");
                         window.location.href = "/themes";
                         Swal.fire({
                           text: "已登出",
@@ -284,25 +283,30 @@ const SideMenu = () => {
                 onKeyPress={(e) => {
                   if (e.key === "Enter") {
                     if (search === "") {
-                      Swal.fire({
-                        text: "請輸入關鍵字",
-                        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-                      });
+                      searchKeyWord(search, setSearch, history, "請輸入關鍵字");
                     } else {
                       history.push(`/book/search/${search}`);
                     }
                   }
                 }}
               ></Input>
-              <SearchBtn onClick={onSubmit} />
+              <SearchBtn
+                onClick={() =>
+                  searchKeyWord(search, setSearch, history, "請輸入關鍵字")
+                }
+              />
             </SearchBar>
           </NavSearch>
           {currentUser ? (
             <>
               <Nav>
-                <AvatarImg src={currentUser.photoURL} alt="" />
+                {isLoading ? <Loading /> : ""}
+                <a href={`/mybooks/${currentUser.uid}/collection`}>
+                  <AvatarImg src={currentUserInfo?.URL} alt="" />
+                </a>
               </Nav>
-              <Nav>{currentUser.displayName}</Nav>
+              <Name>{currentUserInfo?.userName}</Name>
+              <SelfInfo>{currentUserInfo?.selfInfo}</SelfInfo>
             </>
           ) : (
             ""

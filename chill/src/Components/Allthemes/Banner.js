@@ -44,22 +44,22 @@ function Banner() {
 
   return (
     <Sliders {...settings}>
-      <Link to="/宅在家好發慌？">
+      <Link to="/theme/宅在家好發慌？">
         <Img src={c__1} alt="" />
       </Link>
-      <Link to="/錢錢去哪了？">
+      <Link to="/theme/錢錢去哪了？">
         <Img src={c__2} alt="" />
       </Link>
-      <Link to="/一個人好孤單？">
+      <Link to="/theme/一個人好孤單？">
         <Img src={c__3} alt="" />
       </Link>
-      <Link to="/想不出好點子？">
+      <Link to="/theme/想不出好點子？">
         <Img src={c__4} alt="" />
       </Link>
-      <Link to="/如何上火箭？">
+      <Link to="/theme/如何上火箭？">
         <Img src={c__5} alt="" />
       </Link>
-      <Link to="/心裡總是卡卡的？">
+      <Link to="/theme/心裡總是卡卡的？">
         <Img src={c__6} alt="" />
       </Link>
     </Sliders>

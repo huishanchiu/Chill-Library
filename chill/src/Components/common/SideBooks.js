@@ -1,18 +1,13 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import { React, useState, useEffect } from "react";
 import styled from "styled-components";
-import firebase from "../utils/firebase";
 import { Link } from "react-router-dom";
+import CommentAuthorInfo from "../EachBook/CommentAuthorInfo";
+import { useSelector } from "react-redux";
+import { getOtherReviews, getAllReviews } from "../../utils/firebaseFunction";
+import { bookImgSrc, defaltBookImgSrc } from "../../utils/utils";
 
-const Img = styled.img`
-  width: 30px;
-  height: 30px;
-  background-color: white;
-  border-radius: 30px;
-  margin-right: 10px;
-`;
 const Side = styled.div`
-  width: 220px;
+  width: 80%;
   display: flex;
   flex-direction: column;
   margin-top: 50px;
@@ -43,8 +38,6 @@ const Author = styled.div`
   margin-right: auto;
   padding-top: 10px;
   color: rgba(44, 33, 59, 0.9);
-  display: flex;
-  justify-content: flex-start;
 `;
 
 function getRandom(x) {
@@ -52,45 +45,20 @@ function getRandom(x) {
 }
 
 function SideBooks() {
-  const [user, setUser] = useState("");
+  const currentUser = useSelector((state) => state.currentUser);
   const [reviews, setReviews] = useState([]);
   const [allReviews, setAllReviews] = useState([]);
   const reviewIndex = getRandom(reviews.length);
   const allReviewIndex = getRandom(allReviews.length);
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((currentUser) => {
-      setUser(currentUser);
-    });
-  }, []);
-
-  useEffect(() => {
-    const db = firebase.firestore();
-    user &&
-      db
-        .collection("reviews")
-        .where("author.uid", "!=", user.uid)
-        .onSnapshot((collectionSnapshot) => {
-          const data = collectionSnapshot.docs.map((docSnapshot) => {
-            return { ...docSnapshot.data() };
-          });
-          setReviews(data);
-        });
-  }, [user]);
-  useEffect(() => {
-    const db = firebase.firestore();
-    db.collection("reviews").onSnapshot((collectionSnapshot) => {
-      const data = collectionSnapshot.docs.map((docSnapshot) => {
-        // const id = docSnapshot.id;
-        return { ...docSnapshot.data() };
-      });
-      setAllReviews(data);
-    });
-  }, []);
+    getOtherReviews(currentUser.uid, setReviews);
+    getAllReviews(setAllReviews);
+  }, [currentUser.uid]);
 
   return (
     <div>
-      {user ? (
+      {currentUser ? (
         <Side>
           #來看看其他去憂
           {reviews.length > 0 ? (
@@ -99,20 +67,14 @@ function SideBooks() {
                 <SideBookImg />
                 <SideBookName>{reviews[reviewIndex].bookName}</SideBookName>
                 <SideBookImg
-                  src={`https://books.google.com/books/publisher/content/images/frontcover/${
-                    reviews[reviewIndex].id || reviews[reviewIndex].bookId
-                  }?fife=w400-h600`}
+                  src={
+                    bookImgSrc(reviews[reviewIndex].bookId) ||
+                    defaltBookImgSrc()
+                  }
                   alt=""
                 />
                 <Author>
-                  <Img
-                    src={
-                      reviews[reviewIndex].author.photoURL ||
-                      "https://images.blush.design/zzDbRuNIfaObRJJl3MMq?w=920&auto=compress&cs=srgb"
-                    }
-                    alt=""
-                  />
-                  {reviews[reviewIndex].author.displayName}
+                  <CommentAuthorInfo comment={reviews[reviewIndex]} />
                   説：{reviews[reviewIndex].quote}
                 </Author>
               </SideBookTag>
@@ -123,18 +85,15 @@ function SideBooks() {
                     {reviews[reviewIndex + 1].bookName}
                   </SideBookName>
                   <SideBookImg
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${
-                      reviews[reviewIndex + 1].id ||
-                      reviews[reviewIndex + 1].bookId
-                    }?fife=w400-h600`}
+                    src={
+                      bookImgSrc(reviews[reviewIndex + 1].bookId) ||
+                      defaltBookImgSrc()
+                    }
                     alt=""
                   />
+
                   <Author>
-                    <Img
-                      src={reviews[reviewIndex + 1].author.photoURL}
-                      alt=""
-                    />
-                    {reviews[reviewIndex + 1].author.displayName}
+                    <CommentAuthorInfo comment={reviews[reviewIndex + 1]} />
                     説：{reviews[reviewIndex + 1].quote}
                   </Author>
                 </SideBookTag>
@@ -159,18 +118,14 @@ function SideBooks() {
                       {allReviews[allReviewIndex].bookName}
                     </SideBookName>
                     <SideBookImg
-                      src={`https://books.google.com/books/publisher/content/images/frontcover/${
-                        allReviews[allReviewIndex].id ||
-                        allReviews[allReviewIndex].bookId
-                      }?fife=w400-h600`}
+                      src={
+                        bookImgSrc(allReviews[allReviewIndex].bookId) ||
+                        defaltBookImgSrc()
+                      }
                       alt=""
                     />
                     <Author>
-                      <Img
-                        src={allReviews[allReviewIndex].author.photoURL}
-                        alt=""
-                      />
-                      {allReviews[allReviewIndex].author.displayName}
+                      <CommentAuthorInfo comment={allReviews[allReviewIndex]} />
                       説：{allReviews[allReviewIndex].quote}
                     </Author>
                   </SideBookTag>
@@ -183,18 +138,16 @@ function SideBooks() {
                         {allReviews[allReviewIndex + 1].bookName}
                       </SideBookName>
                       <SideBookImg
-                        src={`https://books.google.com/books/publisher/content/images/frontcover/${
-                          allReviews[allReviewIndex + 1].id ||
-                          allReviews[allReviewIndex + 1].bookId
-                        }?fife=w400-h600`}
+                        src={
+                          bookImgSrc(allReviews[allReviewIndex + 1].bookId) ||
+                          defaltBookImgSrc()
+                        }
                         alt=""
                       />
                       <Author>
-                        <Img
-                          src={allReviews[allReviewIndex + 1].author.photoURL}
-                          alt=""
+                        <CommentAuthorInfo
+                          comment={allReviews[allReviewIndex + 1]}
                         />
-                        {allReviews[allReviewIndex + 1].author.displayName}
                         説：{allReviews[allReviewIndex + 1].quote}
                       </Author>
                     </SideBookTag>

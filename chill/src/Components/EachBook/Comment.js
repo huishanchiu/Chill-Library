@@ -2,8 +2,9 @@ import { React, useState } from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import Loading from "../Loading";
+import Loading from "../common/Loading";
 import { submitComments } from "../../utils/firebaseFunction";
+
 const Icon = styled.div`
   border-bottom: hsla(0, 0%, 0%, 0.2) 1px solid;
   width: 680px;
@@ -78,7 +79,9 @@ function Comment({ review, close }) {
   const [isLoading, setIsLoading] = useState(false);
 
   function onSubmit() {
-    submitComments(review.id, setCommentContent, commentContent, setIsLoading);
+    setIsLoading(true);
+    submitComments(review.id, setCommentContent, commentContent);
+    setIsLoading(false);
     close(false);
     Swal.fire({
       text: "送出留言",

@@ -1,12 +1,18 @@
-export const collectAlert = (isCollect, setPopup, Swal) => {
+import Swal from "sweetalert2";
+import { postReview } from "./firebaseFunction";
+
+export const collectAlert = (isCollect, setPopup, text) => {
   if (isCollect) {
     setPopup(true);
   } else {
-    Swal.fire({
-      text: "請先收藏此書",
-      confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-    });
+    alert(text);
   }
+};
+export const alert = (text) => {
+  Swal.fire({
+    text: text,
+    confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+  });
 };
 
 export const linkToRead = (bookId) => {
@@ -27,4 +33,61 @@ export const bookImgSrc = (bookId) => {
 
 export const defaltBookImgSrc = () => {
   return "https://i.pinimg.com/564x/28/3a/79/283a79781a0c5248d70199cc6d1a58a6.jpg";
+};
+export const defaltUserImgSrc = () => {
+  return "https://images.blush.design/zzDbRuNIfaObRJJl3MMq?w=920&auto=compress&cs=srgb";
+};
+
+export const getOtherShelf = (userUid, currentUser, text) => {
+  currentUser
+    ? (window.location.href = `/mybooks/${userUid}/collection`)
+    : alert(text);
+};
+export const searchKeyWord = (search, setSearch, history, text) => {
+  if (search === "") {
+    alert(text);
+  } else {
+    history.push(`/book/search/${search}`);
+    setSearch("");
+  }
+};
+
+export const addNewReview = (
+  content,
+  quote,
+  hashtag1,
+  hashtag2,
+  hashtag3,
+  commentData,
+  userId,
+  close
+) => {
+  if (
+    content !== "" &&
+    quote !== "" &&
+    (hashtag1 !== "" || hashtag2 !== "" || hashtag3 !== "")
+  ) {
+    postReview(commentData, userId);
+    close(false);
+    alert("成功發表一篇去憂");
+    return true;
+  } else {
+    alert("請填入Quote、去憂內容以及至少一個hashtag喔！");
+    return false;
+  }
+  // if (
+  //   content === "" ||
+  //   quote === "" ||
+  //   hashtag1 !== "" ||
+  //   hashtag2 !== "" ||
+  //   hashtag3 !== ""
+  // ) {
+  //   alert("請填入Quote、去憂內容以及至少一個hashtag喔！");
+  //   return false;
+  // } else {
+  //   postReview(commentData, userId);
+  //   close(false);
+  //   alert("成功發表一篇去憂");
+  //   return true;
+  // }
 };

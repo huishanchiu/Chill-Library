@@ -14,6 +14,7 @@ import {
   removeCollectedBook,
   updateReadState,
 } from "../../utils/firebaseFunction";
+import { bookImgSrc, defaltBookImgSrc } from "../../utils/utils";
 
 const BackIcon = styled(RiLogoutCircleLine)`
   margin-right: 8px;
@@ -161,7 +162,8 @@ function BookState() {
         confirmButton: "btn btn-success",
         cancelButton: "btn btn-danger",
       },
-      buttonsStyling: false,
+      buttonsStyling: true,
+      confirmButtonColor: "rgba(15, 101, 98, 0.8)",
     });
     swalWithBootstrapButtons
       .fire({
@@ -186,10 +188,7 @@ function BookState() {
     <Mask>
       {Object.keys(bookShelf).length >= 0 ? (
         <PopupInner>
-          <BookImg
-            src={`https://books.google.com/books/publisher/content/images/frontcover/${book.id}?fife=w400-h600`}
-            alt=""
-          />
+          <BookImg src={bookImgSrc(book.id) || defaltBookImgSrc} alt="" />
           <Div>
             <Inner>書名：{book.title}</Inner>
             <Inner>作者：{book.authors}</Inner>
@@ -235,7 +234,6 @@ function BookState() {
                 <>{bookShelf.read}</>
               )}
             </Inner>
-
             <Inner>
               是否出借：
               {edit ? (

@@ -1,4 +1,6 @@
 import firebase from "./firebase";
+import "firebase/firestore";
+import "firebase/storage";
 
 export const getTheme_1Books = (setFunction) => {
   firebase
@@ -216,6 +218,7 @@ export const deleteComment = (reviewId, commentId) => {
 };
 
 export const getComments = (reviewId, setComments) => {
+  let isUnmount = false;
   firebase
     .firestore()
     .collection("reviews")
@@ -227,17 +230,16 @@ export const getComments = (reviewId, setComments) => {
         const id = docSnapshot.id;
         return { ...docSnapshot.data(), id };
       });
-      setComments(data);
+      if (!isUnmount) {
+        setComments(data);
+      }
     });
+  return () => {
+    isUnmount = true;
+  };
 };
 
-export const submitComments = (
-  reviewId,
-  setCommentContent,
-  commentContent,
-  setIsLoading
-) => {
-  setIsLoading(true);
+export const submitComments = (reviewId, setCommentContent, commentContent) => {
   const firestore = firebase.firestore();
   const batch = firestore.batch();
   const reviewRef = firestore.collection("reviews").doc(reviewId);
@@ -257,7 +259,6 @@ export const submitComments = (
   });
   batch.commit().then(() => {
     setCommentContent("");
-    setIsLoading(false);
   });
 };
 
@@ -315,9 +316,11 @@ export const getAllReviews = (setAllReviews) => {
   firebase
     .firestore()
     .collection("reviews")
+    .orderBy("createdAt", "desc")
     .onSnapshot((collectionSnapshot) => {
       const data = collectionSnapshot.docs.map((docSnapshot) => {
-        return { ...docSnapshot.data() };
+        const id = docSnapshot.id;
+        return { ...docSnapshot.data(), id };
       });
       setAllReviews(data);
     });
@@ -342,5 +345,182 @@ export const removeCategory = (e, bookName) => {
       categories: firebase.firestore.FieldValue.arrayUnion(
         `${e.target.textContent}`
       ),
+    });
+};
+
+export const getThemeBooks = (theme, setFunction) => {
+  firebase
+    .firestore()
+    .collection("books")
+    .where("categories", "array-contains", `${theme}`)
+    .onSnapshot((querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        list.push(doc.data());
+      });
+      setFunction(list);
+    });
+};
+
+export const getPersonalBooks = (
+  userId,
+  setBookList,
+  setIsLoading,
+  setActiveItem
+) => {
+  setIsLoading(true);
+  firebase
+    .firestore()
+    .collection("books")
+    .where("collectedBy", "array-contains", userId)
+    .onSnapshot((collectionSnapshot) => {
+      const data = collectionSnapshot.docs.map((docSnapshot) => {
+        return { ...docSnapshot.data() };
+      });
+      setBookList(data);
+      setActiveItem("collection");
+      setIsLoading(false);
+    });
+};
+export const editReviewToDB = (docId, quote, content) => {
+  firebase
+    .firestore()
+    .collection("reviews")
+    .doc(docId)
+    .update({
+      quote: `${quote}`,
+      content: `${content}`,
+    });
+};
+export const getFollows = (userId, setFollows, setActiveItem, setIsLoading) => {
+  setIsLoading(true);
+  const unsubscribe = firebase
+    .firestore()
+    .collection("users")
+    .where("followBy", "array-contains", userId)
+    .onSnapshot((querySnapshot) => {
+      const data = querySnapshot.docs.map((doc) => {
+        const id = doc.id;
+        return { ...doc.data(), id };
+      });
+      setFollows(data);
+      setActiveItem("follow");
+      setIsLoading(false);
+    });
+  return () => {
+    unsubscribe();
+  };
+};
+export const UnFollowOthers = (followId, userId) => {
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(followId)
+    .update({
+      followBy: firebase.firestore.FieldValue.arrayRemove(userId),
+    });
+};
+export const followOthers = (followId, userId) => {
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(followId)
+    .update({
+      followBy: firebase.firestore.FieldValue.arrayUnion(userId),
+    });
+};
+
+export const updatePersonalInfo = (userId, obj) => {
+  const documentRef = firebase.firestore().collection("users").doc(userId);
+  documentRef.update(obj);
+};
+
+export const uploadBanner = (userId, file, obj) => {
+  const fileRef = firebase.storage().ref("bookshelf-image/" + userId);
+  const metadata = {
+    contentType: file.type,
+  };
+
+  fileRef.put(file, metadata).then(() => {
+    fileRef.getDownloadURL().then((imageUrl) => {
+      obj.imageUrl = imageUrl;
+      updatePersonalInfo(userId, obj);
+    });
+  });
+};
+
+export const uploadUserImg = (userId, userImg, obj) => {
+  const userImgRef = firebase.storage().ref("user-photo/" + userId);
+  const metadata2 = {
+    contentType: userImg.type,
+  };
+  userImgRef.put(userImg, metadata2).then(() => {
+    userImgRef.getDownloadURL().then((userImageUrl) => {
+      obj.URL = userImageUrl;
+      updatePersonalInfo(userId, obj);
+    });
+  });
+};
+export const getEachAuthorData = (authorId, setAuthor) => {
+  firebase
+    .firestore()
+    .collection("users")
+    .where("uid", "==", authorId)
+    .onSnapshot((collectionSnapshot) => {
+      const data = collectionSnapshot.docs.map((docSnapshot) => {
+        return { ...docSnapshot.data() };
+      });
+
+      setAuthor(data[0]);
+    });
+};
+export const getOtherReviews = (userId, setReviews) => {
+  userId &&
+    firebase
+      .firestore()
+      .collection("reviews")
+      .where("author.uid", "!=", userId)
+      .onSnapshot((collectionSnapshot) => {
+        const data = collectionSnapshot.docs.map((docSnapshot) => {
+          return { ...docSnapshot.data() };
+        });
+        setReviews(data);
+      });
+};
+export const getHeaderHashtags = (setReviews) => {
+  firebase
+    .firestore()
+    .collection("reviews")
+    .where("hashtag1", "!=", "")
+    .limit(9)
+    .onSnapshot((collectionSnapshot) => {
+      const data = collectionSnapshot.docs.map((docSnapshot) => {
+        const id = docSnapshot.id;
+        return { ...docSnapshot.data(), id };
+      });
+      setReviews(data);
+    });
+};
+export const getAuthorByReviewsCount = (setAllUsers) => {
+  firebase
+    .firestore()
+    .collection("users")
+    .orderBy("reviewCount", "desc")
+    .limit(5)
+    .onSnapshot((collectionSnapshot) => {
+      const data = collectionSnapshot.docs.map((docSnapshot) => {
+        return { ...docSnapshot.data() };
+      });
+      setAllUsers(data);
+    });
+};
+export const postReview = (commentData, userId) => {
+  firebase.firestore().collection("reviews").doc().set(commentData);
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(userId)
+    .update({
+      reviewCount: firebase.firestore.FieldValue.increment(1),
     });
 };

@@ -1,15 +1,15 @@
 import { useState, useEffect, React } from "react";
 import styled from "styled-components";
-import Header from "./Header";
-import theme__1 from "../images/theme__1.png";
-import theme__2 from "../images/theme__2.png";
-import theme__3 from "../images/theme__3.png";
-import theme__4 from "../images/theme__4.png";
-import theme__5 from "../images/theme__5.png";
-import theme__6 from "../images/theme__6.png";
+import Header from "../common/Header";
+import Loading from "../common/Loading";
+import theme__1 from "../../images/theme__1.png";
+import theme__2 from "../../images/theme__2.png";
+import theme__3 from "../../images/theme__3.png";
+import theme__4 from "../../images/theme__4.png";
+import theme__5 from "../../images/theme__5.png";
+import theme__6 from "../../images/theme__6.png";
 import { GiClick } from "react-icons/gi";
 import { Link } from "react-router-dom";
-import firebase from "../utils/firebase";
 import {
   getTheme_1Books,
   getTheme_2Books,
@@ -17,7 +17,7 @@ import {
   getTheme_4Books,
   getTheme_5Books,
   getTheme_6Books,
-} from "../utils/firebaseFunction";
+} from "../../utils/firebaseFunction";
 
 const ClickIcon = styled(GiClick)`
   padding-right: 10px;
@@ -84,7 +84,6 @@ const Book = styled.div`
     justify-content: center;
   }
 `;
-
 const ThemeTag = styled.div`
   display: flex;
   align-items: flex-start;
@@ -133,9 +132,13 @@ const Title = styled.div`
 `;
 const HeaderDiv = styled.div`
   width: 20%;
+  @media (max-width: 1250px) {
+    display: none;
+  }
 `;
 
 const Themes = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [bookList1, setBookList1] = useState([]);
   const [bookList2, setBookList2] = useState([]);
   const [bookList3, setBookList3] = useState([]);
@@ -144,16 +147,19 @@ const Themes = () => {
   const [bookList6, setBookList6] = useState([]);
 
   useEffect(() => {
+    setIsLoading(true);
     getTheme_1Books(setBookList1);
     getTheme_2Books(setBookList2);
     getTheme_3Books(setBookList3);
     getTheme_4Books(setBookList4);
     getTheme_5Books(setBookList5);
     getTheme_6Books(setBookList6);
+    setIsLoading(false);
   }, []);
 
   return (
     <Div>
+      {isLoading ? <Loading /> : ""}
       <HeaderDiv>
         <Header />
       </HeaderDiv>

@@ -1,25 +1,24 @@
 import { Route, BrowserRouter, Switch } from "react-router-dom";
 import styled from "styled-components";
-import Landing from "./Components/Landing";
+import Landing from "./Components/Landing/Landing";
 import EachTheme from "./Components/Allthemes/EachTheme";
-import Mybooks from "./Components/Mybooks";
-import NewsWall from "./Components/NewsWall";
-import Themes from "./Components/Themes";
+import Mybooks from "./Components/Mybooks/Mybooks";
+import NewsWall from "./Components/NewsWall/NewsWall";
+import Themes from "./Components/Allthemes/Themes";
 import EachBook from "./Components/EachBook/EachBook";
-import Header from "./Components/Header";
-import SideMenu from "./Components/SideMenu";
-import SideBooks from "./Components/SideBooks";
-import Searching from "./Components/Searching";
+import Header from "./Components/common/Header";
+import SideMenu from "./Components/common/SideMenu";
+import SideBooks from "./Components/common/SideBooks";
+import Searching from "./Components/common/Searching";
 import EachSearchBook from "./Components/EachBook/EachSearchBook";
 import bk from "./images/bk.png";
-import SideAuthors from "./Components/SideAuthors";
-import SideMenuThemes from "./Components/SideMenuThemes";
+import SideAuthors from "./Components/common/SideAuthors";
 import { useState, useEffect } from "react";
 import firebase from "./utils/firebase";
-import { getCurrentUser, getUsers } from "./redux/action";
+import { getCurrentUser } from "./redux/action";
 import { useDispatch } from "react-redux";
-import Loading from "./Components/Loading";
-import Nomatch from "./Components/Nomatch";
+import Loading from "./Components/common/Loading";
+import Nomatch from "./Components/common/Nomatch";
 
 const Main = styled.div`
   min-height: 100vh;
@@ -68,11 +67,9 @@ function App() {
           <Div>
             <Switch>
               <Route exact path="/" component={Landing} />
-
               <Route exact path="/themes">
                 <Main>
                   <SideMenu />
-                  {/* <SideMenuThemes /> */}
                   <Themes />
                 </Main>
               </Route>

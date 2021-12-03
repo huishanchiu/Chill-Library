@@ -1,16 +1,14 @@
-import React from "react";
+import { React, useState } from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import { BsFacebook } from "react-icons/bs";
-import { BsGoogle } from "react-icons/bs";
-import { useState } from "react";
-import firebase from "../utils/firebase";
+import { BsFacebook, BsGoogle } from "react-icons/bs";
+import firebase from "../../utils/firebase";
 import { useHistory } from "react-router-dom";
 import Loading from "./Loading";
 import "firebase/auth";
-import socialMediaAuth from "../utils/auth";
-import { facebookProvider, googleProvider } from "../utils/authMethods";
+import socialMediaAuth from "../../utils/auth";
+import { facebookProvider, googleProvider } from "../../utils/authMethods";
 
 const CloseIcon = styled(AiOutlineCloseCircle)`
   color: #1abea7;
@@ -135,7 +133,6 @@ function SignIn(props) {
 
   const handleOnClick = async (provider) => {
     const res = await socialMediaAuth(provider);
-    console.log(res);
     ThirdAddToFirebase(res);
     history.push("/");
   };
@@ -201,7 +198,6 @@ function SignIn(props) {
           setIsLoading(false);
           AddToFirebase(res);
         })
-
         .catch((error) => {
           switch (error.code) {
             case "auth/email-already-in-use":
@@ -222,6 +218,7 @@ function SignIn(props) {
 
   return props.trigger ? (
     <Mask>
+      {isLoading ? <Loading /> : ""}
       <PopupInner>
         <Close onClick={() => props.setTrigger(false)}>
           <CloseIcon />
@@ -272,8 +269,6 @@ function SignIn(props) {
         />
         {errorMessage && <Message>{errorMessage}</Message>}
         <Btn onClick={onSubmit}>
-          {/* {isLoading ? <Loading/> :} */}
-
           {activeItem === "signup" && "註冊"}
           {activeItem === "signin" && "登入"}
         </Btn>

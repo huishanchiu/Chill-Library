@@ -1,20 +1,30 @@
-import React from "react";
+import { React, useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
 import "firebase/storage";
-import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import firebase from "../utils/firebase";
-import { Link, useRouteMatch } from "react-router-dom";
-import { Route, BrowserRouter, Switch } from "react-router-dom";
-import Collection from "./Mybooks/Collection";
-import Review from "./Mybooks/Review";
-import Follow from "./Mybooks/Follow";
-import BookState from "./Mybooks/BookState";
+import Collection from "./Collection";
+import Review from "./Review";
+import Follow from "./Follow";
+import BookState from "./BookState";
 import { FiSettings } from "react-icons/fi";
-import MySetting from "./Mybooks/MySetting";
-import banner from "../images/021.jpeg";
+import MySetting from "./MySetting";
+import banner from "../../images/021.jpeg";
+import Loading from "../common/Loading";
 import { useSelector } from "react-redux";
+import {
+  Link,
+  useRouteMatch,
+  Route,
+  BrowserRouter,
+  Switch,
+} from "react-router-dom";
+import {
+  getAuthorInfo,
+  getReviews,
+  UnFollowOthers,
+  followOthers,
+} from "../../utils/firebaseFunction";
 
 const SetIcon = styled(FiSettings)`
   cursor: pointer;
@@ -68,6 +78,10 @@ const MyInfo = styled.div`
   width: 100%;
 `;
 const MyInfoDiv = styled.div``;
+const Message = styled.h2`
+  display: flex;
+  align-items: center;
+`;
 const MyName = styled.div`
   font-size: 30px;
   font-weight: 500;
@@ -127,70 +141,32 @@ function getRandom(x) {
 const Mybooks = () => {
   const currentUser = useSelector((state) => state.currentUser);
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [follows, setFollows] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [activeItem, setActiveItem] = useState("");
   const [file, setFile] = useState(null);
-  const [user, setUser] = useState(null);
-  let { userId } = useParams();
-  const db = firebase.firestore();
-
+  const { userId } = useParams();
   const quoteIndex = getRandom(reviews.length);
-  useEffect(() => {
-    const unsubscribe = firebase
-      .firestore()
-      .collection("users")
-      .doc(userId)
-      .onSnapshot((docSnapshot) => {
-        setFollows(docSnapshot.data());
-      });
-    return () => {
-      unsubscribe();
-    };
-  }, [userId]);
 
   useEffect(() => {
-    if (user !== "") {
-      const unsubscribe = db
-        .collection("reviews")
-        .where("author.uid", "==", userId)
-        .onSnapshot((collectionSnapshot) => {
-          const data = collectionSnapshot.docs.map((docSnapshot) => {
-            const id = docSnapshot.id;
-            return { ...docSnapshot.data(), id };
-          });
-          setReviews(data);
-        });
-      return () => {
-        unsubscribe();
-      };
-    }
+    setIsLoading(true);
+    getReviews(userId, setReviews);
+    setActiveItem("review");
+    setIsLoading(false);
+    getAuthorInfo(userId, setFollows);
   }, [userId]);
 
   function toggleFollowed() {
     if (userId !== currentUser.uid) {
       if (isFollowed) {
-        firebase
-          .firestore()
-          .collection("users")
-          .doc(userId)
-          .update({
-            followBy: firebase.firestore.FieldValue.arrayRemove(
-              currentUser.uid
-            ),
-          });
+        UnFollowOthers(userId, currentUser.uid);
         Swal.fire({
           text: "已取消追蹤",
           confirmButtonColor: "rgba(15, 101, 98, 0.8)",
         });
       } else {
-        firebase
-          .firestore()
-          .collection("users")
-          .doc(userId)
-          .update({
-            followBy: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
-          });
+        followOthers(userId, currentUser.uid);
         Swal.fire({
           text: "已追蹤",
           confirmButtonColor: "rgba(15, 101, 98, 0.8)",
@@ -199,27 +175,13 @@ const Mybooks = () => {
     }
   }
 
-  const isFollowed = follows.followBy?.includes(currentUser.uid);
-
+  const isFollowed = follows.followBy?.includes(currentUser?.uid);
   const active = {
     background: "#F1FAF7",
     color: "#0D6663",
   };
 
-  useEffect(() => {
-    let isUnmount = false;
-    firebase.auth().onAuthStateChanged((currentUser) => {
-      if (!isUnmount) {
-        setUser(currentUser);
-      }
-    });
-    return () => {
-      isUnmount = true;
-    };
-  }, []);
-
   let { path, url } = useRouteMatch();
-
   const perviewUrl = file
     ? URL.createObjectURL(file)
     : "https://store-images.s-microsoft.com/image/apps.30252.13581223868996394.55d0cdc7-62a9-49a1-baad-f12edad03432.c8c1dee1-8fa1-413e-989b-2d27e219fa4b?w=672&h=378&q=80&mode=letterbox&background=%23FFE4E4E4&format=jpg";
@@ -238,16 +200,14 @@ const Mybooks = () => {
                 >
                   {reviews.length > 0 ? reviews[quoteIndex].quote : ""}
 
-                  {userId === firebase.auth().currentUser.uid ? (
+                  {userId === currentUser.uid ? (
                     <Icon onClick={() => setOpen(true)}>
                       <SetIcon />
                     </Icon>
                   ) : (
                     ""
                   )}
-
                   {open && <MySetting userInfo={follows} close={setOpen} />}
-                  {/* <MyImage src={follows.URL} alt="" /> */}
                 </QuoteTag>
               ) : (
                 <>
@@ -257,7 +217,7 @@ const Mybooks = () => {
                     }}
                   >
                     {reviews.length > 0 ? reviews[quoteIndex].quote : ""}
-                    {userId === firebase.auth().currentUser.uid ? (
+                    {userId === currentUser.uid ? (
                       <Icon onClick={() => setOpen(true)}>
                         <SetIcon />
                       </Icon>
@@ -329,13 +289,14 @@ const Mybooks = () => {
                   component={BookState}
                 />
               </Switch>
+              {isLoading ? <Loading /> : ""}
             </Content>
           ) : (
-            <MyInfo>尚未登入喔！</MyInfo>
+            ""
           )}
         </BrowserRouter>
       ) : (
-        ""
+        <Message>尚未登入喔！</Message>
       )}
     </>
   );
