@@ -52,6 +52,5 @@ You can also use default test account below
 - #### Check books on other's book shelf!
 
 ![mybook-s](https://user-images.githubusercontent.com/84556615/144272624-d7a70769-1532-45e5-be75-16b631d472fb.gif)
-## Future features
 
 
