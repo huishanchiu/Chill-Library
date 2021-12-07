@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import React, { useState } from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
@@ -194,6 +194,10 @@ function SignIn(props) {
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then((res) => {
+          Swal.fire({
+            text: "成功註冊/登入",
+            confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+          });
           history.push("/themes");
           setIsLoading(false);
           AddToFirebase(res);

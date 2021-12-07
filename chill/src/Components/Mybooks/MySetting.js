@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import React, { useState } from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";

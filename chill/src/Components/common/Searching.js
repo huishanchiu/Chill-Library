@@ -1,9 +1,9 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import algolia from "../../utils/algolia";
 import { AiFillPlayCircle } from "react-icons/ai";
+import algolia from "../../utils/algolia";
 import Loading from "../common/Loading";
 import { searchBooks } from "../../utils/api";
 import { bookImgSrc, defaltBookImgSrc } from "../../utils/utils";

@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import AnimatedNumbers from "react-animated-numbers";
 import firebase from "../../utils/firebase";

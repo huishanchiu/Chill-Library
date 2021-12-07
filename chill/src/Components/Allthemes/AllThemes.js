@@ -6,6 +6,7 @@ import theme__3 from "../../images/theme__3.png";
 import theme__4 from "../../images/theme__4.png";
 import theme__5 from "../../images/theme__5.png";
 import theme__6 from "../../images/theme__6.png";
+
 let themeImg;
 let conetnt;
 const Div = styled.div`

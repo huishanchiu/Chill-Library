@@ -1,4 +1,4 @@
-import { useState, useEffect, React } from "react";
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
@@ -311,7 +311,14 @@ function BookState() {
                 </BtnDelete>
               </BtnDiv>
             ) : (
-              ""
+              <Btn
+                onClick={(e) => {
+                  history.push(`/mybooks/${userId}/collection`);
+                }}
+              >
+                <BackIcon />
+                返回
+              </Btn>
             )}
           </Div>
         </PopupInner>

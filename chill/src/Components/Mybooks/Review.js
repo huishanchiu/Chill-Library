@@ -1,4 +1,4 @@
-import { useState, useEffect, React } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Loading from "../common/Loading";
 import EditCombo from "./EditCombo";
