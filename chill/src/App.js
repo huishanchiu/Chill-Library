@@ -1,4 +1,4 @@
-import { Route, BrowserRouter, Switch } from "react-router-dom";
+import Route, { BrowserRouter, Switch } from "react-router-dom";
 import styled from "styled-components";
 import Landing from "./Components/Landing/Landing";
 import EachTheme from "./Components/Allthemes/EachTheme";
