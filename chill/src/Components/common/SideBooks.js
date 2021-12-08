@@ -52,9 +52,9 @@ function SideBooks() {
   const allReviewIndex = getRandom(allReviews.length);
 
   useEffect(() => {
-    getOtherReviews(currentUser.uid, setReviews);
+    getOtherReviews(currentUser?.uid, setReviews);
     getAllReviews(setAllReviews);
-  }, [currentUser.uid]);
+  }, [currentUser?.uid]);
 
   return (
     <div>

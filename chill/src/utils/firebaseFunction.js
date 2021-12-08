@@ -2,7 +2,8 @@ import firebase from "./firebase";
 import "firebase/firestore";
 import "firebase/storage";
 
-export const getTheme_1Books = (setFunction) => {
+export const getTheme_1Books = (setFunction, setIsLoading) => {
+  setIsLoading(true);
   firebase
     .firestore()
     .collection("books")
@@ -15,9 +16,11 @@ export const getTheme_1Books = (setFunction) => {
         list.push(doc.data());
       });
       setFunction(list);
+      setIsLoading(false);
     });
 };
-export const getTheme_2Books = (setFunction) => {
+export const getTheme_2Books = (setFunction, setIsLoading) => {
+  setIsLoading(true);
   firebase
     .firestore()
     .collection("books")
@@ -30,9 +33,11 @@ export const getTheme_2Books = (setFunction) => {
         list.push(doc.data());
       });
       setFunction(list);
+      setIsLoading(false);
     });
 };
-export const getTheme_3Books = (setFunction) => {
+export const getTheme_3Books = (setFunction, setIsLoading) => {
+  setIsLoading(true);
   firebase
     .firestore()
     .collection("books")
@@ -45,9 +50,11 @@ export const getTheme_3Books = (setFunction) => {
         list.push(doc.data());
       });
       setFunction(list);
+      setIsLoading(false);
     });
 };
-export const getTheme_4Books = (setFunction) => {
+export const getTheme_4Books = (setFunction, setIsLoading) => {
+  setIsLoading(true);
   firebase
     .firestore()
     .collection("books")
@@ -60,9 +67,11 @@ export const getTheme_4Books = (setFunction) => {
         list.push(doc.data());
       });
       setFunction(list);
+      setIsLoading(false);
     });
 };
-export const getTheme_5Books = (setFunction) => {
+export const getTheme_5Books = (setFunction, setIsLoading) => {
+  setIsLoading(true);
   firebase
     .firestore()
     .collection("books")
@@ -75,9 +84,11 @@ export const getTheme_5Books = (setFunction) => {
         list.push(doc.data());
       });
       setFunction(list);
+      setIsLoading(false);
     });
 };
-export const getTheme_6Books = (setFunction) => {
+export const getTheme_6Books = (setFunction, setIsLoading) => {
+  setIsLoading(true);
   firebase
     .firestore()
     .collection("books")
@@ -90,6 +101,7 @@ export const getTheme_6Books = (setFunction) => {
         list.push(doc.data());
       });
       setFunction(list);
+      setIsLoading(false);
     });
 };
 

@@ -147,14 +147,12 @@ const Themes = () => {
   const [bookList6, setBookList6] = useState([]);
 
   useEffect(() => {
-    setIsLoading(true);
-    getTheme_1Books(setBookList1);
-    getTheme_2Books(setBookList2);
-    getTheme_3Books(setBookList3);
-    getTheme_4Books(setBookList4);
-    getTheme_5Books(setBookList5);
-    getTheme_6Books(setBookList6);
-    setIsLoading(false);
+    getTheme_1Books(setBookList1, setIsLoading);
+    getTheme_2Books(setBookList2, setIsLoading);
+    getTheme_3Books(setBookList3, setIsLoading);
+    getTheme_4Books(setBookList4, setIsLoading);
+    getTheme_5Books(setBookList5, setIsLoading);
+    getTheme_6Books(setBookList6, setIsLoading);
   }, []);
 
   return (

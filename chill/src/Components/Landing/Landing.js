@@ -67,7 +67,7 @@ function Landing() {
     ScrollTrigger.create({
       animation: t1,
       trigger: ".theme__1",
-      start: "top top",
+      start: "-100px top",
       end: "+=1500px",
       scrub: 5,
       pin: true,
@@ -136,7 +136,7 @@ function Landing() {
     ScrollTrigger.create({
       animation: t2,
       trigger: ".theme__2",
-      start: "top top",
+      start: "-100px top",
       end: "+=1500px",
       scrub: 20,
       pin: true,
@@ -145,7 +145,7 @@ function Landing() {
     ScrollTrigger.create({
       animation: t3,
       trigger: ".theme__3",
-      start: "top top",
+      start: "-100px top",
       end: "+=1500px",
       scrub: 20,
       pin: true,
@@ -154,7 +154,7 @@ function Landing() {
     ScrollTrigger.create({
       animation: t4,
       trigger: ".theme__4",
-      start: "top top",
+      start: "-100px top",
       end: "+=1500px",
       scrub: 20,
       pin: true,
@@ -163,7 +163,7 @@ function Landing() {
     ScrollTrigger.create({
       animation: t5,
       trigger: ".theme__5",
-      start: "top top",
+      start: "-100px top",
       end: "+=1500px",
       scrub: 20,
       pin: true,
@@ -173,7 +173,7 @@ function Landing() {
     ScrollTrigger.create({
       animation: t6,
       trigger: ".theme__6",
-      start: "top top",
+      start: "-100px top",
       end: "+=1500px",
       scrub: 20,
       pin: true,
@@ -528,9 +528,7 @@ function Landing() {
         </div>
         <div className="logo">
           <div>
-            <span className="logo__green">[</span>
             <img className="logo__orange__1" src={logo} alt="" />
-            <span className="logo__green">]</span>
           </div>
           <div className="logo__orange">Chill Library</div>
           <Link className="btn" to="/themes">

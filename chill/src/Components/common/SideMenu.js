@@ -29,18 +29,22 @@ const SideNav = styled.div`
     width: 50%;
     position: fixed;
     z-index: 4;
+    height: 100vh;
   }
   @media (max-width: 500px) {
     display: ${(props) => (props.show ? "block" : "none")};
     width: 100%;
     position: fixed;
     z-index: 4;
+    height: 100vh;
   }
 `;
 const SideMenuIcon = styled.div`
+  position: fixed;
   display: none;
   background-color: rgba(44, 33, 59, 0.6);
   width: 10%;
+  height: 100vh;
   @media (max-width: 875px) {
     display: block;
     z-index: 5;
