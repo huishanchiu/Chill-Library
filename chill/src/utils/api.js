@@ -1,15 +1,16 @@
-export const getBookDescription = (bookId, setFunction) => {
-  fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`, {
-    method: "GET",
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      setFunction(data?.volumeInfo?.description);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+export const getBookDescription = async (bookId) => {
+  const res = await fetch(
+    `https://www.googleapis.com/books/v1/volumes/${bookId}`,
+    {
+      method: "GET",
+    }
+  );
+  const json = await res.json();
+  return json;
 };
+getBookDescription().catch((err) => {
+  console.log(err);
+});
 
 export const searchBooks = async (search) => {
   const res = await fetch(
@@ -21,6 +22,9 @@ export const searchBooks = async (search) => {
   const json = await res.json();
   return json;
 };
+searchBooks().catch((err) => {
+  console.log(err);
+});
 
 export const getEachBook = async (isbn) => {
   const res = await fetch(
@@ -32,3 +36,6 @@ export const getEachBook = async (isbn) => {
   const json = await res.json();
   return json;
 };
+getEachBook().catch((err) => {
+  console.log(err);
+});

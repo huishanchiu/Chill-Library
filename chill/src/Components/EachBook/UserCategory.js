@@ -78,7 +78,7 @@ function UserCategory({ setPopup, book }) {
       {firebase.auth().currentUser ? (
         <Mask>
           <PopupInner>
-            幫這本書新增分類吧
+            幫這本書新增兩個分類吧
             {book?.categories === undefined || book?.categories?.length < 2 ? (
               <>
                 <Category

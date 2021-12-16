@@ -216,10 +216,10 @@ function EachSearchBook() {
     bookTitle && getBookInfo(bookTitle, setBook);
     getBookDescription(bookInfo.id, setBookDescription);
   }, [bookTitle, bookInfo.id]);
-  console.log(book);
+
   function addToFirebase(bookInfo) {
     addNewBookToDB(bookInfo);
-    setUserCollectedBooks(currentUser.uid, bookInfo.volumeInfo.title);
+    setUserCollectedBooks(currentUser.uid, bookInfo.volumeInfo);
     if (
       firebase.firestore().collection("books").doc(bookInfo.volumeInfo.title)
     ) {
@@ -231,10 +231,6 @@ function EachSearchBook() {
     if (isCollect) {
       removeCollectedBook(currentUser.uid, bookName);
       alert("成功移除收藏，我們等你回來～");
-      // Swal.fire({
-      //   text: "成功移除收藏，我們等你回來～",
-      //   confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-      // });
     } else {
       addCollectedBook(currentUser.uid, bookName);
       Swal.fire({

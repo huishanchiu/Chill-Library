@@ -106,11 +106,12 @@ export const getTheme_6Books = (setFunction, setIsLoading) => {
 };
 
 export const getBookInfo = (bookName, setFunction) => {
-  firebase
+  return firebase
     .firestore()
     .collection("books")
     .doc(bookName)
-    .onSnapshot((docSnapshot) => {
+    .get()
+    .then((docSnapshot) => {
       setFunction(docSnapshot.data());
     });
 };
@@ -162,7 +163,6 @@ export const getPersonalShelf = (userId, bookName, setFunction) => {
         const id = docSnapshot.id;
         return { ...docSnapshot.data(), id };
       });
-      console.log(data);
       setFunction(data[0]);
     });
 };
@@ -504,7 +504,7 @@ export const getHeaderHashtags = (setReviews) => {
     .firestore()
     .collection("reviews")
     .where("hashtag1", "!=", "")
-    .limit(9)
+    .limit(8)
     .onSnapshot((collectionSnapshot) => {
       const data = collectionSnapshot.docs.map((docSnapshot) => {
         const id = docSnapshot.id;

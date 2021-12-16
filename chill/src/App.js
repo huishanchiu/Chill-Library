@@ -28,7 +28,7 @@ const Main = styled.div`
   color: white;
   background-position: top;
   background-size: cover;
-  background-image: url(${bk});
+  background-image: url(${(props) => props.backgroundImg});
 `;
 
 const SideRight = styled.div`
@@ -47,9 +47,16 @@ const Div = styled.div`
   width: 100vw;
   min-height: 100vh;
 `;
+
 function App() {
   const dispatch = useDispatch();
   const [user, setUser] = useState();
+  const [source, setSource] = useState("preload.jpg");
+  useEffect(() => {
+    const img = new Image();
+    img.src = bk;
+    img.onload = () => setSource(bk);
+  }, [bk]);
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((currentUser) => {
@@ -68,13 +75,13 @@ function App() {
             <Switch>
               <Route exact path="/" component={Landing} />
               <Route exact path="/themes">
-                <Main>
+                <Main backgroundImg={bk}>
                   <SideMenu />
                   <Themes />
                 </Main>
               </Route>
               <Route exact path="/news">
-                <Main>
+                <Main backgroundImg={bk}>
                   <SideMenu />
                   <NewsWall />
                   <SideRight>
@@ -84,7 +91,7 @@ function App() {
                 </Main>
               </Route>
               <Route path="/mybooks/:userId">
-                <Main>
+                <Main backgroundImg={bk}>
                   <SideMenu />
                   <Mybooks />
                   <SideRight>
@@ -93,9 +100,8 @@ function App() {
                   </SideRight>
                 </Main>
               </Route>
-
               <Route path="/theme/:theme">
-                <Main>
+                <Main backgroundImg={bk}>
                   <SideMenu />
                   <EachTheme />
                   <SideRight>
@@ -105,7 +111,7 @@ function App() {
                 </Main>
               </Route>
               <Route exact path="/book/search/:search">
-                <Main>
+                <Main backgroundImg={bk}>
                   <SideMenu />
                   <Searching />
                   <SideRight>
@@ -115,7 +121,7 @@ function App() {
                 </Main>
               </Route>
               <Route exact path="/book/:bookName">
-                <Main>
+                <Main backgroundImg={bk}>
                   <SideMenu />
                   <EachBook />
                   <SideRight>
@@ -125,7 +131,7 @@ function App() {
                 </Main>
               </Route>
               <Route exact path="/book/searching/:isbn">
-                <Main>
+                <Main backgroundImg={bk}>
                   <SideMenu />
                   <EachSearchBook />
                   <SideRight>
@@ -135,7 +141,7 @@ function App() {
                 </Main>
               </Route>
               <Route path="">
-                <Main>
+                <Main backgroundImg={bk}>
                   <Nomatch />
                 </Main>
               </Route>

@@ -57,7 +57,8 @@ const Div = styled.div`
   justify-content: flex-start;
 `;
 const HashtagDiv = styled.div`
-  color: #0d6663;
+  width: 200px;
+  height: 100px;
   display: flex;
   flex-wrap: wrap;
 `;

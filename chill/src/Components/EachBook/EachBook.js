@@ -194,9 +194,18 @@ function Book() {
   const { bookName } = useParams();
   useEffect(() => {
     setIsLoading(true);
-    getBookInfo(bookName, setBook);
-    getBookDescription(book.id, setBookDescription);
-    setIsLoading(false);
+    const p1 = getBookInfo(bookName, setBook);
+    const p2 = getBookDescription(book.id).then((data) => {
+      setBookDescription(data?.volumeInfo?.description);
+    });
+    const successGroup = Promise.all([p1, p2]);
+    successGroup
+      .then(() => {
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [bookName, book.id]);
 
   function toggleCollected() {
@@ -220,9 +229,8 @@ function Book() {
       });
     }
   }
-  const isCollect = currentUser
-    ? book.collectedBy?.includes(currentUser.uid)
-    : "";
+  const isCollect = currentUser && book.collectedBy?.includes(currentUser.uid);
+  console.log(book);
   return (
     <Div>
       <Content>
@@ -240,16 +248,15 @@ function Book() {
                   去憂分類:
                 </BookCategories>
               </BookInfo>
-              {book.categories
-                ? book.categories.map((category) => {
-                    return (
-                      <Categories key={category}>
-                        <Tag />
-                        {category}
-                      </Categories>
-                    );
-                  })
-                : ""}
+              {book.categories &&
+                book.categories.map((category) => {
+                  return (
+                    <Categories key={category}>
+                      <Tag />
+                      {category}
+                    </Categories>
+                  );
+                })}
             </BookContent>
             <BtnTag>
               <Btn onClick={() => linkToBorrow(book.ISBN)}>
@@ -263,13 +270,13 @@ function Book() {
                 <ReadIcon />
                 試閱
               </Btn>
-              {currentUser ? (
+              {currentUser && (
                 <>
                   <Btn onClick={toggleCollected}>
                     {isCollect ? <BookCollection /> : <BookUnCollection />}
                     收藏
                   </Btn>
-                  {book?.categories?.length === 0 ? (
+                  {book?.categories?.length === 0 && (
                     <Btn
                       onClick={() =>
                         collectAlert(isCollect, setPopup, "請先收藏此書！")
@@ -278,13 +285,9 @@ function Book() {
                       <BtnTagIcon />
                       分類
                     </Btn>
-                  ) : (
-                    ""
                   )}
                   {popup && <UserCategory setPopup={setPopup} book={book} />}
                 </>
-              ) : (
-                ""
               )}
             </BtnTag>
           </BookInfoUp>
@@ -293,16 +296,14 @@ function Book() {
           <BookSummary>{parse(`<p>${bookDescription}</p>`)}</BookSummary>
           <ReviewTag>
             <EachReview bookName={bookName} />
-            {currentUser ? (
+            {currentUser && (
               <Btn onClick={() => setOpen(true)}>發表一篇去憂</Btn>
-            ) : (
-              ""
             )}
           </ReviewTag>
         </BookTag>
         {open && <NewReview close={setOpen} bookName={bookName} />}
       </Content>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
     </Div>
   );
 }
