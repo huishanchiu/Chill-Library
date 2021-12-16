@@ -99,10 +99,8 @@ function Review({ setActiveItem }) {
               reviews.map((review) => {
                 return (
                   <ReviewTag key={review.id}>
-                    {userId === currentUser.uid ? (
+                    {userId === currentUser.uid && (
                       <EditCombo review={review} />
-                    ) : (
-                      ""
                     )}
                     <BookName>-{review.bookName}</BookName>
                     <BookImgTag>

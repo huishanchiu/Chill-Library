@@ -50,6 +50,11 @@ const ContentDiv = styled.div`
   color: rgba(255, 240, 221, 0.8);
   word-break: break-all;
 `;
+const BookName = styled.p`
+  font-size: 14px;
+  font-weight: 900;
+  margin: 8px 0;
+`;
 
 function EachReview({ bookName }) {
   const currentUser = useSelector((state) => state.currentUser);
@@ -84,6 +89,7 @@ function EachReview({ bookName }) {
               </HashtagContainer>
               的問題!
             </Question>
+            <BookName>-{review.bookName}</BookName>
             {new Date(review.createdAt.seconds * 1000).toLocaleString(
               "en-US",
               options
