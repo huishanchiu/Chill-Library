@@ -110,8 +110,7 @@ export const getBookInfo = (bookName, setFunction) => {
     .firestore()
     .collection("books")
     .doc(bookName)
-    .get()
-    .then((docSnapshot) => {
+    .onSnapshot((docSnapshot) => {
       setFunction(docSnapshot.data());
     });
 };

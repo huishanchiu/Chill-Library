@@ -202,16 +202,22 @@ function EachSearchBook() {
 
   useEffect(() => {
     setIsLoading(true);
-    getEachBook(isbn)
-      .then((datas) => {
-        setBookInfo(datas.items[0]);
-        setBookTitle(datas.items[0].volumeInfo.title);
+    const p1 = getEachBook(isbn).then((datas) => {
+      setBookInfo(datas.items[0]);
+      setBookTitle(datas.items[0].volumeInfo.title);
+    });
+    const p2 = getBookDescription(bookInfo.id).then((data) => {
+      setBookDescription(data?.volumeInfo?.description);
+    });
+    const successGroup = Promise.all([p1, p2]);
+    successGroup
+      .then(() => {
         setIsLoading(false);
       })
-      .catch((error) => {
-        return error;
+      .catch((err) => {
+        console.log(err);
       });
-  }, []);
+  }, [isbn, bookInfo.id]);
   useEffect(() => {
     bookTitle && getBookInfo(bookTitle, setBook);
     getBookDescription(bookInfo.id, setBookDescription);
@@ -273,16 +279,15 @@ function EachSearchBook() {
                       去憂分類:
                     </BookCategories>
                   </BookInfo>
-                  {book?.categories
-                    ? book.categories.map((category) => {
-                        return (
-                          <Category key={category}>
-                            <Tag />
-                            {category}
-                          </Category>
-                        );
-                      })
-                    : ""}
+                  {book?.categories &&
+                    book.categories.map((category) => {
+                      return (
+                        <Category key={category}>
+                          <Tag />
+                          {category}
+                        </Category>
+                      );
+                    })}
                 </BookDetail>
               </BookContent>
               <BtnTag>
@@ -293,7 +298,7 @@ function EachSearchBook() {
                   <ReadIcon />
                   試閱
                 </Btn>
-                {currentUser ? (
+                {currentUser && (
                   <>
                     <Btn
                       onClick={() => {
@@ -318,8 +323,6 @@ function EachSearchBook() {
                     )}
                     {popup && <UserCategory setPopup={setPopup} book={book} />}
                   </>
-                ) : (
-                  ""
                 )}
               </BtnTag>
             </BookInfoUp>
@@ -330,7 +333,7 @@ function EachSearchBook() {
             <BookSummary>{parse(`<p>${bookDescription}</p>`)}</BookSummary>
             <ReviewTag>
               <EachReview bookName={bookInfo.volumeInfo.title} />
-              {currentUser ? (
+              {currentUser && (
                 <Btn
                   onClick={() => {
                     collectAlert(isCollect, setOpen, "請先收藏此書！");
@@ -338,8 +341,6 @@ function EachSearchBook() {
                 >
                   發表一篇去憂
                 </Btn>
-              ) : (
-                ""
               )}
             </ReviewTag>
           </BookTag>
