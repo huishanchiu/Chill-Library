@@ -17,13 +17,11 @@ const BookTag = styled.div`
   padding: 20px;
   display: grid;
   grid-template-columns: 25% 75%;
-  grid-template-rows: 100% 100%;
   &:hover {
     background-color: rgba(213, 219, 219, 0.1);
   }
   @media (max-width: 768px) {
-    grid-template-columns: 45% 55%;
-    grid-template-rows: 100% 100%;
+    grid-template-columns: 35% 65%;
   }
   @media (max-width: 600px) {
     display: flex;

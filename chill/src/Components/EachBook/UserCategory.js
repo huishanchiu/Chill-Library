@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import firebase from "../../utils/firebase";
+import { useSelector } from "react-redux";
 import { addCategory, removeCategory } from "../../utils/firebaseFunction";
 
 const Mask = styled.div`
@@ -58,6 +59,7 @@ const Btn = styled.div`
 `;
 
 function UserCategory({ setPopup, book }) {
+  const currentUser = useSelector((state) => state.currentUser);
   function toggleAddCategory(e) {
     const isCategory =
       Object.keys(book).length > 0
@@ -75,7 +77,7 @@ function UserCategory({ setPopup, book }) {
 
   return (
     <>
-      {firebase.auth().currentUser ? (
+      {currentUser && (
         <Mask>
           <PopupInner>
             幫這本書新增兩個分類吧
@@ -130,8 +132,6 @@ function UserCategory({ setPopup, book }) {
             )}
           </PopupInner>
         </Mask>
-      ) : (
-        ""
       )}
     </>
   );

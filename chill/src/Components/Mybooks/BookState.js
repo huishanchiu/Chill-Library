@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
 import book from "../../images/library.png";
+import { useParams } from "react-router-dom";
 import { BsPencilSquare } from "react-icons/bs";
 import { MdFileDownloadDone } from "react-icons/md";
 import { RiLogoutCircleLine } from "react-icons/ri";
@@ -186,7 +186,6 @@ function BookState() {
   console.log(bookName);
   return (
     <Mask>
-      {/* {Object.keys(bookShelf).length >= 0 ? ( */}
       <PopupInner>
         <BookImg src={bookImgSrc(book.id) || defaltBookImgSrc} alt="" />
         <Div>
@@ -322,9 +321,6 @@ function BookState() {
           )}
         </Div>
       </PopupInner>
-      {/* ) : (
-        ""
-      )} */}
     </Mask>
   );
 }

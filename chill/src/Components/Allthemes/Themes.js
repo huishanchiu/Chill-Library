@@ -18,6 +18,7 @@ import {
   getTheme_5Books,
   getTheme_6Books,
 } from "../../utils/firebaseFunction";
+import { bookImgSrc } from "../../utils/utils";
 
 const ClickIcon = styled(GiClick)`
   padding-right: 10px;
@@ -147,6 +148,9 @@ const Themes = () => {
   const [bookList6, setBookList6] = useState([]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  useEffect(() => {
     getTheme_1Books(setBookList1, setIsLoading);
     getTheme_2Books(setBookList2, setIsLoading);
     getTheme_3Books(setBookList3, setIsLoading);
@@ -157,7 +161,7 @@ const Themes = () => {
 
   return (
     <Div>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
       <HeaderDiv>
         <Header />
       </HeaderDiv>
@@ -180,11 +184,7 @@ const Themes = () => {
             <Book>
               {bookList1.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>
@@ -211,11 +211,7 @@ const Themes = () => {
             <Book>
               {bookList2.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>
@@ -244,11 +240,7 @@ const Themes = () => {
             <Book>
               {bookList3.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>
@@ -276,11 +268,7 @@ const Themes = () => {
             <Book>
               {bookList4.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>
@@ -310,11 +298,7 @@ const Themes = () => {
             <Book>
               {bookList5.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>
@@ -343,11 +327,7 @@ const Themes = () => {
             <Book>
               {bookList6.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>

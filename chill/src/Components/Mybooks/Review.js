@@ -91,7 +91,7 @@ function Review({ setActiveItem }) {
 
   return (
     <>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
       {reviews.length > 0 ? (
         <DivContainer>
           <AllBook>

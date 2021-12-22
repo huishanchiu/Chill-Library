@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import CommentAuthorInfo from "../EachBook/CommentAuthorInfo";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getOtherReviews, getAllReviews } from "../../utils/firebaseFunction";
 import { bookImgSrc, defaltBookImgSrc } from "../../utils/utils";
@@ -17,7 +17,7 @@ const SideBookTag = styled(Link)`
   color: #4e4e4e;
   border-radius: 15px;
   padding: 10px;
-  margin: 10px;
+  margin: 10px 10px 10px 0;
   text-decoration: none;
   display: flex;
   flex-direction: column;
@@ -61,7 +61,7 @@ function SideBooks() {
       {currentUser ? (
         <Side>
           #來看看其他去憂
-          {reviews.length > 0 ? (
+          {reviews.length > 0 && (
             <>
               <SideBookTag to={`/book/${reviews[reviewIndex].bookName}`}>
                 <SideBookImg />
@@ -99,8 +99,6 @@ function SideBooks() {
                 </SideBookTag>
               )}
             </>
-          ) : (
-            ""
           )}
         </Side>
       ) : (
@@ -108,7 +106,7 @@ function SideBooks() {
           {allReviews.length > 0 ? (
             <Side>
               #來看看其他去憂
-              {allReviews.length > 0 ? (
+              {allReviews.length > 0 && (
                 <>
                   <SideBookTag
                     to={`/book/${allReviews[allReviewIndex].bookName}`}
@@ -153,8 +151,6 @@ function SideBooks() {
                     </SideBookTag>
                   )}
                 </>
-              ) : (
-                ""
               )}
             </Side>
           ) : (

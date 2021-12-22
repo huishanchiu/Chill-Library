@@ -69,7 +69,7 @@ function Collection({ setActiveItem }) {
   }, [userId]);
   return (
     <>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
       {bookList.length > 0 ? (
         <AllBook>
           {bookList.map((item) => {

@@ -222,7 +222,7 @@ function SignIn(props) {
 
   return props.trigger ? (
     <Mask>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
       <PopupInner>
         <Close onClick={() => props.setTrigger(false)}>
           <CloseIcon />

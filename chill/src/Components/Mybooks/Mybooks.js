@@ -2,15 +2,7 @@ import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import styled from "styled-components";
 import "firebase/storage";
-import { useParams } from "react-router-dom";
-import Collection from "./Collection";
-import Review from "./Review";
-import Follow from "./Follow";
-import BookState from "./BookState";
 import { FiSettings } from "react-icons/fi";
-import MySetting from "./MySetting";
-import banner from "../../images/021.jpeg";
-import Loading from "../common/Loading";
 import { useSelector } from "react-redux";
 import {
   Link,
@@ -18,7 +10,17 @@ import {
   Route,
   BrowserRouter,
   Switch,
+  useParams,
 } from "react-router-dom";
+
+import Collection from "./Collection";
+import Review from "./Review";
+import Follow from "./Follow";
+import BookState from "./BookState";
+import MySetting from "./MySetting";
+import banner from "../../images/021.jpeg";
+import Loading from "../common/Loading";
+
 import {
   getAuthorInfo,
   getReviews,
@@ -189,7 +191,7 @@ const Mybooks = () => {
     <>
       {currentUser ? (
         <BrowserRouter>
-          {Object.keys(follows) ? (
+          {Object.keys(follows) && (
             <Content>
               {follows.imageUrl ? (
                 <QuoteTag
@@ -198,14 +200,12 @@ const Mybooks = () => {
                       `url(${follows.imageUrl})` || `url(${banner})`,
                   }}
                 >
-                  {reviews.length > 0 ? reviews[quoteIndex].quote : ""}
+                  {reviews.length > 0 && reviews[quoteIndex].quote}
 
-                  {userId === currentUser.uid ? (
+                  {userId === currentUser.uid && (
                     <Icon onClick={() => setOpen(true)}>
                       <SetIcon />
                     </Icon>
-                  ) : (
-                    ""
                   )}
                   {open && <MySetting userInfo={follows} close={setOpen} />}
                 </QuoteTag>
@@ -217,12 +217,10 @@ const Mybooks = () => {
                     }}
                   >
                     {reviews.length > 0 ? reviews[quoteIndex].quote : ""}
-                    {userId === currentUser.uid ? (
+                    {userId === currentUser.uid && (
                       <Icon onClick={() => setOpen(true)}>
                         <SetIcon />
                       </Icon>
-                    ) : (
-                      ""
                     )}
                     {open && <MySetting userInfo={follows} close={setOpen} />}
                   </QuoteTag>
@@ -289,10 +287,8 @@ const Mybooks = () => {
                   component={BookState}
                 />
               </Switch>
-              {isLoading ? <Loading /> : ""}
+              {isLoading && <Loading />}
             </Content>
-          ) : (
-            ""
           )}
         </BrowserRouter>
       ) : (

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { AiFillPlayCircle } from "react-icons/ai";
 import algolia from "../../utils/algolia";
 import Loading from "../common/Loading";
+import { useParams, Link } from "react-router-dom";
+import { AiFillPlayCircle } from "react-icons/ai";
 import { searchBooks } from "../../utils/api";
 import { bookImgSrc, defaltBookImgSrc } from "../../utils/utils";
 
@@ -225,9 +224,8 @@ function Searching() {
             <BookTag key={item.volumeInfo.title}>
               <BookLink
                 to={
-                  item.volumeInfo.industryIdentifiers
-                    ? `/book/searching/${item.volumeInfo.industryIdentifiers[0].identifier}`
-                    : ""
+                  item.volumeInfo.industryIdentifiers &&
+                  `/book/searching/${item.volumeInfo.industryIdentifiers[0].identifier}`
                 }
               >
                 <BookImg
@@ -242,9 +240,8 @@ function Searching() {
               <BookContent>
                 <BookName
                   to={
-                    item.volumeInfo.industryIdentifiers
-                      ? `/book/searching/${item.volumeInfo.industryIdentifiers[0].identifier}`
-                      : ""
+                    item.volumeInfo.industryIdentifiers &&
+                    `/book/searching/${item.volumeInfo.industryIdentifiers[0].identifier}`
                   }
                 >
                   {item.volumeInfo.title}
@@ -261,9 +258,8 @@ function Searching() {
                     `${item.volumeInfo.description.slice(0, 200)}......`}
                   <More
                     to={
-                      item.volumeInfo.industryIdentifiers
-                        ? `/book/searching/${item.volumeInfo.industryIdentifiers[0].identifier}`
-                        : ""
+                      item.volumeInfo.industryIdentifiers &&
+                      `/book/searching/${item.volumeInfo.industryIdentifiers[0].identifier}`
                     }
                   >
                     <PlayIcon />
@@ -275,7 +271,7 @@ function Searching() {
           );
         })}
       </AllBook>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
     </>
   );
 }

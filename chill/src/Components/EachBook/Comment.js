@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { AiOutlineCloseCircle } from "react-icons/ai";
 import Loading from "../common/Loading";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 import { submitComments } from "../../utils/firebaseFunction";
 import { alert } from "../../utils/utils";
 
@@ -88,7 +88,7 @@ function Comment({ review, close }) {
 
   return (
     <Mask>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
       <PopupInner>
         <Icon>
           <Btn onClick={onSubmit}>送出</Btn>

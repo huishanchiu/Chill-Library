@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { AiOutlineCloseCircle } from "react-icons/ai";
-import { useState, useEffect } from "react";
-import firebase from "../../utils/firebase";
 import { useSelector } from "react-redux";
+import { AiOutlineCloseCircle } from "react-icons/ai";
+import firebase from "../../utils/firebase";
 import "firebase/firestore";
 import { getAuthorInfo, getBookInfo } from "../../utils/firebaseFunction";
 import { addNewReview } from "../../utils/utils";

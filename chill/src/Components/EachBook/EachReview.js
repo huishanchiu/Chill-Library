@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Comment from "./Comment";
 import Comments from "./Comments";
-import { useSelector } from "react-redux";
 import ReviewAuthorInfo from "./ReviewAuthorInfo";
 import { getReviewsWithBook } from "../../utils/firebaseFunction";
 
@@ -95,7 +95,7 @@ function EachReview({ bookName }) {
               options
             )}
             {open && <Comment close={setOpen} review={review} />}
-            {currentUser ? <Comments review={review} /> : ""}
+            {currentUser && <Comments review={review} />}
           </ReviewTag>
         );
       })}

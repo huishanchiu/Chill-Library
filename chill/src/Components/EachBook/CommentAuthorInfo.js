@@ -22,7 +22,7 @@ function CommentAuthorInfo({ comment }) {
   useEffect(() => {
     getAuthorInfo(comment.author.uid, setAuthor);
   }, [comment.author.uid]);
-  console.log(author);
+
   return (
     <AuthorDiv>
       <CommentAuthorPhoto src={author.URL} alt="" />

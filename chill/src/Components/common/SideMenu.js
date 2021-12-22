@@ -3,6 +3,7 @@ import styled from "styled-components";
 import AnimatedNumbers from "react-animated-numbers";
 import firebase from "../../utils/firebase";
 import Swal from "sweetalert2";
+
 import SignIn from "../common/SignIn";
 import Loading from "../common/Loading";
 import shortLogo from "../../images/shortLogo.png";
@@ -301,10 +302,10 @@ const SideMenu = () => {
               />
             </SearchBar>
           </NavSearch>
-          {currentUser ? (
+          {currentUser && (
             <>
               <Nav>
-                {isLoading ? <Loading /> : ""}
+                {isLoading && <Loading />}
                 <a href={`/mybooks/${currentUser.uid}/collection`}>
                   <AvatarImg src={currentUserInfo?.URL} alt="" />
                 </a>
@@ -312,8 +313,6 @@ const SideMenu = () => {
               <Name>{currentUserInfo?.userName}</Name>
               <SelfInfo>{currentUserInfo?.selfInfo}</SelfInfo>
             </>
-          ) : (
-            ""
           )}
         </Div>
         <SignIn trigger={buttonPopup} setTrigger={setButtonPopup}></SignIn>

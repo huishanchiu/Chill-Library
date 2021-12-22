@@ -169,6 +169,16 @@ function MySetting({ close, userInfo }) {
     }
   }
 
+  function checkFileType(e, setFunction) {
+    if (!e.target.files[0].type.includes("image")) {
+      Swal.fire({
+        text: "檔案格式怪怪的喔！",
+        confirmButtonColor: "rgba(15, 101, 98, 0.8)",
+      });
+      return;
+    }
+    setFunction(e.target.files[0]);
+  }
   return (
     <Mask>
       <PopupInner>
@@ -185,16 +195,7 @@ function MySetting({ close, userInfo }) {
             type="file"
             id="book-image"
             style={{ display: "none" }}
-            onChange={(e) => {
-              if (!e.target.files[0].type.includes("image")) {
-                Swal.fire({
-                  text: "檔案格式怪怪的喔！",
-                  confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-                });
-                return;
-              }
-              setFile(e.target.files[0]);
-            }}
+            onChange={(e) => checkFileType(e, setFile)}
           />
         </Banner>
         <ImgTag userPhoto={previemUserImg}>
@@ -206,9 +207,7 @@ function MySetting({ close, userInfo }) {
             type="file"
             id="user-image"
             style={{ display: "none" }}
-            onChange={(e) => {
-              setUserImg(e.target.files[0]);
-            }}
+            onChange={(e) => checkFileType(e, setUserImg)}
           />
         </ImgTag>
         <Edit>
@@ -217,13 +216,6 @@ function MySetting({ close, userInfo }) {
           <DisplayNameEdit
             value={displayName}
             onChange={(e) => {
-              if (!e.target.files[0].type.includes("image")) {
-                Swal.fire({
-                  text: "檔案格式怪怪的喔！",
-                  confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-                });
-                return;
-              }
               setDisplayName(e.target.value);
             }}
             defaultValue={userInfo.userName}
@@ -237,7 +229,7 @@ function MySetting({ close, userInfo }) {
           />
         </Edit>
       </PopupInner>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
     </Mask>
   );
 }

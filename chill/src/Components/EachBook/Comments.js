@@ -148,7 +148,7 @@ function Comments({ review }) {
   }
   return (
     <>
-      {currentUser ? (
+      {currentUser && (
         <CommentTag>
           <LikeDiv>
             <TextIcon onClick={() => setOpen(true)} />
@@ -164,10 +164,8 @@ function Comments({ review }) {
                   src={toastGrey}
                 />
               )}
-              {review.likedCount >= 1 ? (
+              {review.likedCount >= 1 && (
                 <LikeCount>{review.likedCount && review.likedCount}</LikeCount>
-              ) : (
-                ""
               )}
             </Beer>
           </LikeDiv>
@@ -185,7 +183,7 @@ function Comments({ review }) {
                         <CloseIcon onClick={(e) => toggleRemove(comment.id)} />
                       </Close>
                     ) : (
-                      <Close></Close>
+                      <Close />
                     )}
                     <CommentAuthorInfo comment={comment} />
                     <Text>{comment.content}</Text>
@@ -196,8 +194,6 @@ function Comments({ review }) {
             );
           })}
         </CommentTag>
-      ) : (
-        ""
       )}
     </>
   );

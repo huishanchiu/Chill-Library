@@ -70,7 +70,7 @@ function SlideBooks() {
 
   return (
     <div>
-      {allReviews.length > 0 ? (
+      {allReviews.length > 0 && (
         <>
           <Sliders {...settings}>
             {allReviews.map((item) => {
@@ -83,9 +83,9 @@ function SlideBooks() {
                       alt=""
                     />
                     <Hashtags>
-                      {item.hashtag1 ? <Hashtag>#{item.hashtag1}</Hashtag> : ""}
-                      {item.hashtag2 ? <Hashtag>#{item.hashtag2}</Hashtag> : ""}
-                      {item.hashtag3 ? <Hashtag>#{item.hashtag3}</Hashtag> : ""}
+                      {item.hashtag1 && <Hashtag>#{item.hashtag1}</Hashtag>}
+                      {item.hashtag2 && <Hashtag>#{item.hashtag2}</Hashtag>}
+                      {item.hashtag3 && <Hashtag>#{item.hashtag3}</Hashtag>}
                     </Hashtags>
                   </SideBookTag>
                 </div>
@@ -93,8 +93,6 @@ function SlideBooks() {
             })}
           </Sliders>
         </>
-      ) : (
-        ""
       )}
     </div>
   );
