@@ -1,4 +1,4 @@
-import { useState, useEffect, React } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Header from "../common/Header";
 import Loading from "../common/Loading";
@@ -18,6 +18,7 @@ import {
   getTheme_5Books,
   getTheme_6Books,
 } from "../../utils/firebaseFunction";
+import { bookImgSrc } from "../../utils/utils";
 
 const ClickIcon = styled(GiClick)`
   padding-right: 10px;
@@ -147,19 +148,20 @@ const Themes = () => {
   const [bookList6, setBookList6] = useState([]);
 
   useEffect(() => {
-    setIsLoading(true);
-    getTheme_1Books(setBookList1);
-    getTheme_2Books(setBookList2);
-    getTheme_3Books(setBookList3);
-    getTheme_4Books(setBookList4);
-    getTheme_5Books(setBookList5);
-    getTheme_6Books(setBookList6);
-    setIsLoading(false);
+    window.scrollTo(0, 0);
+  }, []);
+  useEffect(() => {
+    getTheme_1Books(setBookList1, setIsLoading);
+    getTheme_2Books(setBookList2, setIsLoading);
+    getTheme_3Books(setBookList3, setIsLoading);
+    getTheme_4Books(setBookList4, setIsLoading);
+    getTheme_5Books(setBookList5, setIsLoading);
+    getTheme_6Books(setBookList6, setIsLoading);
   }, []);
 
   return (
     <Div>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
       <HeaderDiv>
         <Header />
       </HeaderDiv>
@@ -182,11 +184,7 @@ const Themes = () => {
             <Book>
               {bookList1.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>
@@ -213,11 +211,7 @@ const Themes = () => {
             <Book>
               {bookList2.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>
@@ -246,11 +240,7 @@ const Themes = () => {
             <Book>
               {bookList3.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>
@@ -278,11 +268,7 @@ const Themes = () => {
             <Book>
               {bookList4.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>
@@ -312,11 +298,7 @@ const Themes = () => {
             <Book>
               {bookList5.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>
@@ -345,11 +327,7 @@ const Themes = () => {
             <Book>
               {bookList6.map((item) => {
                 return (
-                  <BookImg
-                    key={item.id}
-                    src={`https://books.google.com/books/publisher/content/images/frontcover/${item.id}?fife=w400-h600`}
-                    alt=""
-                  />
+                  <BookImg key={item.id} src={bookImgSrc(item.id)} alt="" />
                 );
               })}
             </Book>

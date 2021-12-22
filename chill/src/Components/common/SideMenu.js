@@ -1,8 +1,9 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import AnimatedNumbers from "react-animated-numbers";
 import firebase from "../../utils/firebase";
 import Swal from "sweetalert2";
+
 import SignIn from "../common/SignIn";
 import Loading from "../common/Loading";
 import shortLogo from "../../images/shortLogo.png";
@@ -29,18 +30,22 @@ const SideNav = styled.div`
     width: 50%;
     position: fixed;
     z-index: 4;
+    height: 100vh;
   }
   @media (max-width: 500px) {
     display: ${(props) => (props.show ? "block" : "none")};
     width: 100%;
     position: fixed;
     z-index: 4;
+    height: 100vh;
   }
 `;
 const SideMenuIcon = styled.div`
+  position: fixed;
   display: none;
   background-color: rgba(44, 33, 59, 0.6);
   width: 10%;
+  height: 100vh;
   @media (max-width: 875px) {
     display: block;
     z-index: 5;
@@ -297,10 +302,10 @@ const SideMenu = () => {
               />
             </SearchBar>
           </NavSearch>
-          {currentUser ? (
+          {currentUser && (
             <>
               <Nav>
-                {isLoading ? <Loading /> : ""}
+                {isLoading && <Loading />}
                 <a href={`/mybooks/${currentUser.uid}/collection`}>
                   <AvatarImg src={currentUserInfo?.URL} alt="" />
                 </a>
@@ -308,8 +313,6 @@ const SideMenu = () => {
               <Name>{currentUserInfo?.userName}</Name>
               <SelfInfo>{currentUserInfo?.selfInfo}</SelfInfo>
             </>
-          ) : (
-            ""
           )}
         </Div>
         <SignIn trigger={buttonPopup} setTrigger={setButtonPopup}></SignIn>

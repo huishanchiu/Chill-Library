@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link, useParams } from "react-router-dom";
 import bookShelf from "../../images/bookShelf.jpeg";
@@ -69,7 +69,7 @@ function Collection({ setActiveItem }) {
   }, [userId]);
   return (
     <>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
       {bookList.length > 0 ? (
         <AllBook>
           {bookList.map((item) => {

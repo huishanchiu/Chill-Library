@@ -1,9 +1,9 @@
-import { React, useState } from "react";
-import Swal from "sweetalert2";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { AiOutlineCloseCircle } from "react-icons/ai";
 import Loading from "../common/Loading";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 import { submitComments } from "../../utils/firebaseFunction";
+import { alert } from "../../utils/utils";
 
 const Icon = styled.div`
   border-bottom: hsla(0, 0%, 0%, 0.2) 1px solid;
@@ -83,15 +83,12 @@ function Comment({ review, close }) {
     submitComments(review.id, setCommentContent, commentContent);
     setIsLoading(false);
     close(false);
-    Swal.fire({
-      text: "送出留言",
-      confirmButtonColor: "rgba(15, 101, 98, 0.8)",
-    });
+    alert("送出留言");
   }
 
   return (
     <Mask>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
       <PopupInner>
         <Icon>
           <Btn onClick={onSubmit}>送出</Btn>

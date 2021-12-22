@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import search from "../../images/search.png";
 import { useHistory } from "react-router";
@@ -12,7 +12,7 @@ const SearchBar = styled.div`
   border-radius: 30px;
   height: 40px;
   width: 200px;
-  margin: 10px;
+  margin: 10px 0;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -27,9 +27,9 @@ const Input = styled.input`
   outline: none;
   border: none;
   text-decoration: none;
-  width: 190px;
+  width: 170px;
   font-size: 16px;
-  padding: 8px 5px;
+  padding: 10px 13px;
   background-color: transparent;
   border-radius: 30px;
   @media (max-width: 500px) {
@@ -42,8 +42,8 @@ const SearchBtn = styled.div`
   background-image: url(${search});
   background-repeat: no-repeat;
   background-size: 20px;
-  width: 25px;
-  height: 20px;
+  width: 30px;
+  height: 25px;
   outline: none;
   text-decoration: none;
   border-top-right-radius: 20px;
@@ -57,7 +57,8 @@ const Div = styled.div`
   justify-content: flex-start;
 `;
 const HashtagDiv = styled.div`
-  color: #0d6663;
+  width: 200px;
+  height: 100px;
   display: flex;
   flex-wrap: wrap;
 `;
@@ -67,7 +68,7 @@ const Hashtag = styled.div`
   font-size: 15px;
   background-color: #0d6663;
   color: #f7f7f7;
-  margin: 5px;
+  margin: 4px 4px 4px 0;
   cursor: pointer;
   @media (max-width: 500px) {
     font-size: 8px;
@@ -92,13 +93,12 @@ const Header = () => {
           value={search}
           placeholder="你在煩惱什麼？"
           onKeyPress={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter")
               if (search === "") {
                 searchKeyWord(search, setSearch, history, "請輸入關鍵字");
               } else {
                 history.push(`/book/search/${search}`);
               }
-            }
           }}
         ></Input>
         <SearchBtn

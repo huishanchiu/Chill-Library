@@ -75,19 +75,4 @@ export const addNewReview = (
     alert("請填入Quote、去憂內容以及至少一個hashtag喔！");
     return false;
   }
-  // if (
-  //   content === "" ||
-  //   quote === "" ||
-  //   hashtag1 !== "" ||
-  //   hashtag2 !== "" ||
-  //   hashtag3 !== ""
-  // ) {
-  //   alert("請填入Quote、去憂內容以及至少一個hashtag喔！");
-  //   return false;
-  // } else {
-  //   postReview(commentData, userId);
-  //   close(false);
-  //   alert("成功發表一篇去憂");
-  //   return true;
-  // }
 };

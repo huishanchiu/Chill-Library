@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { getAuthorInfo } from "../../utils/firebaseFunction";
 
@@ -22,7 +22,7 @@ function CommentAuthorInfo({ comment }) {
   useEffect(() => {
     getAuthorInfo(comment.author.uid, setAuthor);
   }, [comment.author.uid]);
-  console.log(author);
+
   return (
     <AuthorDiv>
       <CommentAuthorPhoto src={author.URL} alt="" />

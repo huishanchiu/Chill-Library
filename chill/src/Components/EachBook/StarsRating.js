@@ -17,7 +17,7 @@ function StarsRating(rate) {
   const [rating, setRating] = React.useState(0);
 
   return (
-    <div onClick={(event) => setRating(event.target.getAttribute("star-id"))}>
+    <div onClick={(e) => setRating(e.target.getAttribute("star-id"))}>
       {Array.from({ length: 5 }, (v, i) => (
         <Star starId={i + 1} marked={selection ? selection > i : rating > i} />
       ))}

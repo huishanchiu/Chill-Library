@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { getAllReviews } from "../../utils/firebaseFunction";
 import EachReview from "../EachBook/EachReview";

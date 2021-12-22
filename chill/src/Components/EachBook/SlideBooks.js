@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
@@ -70,7 +70,7 @@ function SlideBooks() {
 
   return (
     <div>
-      {allReviews.length > 0 ? (
+      {allReviews.length > 0 && (
         <>
           <Sliders {...settings}>
             {allReviews.map((item) => {
@@ -83,9 +83,9 @@ function SlideBooks() {
                       alt=""
                     />
                     <Hashtags>
-                      {item.hashtag1 ? <Hashtag>#{item.hashtag1}</Hashtag> : ""}
-                      {item.hashtag2 ? <Hashtag>#{item.hashtag2}</Hashtag> : ""}
-                      {item.hashtag3 ? <Hashtag>#{item.hashtag3}</Hashtag> : ""}
+                      {item.hashtag1 && <Hashtag>#{item.hashtag1}</Hashtag>}
+                      {item.hashtag2 && <Hashtag>#{item.hashtag2}</Hashtag>}
+                      {item.hashtag3 && <Hashtag>#{item.hashtag3}</Hashtag>}
                     </Hashtags>
                   </SideBookTag>
                 </div>
@@ -93,8 +93,6 @@ function SlideBooks() {
             })}
           </Sliders>
         </>
-      ) : (
-        ""
       )}
     </div>
   );

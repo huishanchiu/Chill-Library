@@ -1,4 +1,4 @@
-import { useState, useEffect, React } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Loading from "../common/Loading";
 import EditCombo from "./EditCombo";
@@ -91,7 +91,7 @@ function Review({ setActiveItem }) {
 
   return (
     <>
-      {isLoading ? <Loading /> : ""}
+      {isLoading && <Loading />}
       {reviews.length > 0 ? (
         <DivContainer>
           <AllBook>
@@ -99,10 +99,8 @@ function Review({ setActiveItem }) {
               reviews.map((review) => {
                 return (
                   <ReviewTag key={review.id}>
-                    {userId === currentUser.uid ? (
+                    {userId === currentUser.uid && (
                       <EditCombo review={review} />
-                    ) : (
-                      ""
                     )}
                     <BookName>-{review.bookName}</BookName>
                     <BookImgTag>

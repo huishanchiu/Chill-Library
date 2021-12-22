@@ -1,8 +1,8 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Comment from "./Comment";
 import Comments from "./Comments";
-import { useSelector } from "react-redux";
 import ReviewAuthorInfo from "./ReviewAuthorInfo";
 import { getReviewsWithBook } from "../../utils/firebaseFunction";
 
@@ -50,6 +50,11 @@ const ContentDiv = styled.div`
   color: rgba(255, 240, 221, 0.8);
   word-break: break-all;
 `;
+const BookName = styled.p`
+  font-size: 14px;
+  font-weight: 900;
+  margin: 8px 0;
+`;
 
 function EachReview({ bookName }) {
   const currentUser = useSelector((state) => state.currentUser);
@@ -84,12 +89,13 @@ function EachReview({ bookName }) {
               </HashtagContainer>
               的問題!
             </Question>
+            <BookName>-{review.bookName}</BookName>
             {new Date(review.createdAt.seconds * 1000).toLocaleString(
               "en-US",
               options
             )}
             {open && <Comment close={setOpen} review={review} />}
-            {currentUser ? <Comments review={review} /> : ""}
+            {currentUser && <Comments review={review} />}
           </ReviewTag>
         );
       })}

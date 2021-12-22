@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import Loading from "../common/Loading";
@@ -70,7 +70,7 @@ function Follow({ setActiveItem }) {
     <>
       {follows.length > 0 ? (
         <FollowsTag>
-          {isLoading ? <Loading /> : ""}
+          {isLoading && <Loading />}
           {follows.map((item) => {
             return (
               <PersonTag key={item.id}>
@@ -79,7 +79,7 @@ function Follow({ setActiveItem }) {
                     <PersonImg src={item.URL} alt="" />
                   </a>
                   <PersonName>{item.userName}</PersonName>
-                  {currentUser.uid === userId ? (
+                  {currentUser.uid === userId && (
                     <FollowBtn
                       onClick={() => {
                         toggleFollowed(item.uid);
@@ -87,8 +87,6 @@ function Follow({ setActiveItem }) {
                     >
                       取消追蹤
                     </FollowBtn>
-                  ) : (
-                    ""
                   )}
                 </>
               </PersonTag>

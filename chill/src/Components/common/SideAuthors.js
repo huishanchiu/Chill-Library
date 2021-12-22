@@ -1,5 +1,4 @@
-import { React, useState, useEffect } from "react";
-import Swal from "sweetalert2";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { getOtherShelf } from "../../utils/utils";

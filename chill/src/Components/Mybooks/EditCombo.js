@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import firebase from "../../utils/firebase";
 import Swal from "sweetalert2";
@@ -62,20 +62,6 @@ const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const Btn = styled.div`
-  white-space: nowrap;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  background-color: #0d6663;
-  color: #f1faf7;
-  text-align: center;
-  margin: 10px;
-  padding: 5px 10px;
-  border-radius: 20px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-`;
 
 function EditCombo({ review }) {
   const [content, setContent] = useState([]);
@@ -130,7 +116,7 @@ function EditCombo({ review }) {
   return (
     <Div>
       <Edit>
-        {open ? (
+        {open && (
           <>
             <EditIcons
               onClick={() => {
@@ -139,7 +125,7 @@ function EditCombo({ review }) {
             >
               編輯
             </EditIcons>
-            {editReview === review.id ? (
+            {editReview === review.id && (
               <EditIcons
                 onClick={() => {
                   toggleSave(review.id);
@@ -147,14 +133,10 @@ function EditCombo({ review }) {
               >
                 儲存
               </EditIcons>
-            ) : (
-              ""
             )}
 
             <EditIcons onClick={(e) => toggleRemove(review.id)}>刪除</EditIcons>
           </>
-        ) : (
-          ""
         )}
         <EditMenuIcon
           onClick={(e) => {

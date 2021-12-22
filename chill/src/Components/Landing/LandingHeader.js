@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import AnimatedNumbers from "react-animated-numbers";
@@ -16,7 +16,6 @@ const FindIcon = styled(IoIosCompass)`
 const HeaderNav = styled.div`
   z-index: 2;
   position: fixed;
-  background-color: #2c213b;
   display: flex;
   align-items: center;
 `;
@@ -28,7 +27,7 @@ const NavLink = styled(Link)`
   text-decoration: none;
 `;
 const Btn = styled.div`
-  width: 180px;
+  width: 160px;
   display: flex;
   align-items: center;
   border-radius: 50rem;
@@ -53,7 +52,7 @@ const LandingHeader = () => {
       <NavLink to="/news">
         <Btn>
           <FindIcon />
-          累積去憂#
+          累積去憂
           <AnimatedNumbers
             animateToNumber={news.length}
             fontStyle={{ fontSize: 24 }}
