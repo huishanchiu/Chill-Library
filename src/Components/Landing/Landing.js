@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import "../../styles.css";
 import roadPng from "../../images/grayRoad.png";
 import lightPng from "../../images/yellowLight.png";
 import treePng from "../../images/tree.png";
@@ -28,12 +27,14 @@ import LandingHeader from "./LandingHeader";
 import scroll from "../../images/scroll.gif";
 import { Link } from "react-router-dom";
 import { GiClick } from "react-icons/gi";
+import Image from "next/image";
 
 const ClickIcon = styled(GiClick)`
   padding-right: 10px;
   width: 30px;
   height: 100%;
 `;
+
 
 function Landing() {
   useEffect(() => {
@@ -405,61 +406,66 @@ function Landing() {
   return (
     <div className="background">
       <LandingHeader />
-      <img className="road" src={roadPng} alt="landing-road" />
+      <Image
+        className="road"
+        src={roadPng}
+        alt="landing-road"
+        priority
+      />
       <div>
-        <img className=" theme scroll" src={scroll} alt="" />
+        <Image className=" theme scroll" src={scroll} alt="" priority />
       </div>
       <div className="light__1__left">
-        <img className="big" src={building2Png} alt="" />
-        <img className="mid" src={treePng} alt="" />
-        <img className="light" src={lightPng} alt="" />
+        <Image className="big" src={building2Png} alt="" />
+        <Image className="mid" src={treePng} alt="" />
+        <Image className="light" src={lightPng} alt="" />
         <div className="box"></div>
-        <img className="triangle" src={trianglePng} alt="" />
+        <Image className="triangle" src={trianglePng} alt="" />
       </div>
       <div className="light__1__right">
-        <img className="light" src={lightPng} alt="" />
-        <img className="mid" src={treePng} alt="" />
-        <img className="small" src={treePng} alt="" />
+        <Image className="light" src={lightPng} alt="" />
+        <Image className="mid" src={treePng} alt="" />
+        <Image className="small" src={treePng} alt="" />
       </div>
       <div className="light__2__left">
-        <img className="big" src={buildingPng} alt="" />
-        <img className="light" src={lightPng} alt="" />
+        <Image className="big" src={buildingPng} alt="" />
+        <Image className="light" src={lightPng} alt="" />
         <div className="box__2"></div>
       </div>
       <div className="light__2__right">
-        <img className="light" src={lightPng} alt="" />
-        <img className="big" src={hospitalPng} alt="" />
+        <Image className="light" src={lightPng} alt="" />
+        <Image className="big" src={hospitalPng} alt="" />
         <div className="box__C"></div>
       </div>
       <div className="light__3__left">
-        <img className="light" src={lightPng} alt="" />
-        <img className="mid" src={logoPng} alt="" />
+        <Image className="light" src={lightPng} alt="" />
+        <Image className="mid" src={logoPng} alt="" />
       </div>
       <div className="light__3__right">
-        <img className="light" src={lightPng} alt="" />
-        <img className="small" src={subwayPng} alt="" />
-        <img className="small" src={treePng} alt="" />
+        <Image className="light" src={lightPng} alt="" />
+        <Image className="small" src={subwayPng} alt="" />
+        <Image className="small" src={treePng} alt="" />
       </div>
       <div className="light__4__left">
-        <img className="light" src={lightPng} alt="" />
-        <img className="big" src={playPng} alt="" />
-        <img className="mid" src={treePng} alt="" />
+        <Image className="light" src={lightPng} alt="" />
+        <Image className="big" src={playPng} alt="" />
+        <Image className="mid" src={treePng} alt="" />
       </div>
       <div className="light__4__right">
-        <img className="light" src={lightPng} alt="" />
-        <img className="small" src={marketPng} alt="" />
-        <img className="mid" src={treePng} alt="" />
+        <Image className="light" src={lightPng} alt="" />
+        <Image className="small" src={marketPng} alt="" />
+        <Image className="mid" src={treePng} alt="" />
       </div>
       <div className="light__5__right">
-        <img className="big" src={busPng} alt="" />
+        <Image className="big" src={busPng} alt="" />
       </div>
       <div className="middle__6">
-        <img className="big" src={traficPng} alt="" />
+        <Image className="big" src={traficPng} alt="" />
       </div>
       <div className="themes">
         <div className="theme theme__0"></div>
         <div className="theme theme__1">
-          <img className="theme__1__img" src={theme__1} alt="" />
+          <Image className="theme__1__img" src={theme__1} alt="" />
           <div className="theme__1__content">
             <strong>宅在家好發慌？</strong>
             <br />
@@ -469,7 +475,7 @@ function Landing() {
           </div>
         </div>
         <div className="theme theme__2">
-          <img className="theme__2__img" src={theme__2} alt="" />
+          <Image className="theme__2__img" src={theme__2} alt="" />
           <div className="theme__2__content">
             <strong>錢錢去哪了？</strong>
             <br />
@@ -479,7 +485,7 @@ function Landing() {
           </div>
         </div>
         <div className="theme theme__3">
-          <img className="theme__3__img" src={theme__3} alt="" />
+          <Image className="theme__3__img" src={theme__3} alt="" />
           <div className="theme__3__content">
             <strong>一個人好孤單？</strong>
             <br />
@@ -491,7 +497,7 @@ function Landing() {
           </div>
         </div>
         <div className="theme theme__4">
-          <img className="theme__4__img" src={theme__4} alt="" />
+          <Image className="theme__4__img" src={theme__4} alt="" />
           <div className="theme__4__content">
             <strong>想不出好點子？</strong>
             <br />
@@ -502,7 +508,7 @@ function Landing() {
           </div>
         </div>
         <div className="theme theme__5">
-          <img className="theme__5__img" src={theme__5} alt="" />
+          <Image className="theme__5__img" src={theme__5} alt="" />
           <div className="theme__5__content">
             <strong>如何上火箭？</strong>
             <br />
@@ -515,7 +521,7 @@ function Landing() {
           </div>
         </div>
         <div className="theme theme__6">
-          <img className="theme__6__img" src={theme__6} alt="" />
+          <Image className="theme__6__img" src={theme__6} alt="" />
           <div className="theme__6__content">
             <strong>心裡總是卡卡的？</strong>
             <br />
@@ -528,7 +534,7 @@ function Landing() {
         </div>
         <div className="logo">
           <div>
-            <img className="logo__orange__1" src={logo} alt="" />
+            <Image className="logo__orange__1" src={logo} alt="" />
           </div>
           <div className="logo__orange">Chill Library</div>
           <Link className="btn" to="/themes">
@@ -539,7 +545,7 @@ function Landing() {
       </div>
 
       <div className="car">
-        <img src={car} alt="" />
+        <Image src={car} alt="" />
       </div>
     </div>
   );

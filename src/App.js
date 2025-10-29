@@ -19,6 +19,7 @@ import { getCurrentUser } from "./redux/action";
 import { useDispatch } from "react-redux";
 import Loading from "./Components/common/Loading";
 import Nomatch from "./Components/common/Nomatch";
+const bkSrc = typeof bk === "string" ? bk : bk.src;
 
 const Main = styled.div`
   min-height: 100vh;
@@ -51,12 +52,13 @@ const Div = styled.div`
 function App() {
   const dispatch = useDispatch();
   const [user, setUser] = useState();
-  const [source, setSource] = useState("preload.jpg");
   useEffect(() => {
     const img = new Image();
-    img.src = bk;
-    img.onload = () => setSource(bk);
-  }, [bk]);
+    img.src = bkSrc;
+    return () => {
+      img.onload = null;
+    };
+  }, []);
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((currentUser) => {
@@ -75,13 +77,13 @@ function App() {
             <Switch>
               <Route exact path="/" component={Landing} />
               <Route exact path="/themes">
-                <Main backgroundImg={bk}>
+                <Main backgroundImg={bkSrc}>
                   <SideMenu />
                   <Themes />
                 </Main>
               </Route>
               <Route exact path="/news">
-                <Main backgroundImg={bk}>
+                <Main backgroundImg={bkSrc}>
                   <SideMenu />
                   <NewsWall />
                   <SideRight>
@@ -91,7 +93,7 @@ function App() {
                 </Main>
               </Route>
               <Route path="/mybooks/:userId">
-                <Main backgroundImg={bk}>
+                <Main backgroundImg={bkSrc}>
                   <SideMenu />
                   <Mybooks />
                   <SideRight>
@@ -101,7 +103,7 @@ function App() {
                 </Main>
               </Route>
               <Route path="/theme/:theme">
-                <Main backgroundImg={bk}>
+                <Main backgroundImg={bkSrc}>
                   <SideMenu />
                   <EachTheme />
                   <SideRight>
@@ -111,7 +113,7 @@ function App() {
                 </Main>
               </Route>
               <Route exact path="/book/search/:search">
-                <Main backgroundImg={bk}>
+                <Main backgroundImg={bkSrc}>
                   <SideMenu />
                   <Searching />
                   <SideRight>
@@ -121,7 +123,7 @@ function App() {
                 </Main>
               </Route>
               <Route exact path="/book/:bookName">
-                <Main backgroundImg={bk}>
+                <Main backgroundImg={bkSrc}>
                   <SideMenu />
                   <EachBook />
                   <SideRight>
@@ -131,7 +133,7 @@ function App() {
                 </Main>
               </Route>
               <Route exact path="/book/searching/:isbn">
-                <Main backgroundImg={bk}>
+                <Main backgroundImg={bkSrc}>
                   <SideMenu />
                   <EachSearchBook />
                   <SideRight>
